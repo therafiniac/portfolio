@@ -1,0 +1,48 @@
+import type { Project } from "@/types";
+
+export const projects: Project[] = [
+  {
+    id:          "zerodha-clone",
+    title:       "Zerodha Clone",
+    description: "Full-stack trading platform clone with user auth, dashboard, and real-time charts.",
+    longDesc:    "A full-stack clone of the Zerodha trading platform featuring user authentication, interactive trading dashboard, charts, and an admin panel. Implements protected routes and server-side data flow.",
+    tags:        ["React", "Node.js", "Express", "MongoDB", "MERN"],
+    github:      "https://github.com/therafiniac/zerodha-clone",
+    live:        "",
+    featured:    true,
+    status:      "completed",
+  },
+  {
+    id:          "vidtube",
+    title:       "VidTube",
+    description: "Backend service for video upload & management with secure JWT authentication.",
+    longDesc:    "A production-grade backend service enabling secure video uploads, authentication, and session handling. Integrates Multer for file handling and Cloudinary for media storage.",
+    tags:        ["Node.js", "Express", "MongoDB"],
+    github:      "https://github.com/therafiniac/vidtube",
+    live:        "",
+    featured:    true,
+    status:      "completed",
+  },
+  {
+    id:          "travel-packing-list",
+    title:       "Travel Packing List",
+    description: "Minimal React app for managing travel checklists with full CRUD functionality.",
+    longDesc:    "A minimal and intuitive travel packing list app. Users can add, edit, delete, and filter essential travel items. Built with component-based architecture and React Hooks.",
+    tags:        ["React"],
+    github:      "https://github.com/therafiniac/react-projects/tree/main/travel-list",
+    live:        "",
+    featured:    false,
+    status:      "completed",
+  },
+  {
+    id:          "password-generator",
+    title:       "Password Generator",
+    description: "Custom password generator with live preview, length control, and character options.",
+    longDesc:    "A sleek password generator that lets users configure length and character types (special characters, numbers, uppercase). Styled with Tailwind CSS for a clean, modern interface.",
+    tags:        ["React", "Tailwind"],
+    github:      "https://github.com/therafiniac/react-projects/tree/main/password-generator",
+    live:        "",
+    featured:    false,
+    status:      "completed",
+  },
+];
