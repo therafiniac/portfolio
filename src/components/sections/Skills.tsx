@@ -1,25 +1,22 @@
 import { Section } from "@/components/layout/Section";
-import { skillGroups } from "@/lib/data";
+import { Marquee } from "@/components/layout/Marquee";
+import { skillGroups } from "@/lib/data/skills";
 
 export function Skills() {
   return (
-    <Section id="stack" eyebrow="Capabilities" title="Stack">
-      <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        {skillGroups.map((group) => (
+    <Section id="stack" index="04" eyebrow="Capabilities" title="Stack">
+      <div className="space-y-8">
+        {skillGroups.map((group, index) => (
           <div key={group.label}>
-            <h3 className="font-mono text-xs uppercase tracking-[0.15em] text-accent-secondary">
+            <h3 className="mb-4 flex items-center gap-2 font-mono text-xs uppercase tracking-[0.15em] text-accent-secondary">
+              <group.icon className="h-4 w-4" aria-hidden="true" />
               {group.label}
             </h3>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {group.items.map((item) => (
-                <span
-                  key={item}
-                  className="glass-panel rounded-full px-3 py-1.5 text-sm text-text-primary transition-colors hover:text-accent"
-                >
-                  {item}
-                </span>
-              ))}
-            </div>
+            <Marquee
+              items={group.items}
+              reverse={index % 2 === 1}
+              durationSeconds={14 + group.items.length * 2}
+            />
           </div>
         ))}
       </div>

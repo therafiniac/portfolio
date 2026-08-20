@@ -50,6 +50,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col bg-bg text-text-primary font-sans">
         <MotionConfig reducedMotion="user">
+          <div className="grain-overlay" aria-hidden="true" />
           <CursorGlow />
           <Navbar />
           {children}

@@ -6,10 +6,16 @@
   --line: #45475a;
   --text-primary: #cdd6f4;
   --text-muted: #a6adc8;
-  --accent: #94e2d5;
-  --accent-secondary: #fab387;
+  /* Blue/maroon, not the teal/peach pairing Catppuccin's own marketing
+     showcases everywhere — same family, far less instantly recognizable
+     as "a Catppuccin site." Blue also happens to land close to GitHub's
+     own brand blue, which doesn't hurt. */
+  --accent: #89b4fa;
+  --accent-secondary: #eba0ac;
   --status-live: #a6e3a1;
+  --danger: #f38ba8;
   --accent-dim: color-mix(in srgb, var(--accent) 10%, transparent);
+  --gradient-signature: linear-gradient(135deg, var(--accent), var(--accent-secondary));
 }
 
 :root[data-theme="light"] {
@@ -18,9 +24,10 @@
   --line: #bcc0cc;
   --text-primary: #4c4f69;
   --text-muted: #6c6f85;
-  --accent: #179299;
-  --accent-secondary: #fe640b;
+  --accent: #1e66f5;
+  --accent-secondary: #e64553;
   --status-live: #40a02b;
+  --danger: #d20f39;
 }
 
 @theme inline {
@@ -33,6 +40,7 @@
   --color-accent-dim: var(--accent-dim);
   --color-accent-secondary: var(--accent-secondary);
   --color-status-live: var(--status-live);
+  --color-danger: var(--danger);
   --font-sans: var(--font-inter);
   --font-mono: var(--font-jetbrains-mono);
 }
@@ -55,22 +63,48 @@ body {
   outline-offset: 2px;
 }
 
+/* Crisp, mostly-opaque surface with a thin high-contrast border and a
+   subtle inset top highlight — closer to Vercel/Linear's "engineered"
+   card language than a soft blurred glass sheet. Named glass-panel for
+   historical reasons (still has a little blur/translucency) but the
+   emphasis moved from "glass" to "precise." */
 .glass-panel {
-  background: color-mix(in srgb, var(--surface) 55%, transparent);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid color-mix(in srgb, var(--line) 40%, transparent);
-  border-radius: 1rem;
+  position: relative;
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
+  border-radius: 0.75rem;
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--text-primary) 8%, transparent);
+  /* Deliberately not transitioning box-shadow's blur radius — animating
+     blur-radius shadows forces a repaint every frame on top of
+     backdrop-filter, which is what made hover feel janky. Border/
+     background are cheap; the glow appears via the (cheap, GPU-composited)
+     opacity fade below. */
   transition:
-    border-color 0.3s ease,
-    box-shadow 0.3s ease,
-    background-color 0.3s ease;
+    border-color 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.18s ease;
+}
+
+.glass-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 28px color-mix(in srgb, var(--accent) 16%, transparent);
+  opacity: 0;
+  transition: opacity 0.18s ease;
+  pointer-events: none;
 }
 
 .glass-panel:hover,
 .glass-panel:focus-within {
-  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
-  box-shadow: 0 0 48px color-mix(in srgb, var(--accent) 12%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+.glass-panel:hover::after,
+.glass-panel:focus-within::after {
+  opacity: 1;
 }
 
 .text-glow {
@@ -107,4 +141,57 @@ body {
   .aurora-blob {
     animation: none;
   }
+}
+
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-mask {
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    black 8%,
+    black 92%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent,
+    black 8%,
+    black 92%,
+    transparent
+  );
+}
+
+.marquee-track {
+  animation: marquee-scroll linear infinite;
+}
+
+.marquee-mask:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+}
+
+/* Static film-grain texture — cheap perceived depth/premium feel. Not
+   animated: an animated grain would repaint every frame for very little
+   extra effect, this is the same visual win at zero ongoing cost. */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
 }

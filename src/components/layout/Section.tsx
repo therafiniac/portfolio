@@ -5,12 +5,14 @@ import type { ReactNode } from "react";
 
 type SectionProps = {
   id?: string;
+  index?: string;
   eyebrow: string;
   title: string;
+  tint?: boolean;
   children: ReactNode;
 };
 
-export function Section({ id, eyebrow, title, children }: SectionProps) {
+export function Section({ id, index, eyebrow, title, tint, children }: SectionProps) {
   return (
     <motion.section
       id={id}
@@ -18,9 +20,19 @@ export function Section({ id, eyebrow, title, children }: SectionProps) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className="scroll-mt-24 px-6 py-24 md:px-12 md:py-32"
+      className={`relative scroll-mt-24 overflow-hidden border-t border-line/30 px-6 py-24 md:px-12 md:py-32 ${
+        tint ? "bg-surface/40" : ""
+      }`}
     >
-      <div className="mx-auto max-w-5xl">
+      {index && (
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-4 right-4 select-none font-mono text-[clamp(6rem,18vw,14rem)] font-bold leading-none text-text-primary/[0.035] md:right-8"
+        >
+          {index}
+        </span>
+      )}
+      <div className="relative mx-auto max-w-6xl">
         <span className="inline-block rounded-full border border-line/40 bg-surface/60 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.2em] text-accent-secondary backdrop-blur">
           {eyebrow}
         </span>

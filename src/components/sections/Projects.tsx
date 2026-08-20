@@ -1,30 +1,19 @@
+import { ExternalLink } from "lucide-react";
 import { Section } from "@/components/layout/Section";
-import { projects } from "@/lib/data";
-
-// Decorative-only gradients cycling across the Catppuccin palette — an
-// abstract stand-in for a real project screenshot, one per card. Swap the
-// div below for an <img> per project once real screenshots exist.
-const covers = [
-  "linear-gradient(135deg, rgb(148 226 213 / 35%), rgb(250 179 135 / 25%))",
-  "linear-gradient(135deg, rgb(137 180 250 / 35%), rgb(203 166 247 / 25%))",
-  "linear-gradient(135deg, rgb(166 227 161 / 35%), rgb(148 226 213 / 25%))",
-  "linear-gradient(135deg, rgb(250 179 135 / 35%), rgb(243 139 168 / 25%))",
-];
+import { ProjectGraphic } from "@/components/sections/ProjectGraphic";
+import { GithubIcon } from "@/components/icons/BrandIcons";
+import { projects } from "@/lib/data/projects";
 
 export function Projects() {
   return (
-    <Section id="work" eyebrow="Selected Work" title="What I've Shipped">
+    <Section id="case-studies" index="02" eyebrow="Technical Deep Dive" title="Case Studies">
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
         {projects.map((project, index) => (
           <article
             key={project.name}
-            className="glass-panel overflow-hidden transition-transform duration-300 hover:-translate-y-1"
+            className="glass-panel will-change-transform overflow-hidden transition-transform duration-200 ease-out hover:-translate-y-1"
           >
-            <div
-              className="h-28 w-full"
-              style={{ background: covers[index % covers.length] }}
-              aria-hidden="true"
-            />
+            <ProjectGraphic index={index} />
             <div className="p-6 md:p-8">
               <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
                 <h3 className="font-mono text-xl text-text-primary">
@@ -36,8 +25,9 @@ export function Projects() {
                       href={project.liveUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-accent hover:underline"
+                      className="flex items-center gap-1 text-accent hover:underline"
                     >
+                      <ExternalLink className="h-3 w-3" aria-hidden="true" />
                       Live Demo
                     </a>
                   )}
@@ -46,8 +36,9 @@ export function Projects() {
                       href={project.githubUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-accent hover:underline"
+                      className="flex items-center gap-1 text-accent hover:underline"
                     >
+                      <GithubIcon className="h-3 w-3" aria-hidden="true" />
                       GitHub
                     </a>
                   )}

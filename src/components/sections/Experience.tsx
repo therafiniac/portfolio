@@ -1,9 +1,9 @@
 import { Section } from "@/components/layout/Section";
-import { experience } from "@/lib/data";
+import { experience } from "@/lib/data/experience";
 
 export function Experience() {
   return (
-    <Section id="experience" eyebrow="Track Record" title="Experience">
+    <Section id="experience" index="03" tint eyebrow="Track Record" title="Experience">
       <div className="relative space-y-12">
         <div className="absolute left-[5px] top-2 bottom-2 w-px bg-gradient-to-b from-accent/70 via-line/60 to-transparent" />
         {experience.map((entry) => (
