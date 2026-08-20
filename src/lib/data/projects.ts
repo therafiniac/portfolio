@@ -14,7 +14,10 @@ export const projects: Project[] = [
     highlight:
       "A custom linear-to-tree algorithm resolves nested comments in O(N) via one hash-map pass — no recursion, no N+1 query.",
     stat: { value: "O(N)", label: "not O(N²) recursion" },
-    flow: ["Flat comment list", "One hash-map pass", "Nested tree"],
+    // Short on purpose — the flow diagram's dots/lines need single-line
+    // labels to stay aligned; the full mechanism is already spelled out
+    // in `highlight` above.
+    flow: ["Flat list", "Hash-map", "Tree"],
     liveUrl: "https://reddit-clone-five-chi.vercel.app",
     // Real repo URL not published yet — "#" per the placeholder-link
     // convention (see src/lib/data/clientWork.ts), never a fake domain.
@@ -27,7 +30,7 @@ export const projects: Project[] = [
     highlight:
       "Firebase-backed RBAC across three roles, a TipTap rich-text engine, and a debounced auto-save system with draft recovery.",
     stat: { value: "3", label: "role-based access tiers" },
-    flow: ["Request", "Role check", "Permitted action"],
+    flow: ["Request", "Role check", "Action"],
     private: true,
   },
 ];

@@ -1,6 +1,7 @@
 import { ExternalLink } from "lucide-react";
 import { Section } from "@/components/layout/Section";
 import { GithubIcon } from "@/components/icons/BrandIcons";
+import { FlowSteps } from "@/components/sections/FlowSteps";
 import { projects } from "@/lib/data/projects";
 import type { IconComponent } from "@/types";
 
@@ -23,39 +24,6 @@ function LinkBadge({
       <Icon className="h-3 w-3" aria-hidden="true" />
       {children}
     </a>
-  );
-}
-
-// The mechanism as a small connected-node diagram — the same node/edge
-// schematic language used in Hero, How I Build, and Work section (small
-// circles + thin lines, final node pulsing) instead of a generic
-// pill-and-arrow-icon UI pattern. Specific to what this project actually
-// does, not a generic graphic swapped in by index.
-function FlowSteps({ steps }: { steps: string[] }) {
-  return (
-    <div className="mt-6 flex items-start">
-      {steps.map((step, i) => {
-        const isLast = i === steps.length - 1;
-        return (
-          <div key={step} className="contents">
-            <div className="flex w-20 flex-col items-center gap-2 sm:w-24">
-              <span
-                className={`h-2.5 w-2.5 shrink-0 rounded-full ${
-                  isLast ? "bg-accent-secondary motion-safe:animate-pulse" : "bg-accent-secondary/70"
-                }`}
-                aria-hidden="true"
-              />
-              <span className="text-center font-mono text-[10px] uppercase leading-tight tracking-[0.08em] text-text-muted">
-                {step}
-              </span>
-            </div>
-            {!isLast && (
-              <div className="mt-[5px] h-px flex-1 bg-accent/30" aria-hidden="true" />
-            )}
-          </div>
-        );
-      })}
-    </div>
   );
 }
 
