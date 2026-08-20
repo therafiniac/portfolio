@@ -18,6 +18,13 @@ export type Project = {
   tagline: string;
   tech: string[];
   highlight: string;
+  // The real technical claim, rendered large (e.g. "O(N)", "3") — not a
+  // decorative graphic, the actual number/complexity being claimed.
+  stat: { value: string; label: string };
+  // A short, project-specific mechanism flow (e.g. "Flat list" → "Hash-map
+  // pass" → "Tree") — illustrates *this* project's actual approach, not a
+  // generic reusable diagram swapped in by index.
+  flow: string[];
   liveUrl?: string;
   githubUrl?: string;
   private?: boolean;

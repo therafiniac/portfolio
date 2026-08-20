@@ -1,9 +1,10 @@
 // A sparse network diagram spanning the hero, in the same line-art
-// language as ProjectGraphic.tsx — this is the site's actual visual
-// signature (schematic diagrams, not decoration), so the hero should carry
-// it too rather than leaning on generic blurred gradient blobs. Very low
-// opacity: texture, not a competing focal element. Static SVG (near-zero
-// cost) except the slow pulse on the three "hub" nodes.
+// language as the How I Build / Work section diagrams — this is the
+// site's actual visual signature (schematic diagrams, not decoration), so
+// the hero should carry it too rather than leaning on generic blurred
+// gradient blobs. Very low opacity: texture, not a competing focal
+// element. Static SVG (near-zero cost) except the slow pulse on the three
+// "hub" nodes.
 
 const nodes: [number, number][] = [
   [120, 100],
