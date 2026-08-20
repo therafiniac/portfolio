@@ -11,6 +11,13 @@ export type ExperienceEntry = {
   start: string;
   end: string;
   highlights: string[];
+  tech: string[];
+};
+
+export type EducationEntry = {
+  degree: string;
+  institution: string;
+  location: string;
 };
 
 export type Project = {

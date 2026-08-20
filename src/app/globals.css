@@ -213,6 +213,38 @@ body {
   }
 }
 
+/* A small bright segment traveling down the Experience timeline's static
+   gradient line — top/opacity only (no height/width change), so it's cheap.
+   Percentage-based top works regardless of how tall the line ends up being
+   (it grows with however many entries are on it). */
+@keyframes trail-light-travel {
+  0% {
+    top: -8%;
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    top: 108%;
+    opacity: 0;
+  }
+}
+
+.trail-light {
+  animation: trail-light-travel 3.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trail-light {
+    animation: none;
+    display: none;
+  }
+}
+
 @keyframes marquee-scroll {
   from {
     transform: translateX(0);

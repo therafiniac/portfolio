@@ -11,6 +11,7 @@ export const experience: ExperienceEntry[] = [
       "Shipping a full-stack Blog Manager SaaS — Next.js, MongoDB, Firebase, RBAC, scheduled publishing.",
       "Owns GCP/Firebase deployments and direct delivery for US/UK clients.",
     ],
+    tech: ["Next.js", "TypeScript", "MongoDB", "Firebase"],
   },
   {
     role: "Web Developer",
@@ -22,13 +23,15 @@ export const experience: ExperienceEntry[] = [
       "150+ client sites delivered solo, from landing pages to e-commerce.",
       "Sole technical point of contact across Kolkata and pan-India accounts.",
     ],
+    tech: ["HTML", "CSS", "JavaScript", "React.js"],
   },
   {
-    role: "Freelance Web Developer",
+    role: "Independent Web Developer",
     org: "Self-Employed",
     location: "Kolkata, India",
     start: "2020",
     end: "2021",
     highlights: ["Independent web builds for small businesses — HTML, CSS, JS, WordPress."],
+    tech: ["HTML", "CSS", "JavaScript", "WordPress"],
   },
 ];
