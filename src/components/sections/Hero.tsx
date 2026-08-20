@@ -6,6 +6,7 @@ import { CountUp } from "@/components/layout/CountUp";
 import { Magnetic } from "@/components/layout/Magnetic";
 import { FramedImage } from "@/components/layout/FramedImage";
 import { TiltCard } from "@/components/layout/TiltCard";
+import { HeroSchematic } from "@/components/sections/HeroSchematic";
 import { heroRoles, heroStatusLine, heroStats } from "@/lib/data/hero";
 import type { GithubStats } from "@/lib/github";
 
@@ -41,10 +42,9 @@ export function Hero({ githubStats }: HeroProps) {
       className="relative flex min-h-screen scroll-mt-24 flex-col justify-center overflow-hidden px-6 md:px-12"
     >
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-        <div className="aurora-blob absolute -left-32 top-1/4 h-96 w-96 rounded-full bg-accent/20 blur-[120px]" />
-        <div className="aurora-blob absolute -right-24 bottom-1/4 h-96 w-96 rounded-full bg-accent-secondary/15 blur-[120px] [animation-delay:-9s]" />
-        <div className="absolute left-1/2 top-1/2 h-[560px] w-[560px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-accent/10" />
-        <div className="absolute left-1/2 top-1/2 h-[720px] w-[720px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-accent/5" />
+        <div className="aurora-blob absolute -left-32 top-1/4 h-96 w-96 rounded-full bg-accent/15 blur-[120px]" />
+        <div className="aurora-blob absolute -right-24 bottom-1/4 h-96 w-96 rounded-full bg-accent-secondary/10 blur-[120px] [animation-delay:-9s]" />
+        <HeroSchematic />
         <HeroCanvasLoader />
       </div>
 

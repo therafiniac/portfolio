@@ -48,7 +48,17 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
-      <body className="min-h-full flex flex-col bg-bg text-text-primary font-sans">
+      {/* suppressHydrationWarning here specifically guards against browser
+          extensions (ColorZilla, Grammarly, etc.) injecting attributes like
+          cz-shortcut-listen into <body> before React hydrates — that's a
+          client-environment mismatch outside the app's control, not a real
+          bug, so it's the correct/standard use of this prop (unlike the
+          ThemeToggle case, where the mismatch was actual app state logic
+          and needed a real fix, not suppression). */}
+      <body
+        className="min-h-full flex flex-col bg-bg text-text-primary font-sans"
+        suppressHydrationWarning
+      >
         <MotionConfig reducedMotion="user">
           <div className="grain-overlay" aria-hidden="true" />
           <CursorGlow />
