@@ -7,9 +7,20 @@
   --text-primary: #cdd6f4;
   --text-muted: #a6adc8;
   --accent: #94e2d5;
-  --accent-dim: rgb(148 226 213 / 10%);
   --accent-secondary: #fab387;
   --status-live: #a6e3a1;
+  --accent-dim: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+:root[data-theme="light"] {
+  --bg: #dce0e8;
+  --surface: #e6e9ef;
+  --line: #bcc0cc;
+  --text-primary: #4c4f69;
+  --text-muted: #6c6f85;
+  --accent: #179299;
+  --accent-secondary: #fe640b;
+  --status-live: #40a02b;
 }
 
 @theme inline {
@@ -29,6 +40,9 @@
 body {
   background: var(--bg);
   color: var(--text-primary);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 ::selection {
@@ -39,4 +53,58 @@ body {
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
+}
+
+.glass-panel {
+  background: color-mix(in srgb, var(--surface) 55%, transparent);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid color-mix(in srgb, var(--line) 40%, transparent);
+  border-radius: 1rem;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    background-color 0.3s ease;
+}
+
+.glass-panel:hover,
+.glass-panel:focus-within {
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  box-shadow: 0 0 48px color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.text-glow {
+  text-shadow: 0 0 56px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+.cursor-glow {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+  background: radial-gradient(
+    600px circle at var(--x, 50%) var(--y, 50%),
+    color-mix(in srgb, var(--accent) 7%, transparent),
+    transparent 70%
+  );
+}
+
+@keyframes aurora-drift {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(4%, -5%) scale(1.1);
+  }
+}
+
+.aurora-blob {
+  animation: aurora-drift 20s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora-blob {
+    animation: none;
+  }
 }

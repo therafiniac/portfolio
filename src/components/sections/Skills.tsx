@@ -1,23 +1,28 @@
-import { Panel } from "@/components/layout/Panel";
+import { Section } from "@/components/layout/Section";
 import { skillGroups } from "@/lib/data";
 
 export function Skills() {
   return (
-    <Panel index="04" title="STACK">
+    <Section id="stack" eyebrow="Capabilities" title="Stack">
       <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
         {skillGroups.map((group) => (
           <div key={group.label}>
-            <h3 className="font-mono text-xs uppercase tracking-[0.15em] text-accent">
+            <h3 className="font-mono text-xs uppercase tracking-[0.15em] text-accent-secondary">
               {group.label}
             </h3>
-            <ul className="mt-3 space-y-1.5 text-sm text-text-primary">
+            <div className="mt-4 flex flex-wrap gap-2">
               {group.items.map((item) => (
-                <li key={item}>{item}</li>
+                <span
+                  key={item}
+                  className="glass-panel rounded-full px-3 py-1.5 text-sm text-text-primary transition-colors hover:text-accent"
+                >
+                  {item}
+                </span>
               ))}
-            </ul>
+            </div>
           </div>
         ))}
       </div>
-    </Panel>
+    </Section>
   );
 }
