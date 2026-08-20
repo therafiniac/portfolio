@@ -1,13 +1,8 @@
 import type { ReactNode } from "react";
 import { ArrowUpRight, LayoutGrid, Send } from "lucide-react";
-import { CountUp } from "@/components/layout/CountUp";
 
-const CHAMFER_CLIP =
-  "polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px)";
-
-// Small decorative version of the network diagram from HeroSchematic/
-// ProjectGraphic — same signature, not a new motif, so it reads as part of
-// the system rather than a random filler graphic.
+// Small decorative version of the site's network diagram — used as the
+// schematic filler variant's own decoration (see WorkFillerTile below).
 function MiniSchematic() {
   const nodes: [number, number][] = [
     [20, 60],
@@ -27,7 +22,12 @@ function MiniSchematic() {
   ];
 
   return (
-    <svg viewBox="0 0 200 120" className="h-16 w-full" aria-hidden="true">
+    <svg
+      viewBox="0 0 200 120"
+      preserveAspectRatio="none"
+      className="pointer-events-none absolute inset-0 h-full w-full opacity-40"
+      aria-hidden="true"
+    >
       {edges.map(([a, b], i) => (
         <line
           key={i}
@@ -35,132 +35,102 @@ function MiniSchematic() {
           y1={nodes[a][1]}
           x2={nodes[b][0]}
           y2={nodes[b][1]}
-          stroke="var(--accent)"
-          strokeWidth={1.25}
-          opacity={0.35}
+          stroke="var(--bg)"
+          strokeWidth={1}
         />
       ))}
       {nodes.map(([cx, cy], i) => (
-        <circle
-          key={i}
-          cx={cx}
-          cy={cy}
-          r={3}
-          fill="var(--accent-secondary)"
-          opacity={0.6}
-          className={i === 5 ? "motion-safe:animate-pulse" : undefined}
-        />
+        <circle key={i} cx={cx} cy={cy} r={2.5} fill="var(--bg)" />
       ))}
     </svg>
   );
 }
 
-function TileBadge({ icon: Icon }: { icon: typeof LayoutGrid }) {
+// The CTA's decoration: one big icon bleeding off the corner.
+function IconBleed({ icon: Icon }: { icon: typeof LayoutGrid }) {
   return (
-    <span className="absolute left-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-bg/50 text-accent backdrop-blur">
-      <Icon className="h-4 w-4" aria-hidden="true" />
-    </span>
-  );
-}
-
-// A soft off-center glow behind the centered content — gives the square
-// footprint some depth instead of a flat gradient, so it reads as a
-// composed accent tile rather than a plain filler shape.
-function TileGlow() {
-  return (
-    <div
+    <Icon
+      className="pointer-events-none absolute -bottom-8 -right-8 h-36 w-36 text-bg/15"
+      strokeWidth={1.25}
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0"
-      style={{
-        background:
-          "radial-gradient(circle at 28% 22%, color-mix(in srgb, var(--accent-secondary) 22%, transparent), transparent 60%)",
-      }}
     />
   );
 }
 
-type RowHeight = "tall" | "short";
+function TileBadge({ icon: Icon }: { icon: typeof LayoutGrid }) {
+  return (
+    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-bg/20 text-bg backdrop-blur">
+      <Icon className="h-5 w-5" aria-hidden="true" />
+    </span>
+  );
+}
 
-// Same border-layer-then-inset-content-layer structure as WorkCard (see
-// globals.css for why), plus the gradient wash + accent-tinted border that
-// make these read as a deliberate brand moment instead of an empty cell.
+// WorkCard (ClientWork.tsx) has no fixed height of its own — its chrome
+// bar + fixed-aspect screenshot + fixed-height text stack determine each
+// row's height naturally. This tile deliberately has no height of its own
+// either; it relies on CSS Grid's default `align-items: stretch` to grow
+// to match whatever the real project cards in its row end up being, so it
+// never needs to duplicate that math.
+//
+// This is meant to be loud — full --gradient-signature fill (the same
+// brand gradient used for the primary CTA and key headlines elsewhere)
+// and high-contrast text. `text-bg` follows the same convention the
+// "Featured" pill already uses to sit on this gradient. (The stat tile at
+// grid slot 5 — see StatShowcase in ClientWork.tsx — is loud a different
+// way: a quiet neutral card with one huge gradient-clipped number, so the
+// two don't end up reading as copies of each other.)
 function TileFrame({
-  height,
   href,
+  decoration,
   children,
 }: {
-  height: RowHeight;
   href?: string;
+  decoration: ReactNode;
   children: ReactNode;
 }) {
-  const heightClass = height === "tall" ? "h-80" : "h-48";
+  const className =
+    "group relative flex flex-col items-center justify-center gap-2 overflow-hidden rounded-xl p-6 text-center shadow-lg shadow-black/10 transition-[filter] duration-300 hover:brightness-110";
+  const style = { backgroundImage: "var(--gradient-signature)" };
+
+  // Decoration painted first (behind) and the text wrapper second (in
+  // front) — both are positioned with z-index:auto, so plain DOM order
+  // decides stacking here, no z-index needed.
   const inner = (
     <>
-      <span
-        aria-hidden="true"
-        className="chamfer-border chamfer-border-accent absolute inset-0"
-        style={{ clipPath: CHAMFER_CLIP }}
-      />
-      <div
-        className="chamfer-panel tile-signature absolute inset-[2px] flex flex-col items-center justify-center gap-2 overflow-hidden p-5 text-center"
-        style={{ clipPath: CHAMFER_CLIP }}
-      >
-        <TileGlow />
-        {children}
-      </div>
+      {decoration}
+      <div className="relative flex flex-col items-center gap-2">{children}</div>
     </>
   );
 
   if (href) {
     return (
-      <a href={href} className={`group relative block ${heightClass}`}>
+      <a href={href} className={className} style={style}>
         {inner}
       </a>
     );
   }
 
-  return <div className={`group relative ${heightClass}`}>{inner}</div>;
+  return (
+    <div className={className} style={style}>
+      {inner}
+    </div>
+  );
 }
 
-type WorkFillerTileProps = { height: RowHeight } & (
-  | { type: "stat"; value: number; label: string }
-  | { type: "schematic" }
-  | { type: "cta" }
-);
+type WorkFillerTileProps = { type: "schematic" } | { type: "cta" };
 
 export function WorkFillerTile(props: WorkFillerTileProps) {
-  if (props.type === "stat") {
-    return (
-      <TileFrame height={props.height}>
-        <TileBadge icon={LayoutGrid} />
-        <span
-          className="bg-clip-text font-mono text-5xl font-semibold text-transparent"
-          style={{ backgroundImage: "var(--gradient-signature)" }}
-        >
-          <CountUp value={props.value} />
-        </span>
-        <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-text-muted">
-          {props.label}
-        </span>
-      </TileFrame>
-    );
-  }
-
   if (props.type === "schematic") {
-    return (
-      <TileFrame height={props.height}>
-        <MiniSchematic />
-      </TileFrame>
-    );
+    return <TileFrame decoration={<MiniSchematic />}>{null}</TileFrame>;
   }
 
   return (
-    <TileFrame height={props.height} href="#contact">
+    <TileFrame href="#contact" decoration={<IconBleed icon={Send} />}>
       <TileBadge icon={Send} />
-      <span className="font-mono text-base text-text-primary">Have a project in mind?</span>
-      <span className="flex items-center gap-1 font-mono text-xs uppercase tracking-[0.15em] text-accent transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-0.5">
+      <span className="font-mono text-xl text-bg">Open to new projects.</span>
+      <span className="flex items-center gap-1 font-mono text-xs uppercase tracking-[0.2em] text-bg/80 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1">
         Get in touch
-        <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
+        <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
       </span>
     </TileFrame>
   );

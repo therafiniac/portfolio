@@ -155,6 +155,7 @@ body {
   content: "";
   position: absolute;
   inset: 0;
+  border-radius: inherit;
   box-shadow: 0 0 28px color-mix(in srgb, var(--accent) 16%, transparent);
   opacity: 0;
   transition: opacity 0.18s ease;

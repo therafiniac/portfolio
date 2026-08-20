@@ -1,152 +1,170 @@
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { Section } from "@/components/layout/Section";
+import { CountUp } from "@/components/layout/CountUp";
 import { WorkFillerTile } from "@/components/sections/WorkFillerTile";
 import { clientProjects } from "@/lib/data/clientWork";
+import { heroStats } from "@/lib/data/hero";
 import type { ClientProject } from "@/types";
 
-// Same chamfered signature shape as BrandMark/FramedImage — ties these
-// cards into the site's mark instead of generic rounded rectangles.
-const CHAMFER_CLIP =
-  "polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px)";
-
-// Every card shares one structure — full-bleed photo, gradient scrim, text
-// overlaid on top — so its total height is fixed by the `height` prop alone,
-// never by how long its description happens to be. That's what keeps a row
-// even: cards only line up when nothing inside them can grow taller than
-// its box. Variety comes from row to row (a "tall" row vs a "short" row),
-// not from mixing different heights inside one row.
-type RowHeight = "tall" | "short";
-
-type SlotSpec =
-  | { kind: "project"; span: 1 | 2; height: RowHeight; featured?: boolean }
-  | { kind: "filler"; span: 1; height: RowHeight };
-
-// A "tall" row: one 2-col-wide featured photo + one 1-col filler tile.
-// The 1-col slot next to it is only ever a filler, never a real project —
-// at 1 column wide but full tall-row height it's close to square, which
-// would badly crop a real website screenshot (the real content this grid
-// is standing in for). A filler tile has no such constraint. Every real
-// project card stays in one of two genuinely landscape shapes: 2-col-wide
-// tall, or 1-col-wide short.
-const ROW_CYCLE: SlotSpec[] = [
-  { kind: "project", span: 2, height: "tall", featured: true },
-  { kind: "filler", span: 1, height: "tall" },
-  { kind: "project", span: 1, height: "short" },
-  { kind: "project", span: 1, height: "short" },
-  { kind: "project", span: 1, height: "short" },
-];
-const PROJECT_SLOTS_PER_CYCLE = ROW_CYCLE.filter((slot) => slot.kind === "project").length;
-
-// Ordered so the functional tiles (a real stat, a contact CTA) surface
-// first as the list grows — the purely decorative schematic tile is the
-// one that can wait until there's enough content to need a third accent.
-type FillerVariant = "stat" | "schematic" | "cta";
-const FILLER_CYCLE: FillerVariant[] = ["stat", "cta", "schematic"];
-
-type GridItem =
-  | { kind: "project"; project: ClientProject; span: 1 | 2; height: RowHeight; featured?: boolean }
-  | { kind: "filler"; variant: "stat"; span: 1; height: RowHeight; value: number; label: string }
-  | { kind: "filler"; variant: "schematic"; span: 1; height: RowHeight }
-  | { kind: "filler"; variant: "cta"; span: 1; height: RowHeight };
-
-function buildGridItems(projects: ClientProject[]): GridItem[] {
-  const industriesServed = new Set(projects.map((p) => p.category)).size;
-  const items: GridItem[] = [];
-  let projectCursor = 0;
-  let fillerCursor = 0;
-  const cycles = Math.ceil(projects.length / PROJECT_SLOTS_PER_CYCLE);
-
-  for (let c = 0; c < cycles; c++) {
-    for (const slot of ROW_CYCLE) {
-      if (slot.kind === "project") {
-        if (projectCursor >= projects.length) continue;
-        const project = projects[projectCursor];
-        projectCursor++;
-        items.push({ kind: "project", project, span: slot.span, height: slot.height, featured: slot.featured });
-        continue;
-      }
-
-      const variant = FILLER_CYCLE[fillerCursor % FILLER_CYCLE.length];
-      fillerCursor++;
-      items.push(
-        variant === "stat"
-          ? { kind: "filler", variant, span: slot.span, height: slot.height, value: industriesServed, label: "Industries Served" }
-          : { kind: "filler", variant, span: slot.span, height: slot.height },
-      );
-    }
-  }
-
-  return items;
+// A soft off-center glow behind the screenshot — gives the card some depth
+// against the plain surface instead of a flat fill. The filler tiles
+// (WorkFillerTile.tsx) don't use this anymore — they're a bold solid
+// gradient now, loud on purpose, so a subtle glow would just get lost.
+function TileGlow() {
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0"
+      style={{
+        background:
+          "radial-gradient(circle at 28% 22%, color-mix(in srgb, var(--accent-secondary) 16%, transparent), transparent 60%)",
+      }}
+    />
+  );
 }
 
-function WorkCard({
-  project,
-  span,
-  height,
-  featured,
-}: {
-  project: ClientProject;
-  span: 1 | 2;
-  height: RowHeight;
-  featured?: boolean;
-}) {
-  const isTall = height === "tall";
+// Every project screenshot is captured the same way (hero/fold, fixed
+// viewport) and shown at this exact aspect ratio with object-cover — since
+// the source and the box already match, nothing ever needs cropping
+// decisions or a per-card size tier. Uniformity here is a feature: real
+// screenshots drop straight in.
+const SHOT_ASPECT = "aspect-[16/10]";
 
+// A thin fake browser top bar above each screenshot — makes it read
+// explicitly as "a live website," not a generic photo, which matters most
+// while the images are still stock placeholders. Dots are neutral (not
+// literal red/yellow/green) since AGENTS.md reserves --danger/--status-live
+// for their actual semantic roles, not decoration. Plain rectangular
+// corners here on purpose — the site's chamfered signature shape reads as
+// a design contradiction on something meant to look like a browser window
+// (real browser chrome never has a diagonal-cut corner), so this card
+// style is the one deliberate exception to it.
+function BrowserChrome({ label }: { label: string }) {
+  return (
+    <div className="flex items-center gap-1.5 border-b border-line/40 bg-surface/90 px-3 py-2">
+      <span className="h-1.5 w-1.5 rounded-full bg-line" />
+      <span className="h-1.5 w-1.5 rounded-full bg-line" />
+      <span className="h-1.5 w-1.5 rounded-full bg-line" />
+      <span className="ml-2 truncate rounded-full bg-bg/60 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.1em] text-text-muted">
+        {label}
+      </span>
+    </div>
+  );
+}
+
+function TechChips({ tech }: { tech: string[] }) {
+  return (
+    <div className="mt-2 flex flex-wrap gap-1.5">
+      {tech.map((t) => (
+        <span
+          key={t}
+          className="rounded border border-line/40 px-1.5 py-0.5 font-mono text-[9px] text-text-muted"
+        >
+          {t}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+// Every card is the same shape and weight — no featured/spotlight card,
+// since with today's placeholder data there's no real "best one" to
+// justify singling out. The section's strength is breadth across
+// industries, not any one hero project. A fixed-height text block below
+// a fixed-aspect screenshot is what keeps every row even regardless of
+// description length.
+function WorkCard({ project }: { project: ClientProject }) {
   return (
     <a
       href={project.href}
-      className={`group relative block ${isTall ? "h-80" : "h-48"} ${span === 2 ? "sm:col-span-2" : ""}`}
+      className="chamfer-panel group relative block overflow-hidden rounded-xl border border-line/60 transition-colors duration-300 hover:border-accent/60"
     >
-      {/* Border layer, painted first (behind). See globals.css for why
-          this can't be a plain `border` or a z-index pseudo-element. */}
-      <span aria-hidden="true" className="chamfer-border absolute inset-0" style={{ clipPath: CHAMFER_CLIP }} />
-      {/* Content layer, inset so the border layer stays visible as a ring
-          underneath it — including along the chamfer cut. */}
-      <div
-        className="chamfer-panel absolute inset-[2px] overflow-hidden bg-bg"
-        style={{ clipPath: CHAMFER_CLIP }}
-      >
+      <TileGlow />
+      <BrowserChrome label={project.category} />
+      <div className={`relative w-full ${SHOT_ASPECT}`}>
         <Image
           src={project.coverImage}
           alt={`${project.name} preview`}
           fill
-          sizes={span === 2 ? "(min-width: 1024px) 66vw, 100vw" : "(min-width: 1024px) 33vw, 100vw"}
+          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
           className="object-cover"
         />
-        <div
-          className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent"
-          aria-hidden="true"
-        />
-        <span className="absolute left-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-black/40 text-white">
-          <project.icon className="h-4 w-4" aria-hidden="true" />
+      </div>
+      <div className="flex h-36 flex-col p-4">
+        <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-accent-secondary">
+          {project.category}
         </span>
-        {featured && (
-          <span
-            className="absolute right-4 top-4 rounded-full px-3 py-1 font-mono text-[10px] uppercase tracking-[0.15em] text-bg"
-            style={{ backgroundImage: "var(--gradient-signature)" }}
-          >
-            Featured
-          </span>
-        )}
-        <div className="absolute inset-x-0 bottom-0 p-6">
-          <span className="font-mono text-[11px] uppercase tracking-[0.15em] text-white/70">
-            {project.category}
-          </span>
-          <h3 className={`mt-1 flex items-center gap-1 text-white ${isTall ? "text-xl" : "text-base"}`}>
-            {project.name}
-            <ArrowUpRight
-              className="h-4 w-4 -translate-x-1 opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100"
-              aria-hidden="true"
-            />
-          </h3>
-          <p className={`mt-1 text-white/70 ${isTall ? "text-sm" : "text-xs line-clamp-1"}`}>
-            {project.description}
-          </p>
+        <h3 className="mt-1 flex items-center gap-1 text-base text-text-primary">
+          {project.name}
+          <ArrowUpRight
+            className="h-3.5 w-3.5 -translate-x-1 opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100"
+            aria-hidden="true"
+          />
+        </h3>
+        <p className="mt-1 line-clamp-2 text-xs text-text-muted">{project.description}</p>
+        <div className="mt-auto">
+          <TechChips tech={project.tech.slice(0, 2)} />
         </div>
       </div>
     </a>
   );
+}
+
+// A quiet card, not a loud one — same neutral shell as WorkCard, but the
+// number itself does the work: huge, gradient-clipped typography instead
+// of an icon+number+label stack. Loud through scale, not through another
+// colorful gradient fill, which is what makes it read as genuinely
+// different from the CTA tile rather than a copy of it. Sourced from
+// heroStats (same "150+ Sites Shipped" fact Hero already states) rather
+// than a separate hardcoded number, so the two never drift apart.
+function StatShowcase({ value, suffix, label }: { value: number; suffix?: string; label: string }) {
+  return (
+    <div className="chamfer-panel group relative flex flex-col items-center justify-center gap-2 overflow-hidden rounded-xl border border-line/60 p-6 text-center transition-colors duration-300 hover:border-accent/60">
+      <TileGlow />
+      <span
+        className="bg-clip-text font-mono text-7xl font-semibold leading-none text-transparent"
+        style={{ backgroundImage: "var(--gradient-signature)" }}
+      >
+        <CountUp value={value} suffix={suffix} />
+      </span>
+      <span className="font-mono text-xs uppercase tracking-[0.2em] text-text-muted">{label}</span>
+    </div>
+  );
+}
+
+type GridItem =
+  | { kind: "project"; project: ClientProject }
+  | { kind: "stat"; value: number; suffix?: string; label: string }
+  | { kind: "filler"; variant: "schematic" }
+  | { kind: "filler"; variant: "cta" };
+
+// Deliberately curated, not algorithmic: with today's 7 projects, the stat
+// tile sits at slot 5 (dead center of the 3x3 grid) and the CTA closes the
+// grid at slot 9 (bottom-right) — both meant to be found, not just filler
+// between screenshots. If the project count changes, re-pick these
+// positions by hand rather than falling back to a generic interval; a
+// formula that "just happens" to land on 5 and 9 isn't worth the
+// complexity for a curated placeholder set this small.
+function buildGridItems(projects: ClientProject[]): GridItem[] {
+  const sitesShipped = heroStats.find((s) => s.label === "Sites Shipped");
+  const items: GridItem[] = [];
+
+  projects.forEach((project, i) => {
+    if (i === 4 && sitesShipped) {
+      items.push({
+        kind: "stat",
+        value: sitesShipped.value,
+        suffix: sitesShipped.suffix,
+        label: sitesShipped.label,
+      });
+    }
+    items.push({ kind: "project", project });
+  });
+
+  items.push({ kind: "filler", variant: "cta" });
+
+  return items;
 }
 
 export function ClientWork() {
@@ -161,23 +179,11 @@ export function ClientWork() {
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item, index) =>
           item.kind === "project" ? (
-            <WorkCard
-              key={item.project.name}
-              project={item.project}
-              span={item.span}
-              height={item.height}
-              featured={item.featured}
-            />
-          ) : item.variant === "stat" ? (
-            <WorkFillerTile
-              key={`filler-${index}`}
-              type="stat"
-              value={item.value}
-              label={item.label}
-              height={item.height}
-            />
+            <WorkCard key={item.project.name} project={item.project} />
+          ) : item.kind === "stat" ? (
+            <StatShowcase key={`stat-${index}`} value={item.value} suffix={item.suffix} label={item.label} />
           ) : (
-            <WorkFillerTile key={`filler-${index}`} type={item.variant} height={item.height} />
+            <WorkFillerTile key={`filler-${index}`} type={item.variant} />
           ),
         )}
       </div>

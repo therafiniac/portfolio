@@ -30,6 +30,7 @@ export type ClientProject = {
   coverImage: string;
   href: string;
   icon: IconComponent;
+  tech: string[];
 };
 
 export type SkillGroup = {
