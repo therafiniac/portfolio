@@ -5,7 +5,7 @@ import { contactLinks } from "@/lib/data/contact";
 
 export function Contact() {
   return (
-    <Section id="contact" index="05" tint eyebrow="Get in Touch" title="Contact">
+    <Section id="contact" index="06" tint eyebrow="Get in Touch" title="Contact">
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_280px] lg:gap-16">
         <div>
           <p className="text-glow bg-gradient-to-br from-text-primary via-text-primary to-accent bg-clip-text text-[clamp(2rem,6vw,4rem)] font-mono font-medium leading-[1.05] tracking-tight text-transparent">
