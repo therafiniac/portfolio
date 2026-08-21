@@ -9,10 +9,18 @@ type SectionProps = {
   eyebrow: string;
   title: string;
   tint?: boolean;
+  // False lets the caller compose its own eyebrow/heading inside
+  // children instead of the default stacked-above-children layout — e.g.
+  // Stack's two-column header, sitting beside its content instead of on
+  // top of it. Section still owns the outer chrome (border, padding,
+  // index watermark, entrance animation) either way; eyebrow/title stay
+  // required even when unrendered since they're still this section's
+  // identity for anything reading the props.
+  renderHeader?: boolean;
   children: ReactNode;
 };
 
-export function Section({ id, index, eyebrow, title, tint, children }: SectionProps) {
+export function Section({ id, index, eyebrow, title, tint, renderHeader = true, children }: SectionProps) {
   return (
     <motion.section
       id={id}
@@ -33,13 +41,17 @@ export function Section({ id, index, eyebrow, title, tint, children }: SectionPr
         </span>
       )}
       <div className="relative mx-auto max-w-6xl">
-        <span className="inline-block rounded-full border border-line/40 bg-surface/60 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.2em] text-accent-secondary backdrop-blur">
-          {eyebrow}
-        </span>
-        <h2 className="mt-4 font-mono text-3xl font-medium text-text-primary md:text-4xl">
-          {title}
-        </h2>
-        <div className="mt-10">{children}</div>
+        {renderHeader && (
+          <>
+            <span className="inline-block rounded-full border border-line/40 bg-surface/60 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.2em] text-accent-secondary backdrop-blur">
+              {eyebrow}
+            </span>
+            <h2 className="mt-4 font-mono text-3xl font-medium text-text-primary md:text-4xl">
+              {title}
+            </h2>
+          </>
+        )}
+        <div className={renderHeader ? "mt-10" : ""}>{children}</div>
       </div>
     </motion.section>
   );

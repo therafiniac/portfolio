@@ -47,10 +47,22 @@ export type ClientProject = {
   tech: string[];
 };
 
+export type SkillItem = {
+  name: string;
+  // Marks tools that repeat across the verified data in experience.ts and
+  // projects.ts — a real, checkable signal, not a self-rated proficiency
+  // score (AGENTS.md: every claim here has to be interview-defensible).
+  core?: boolean;
+};
+
 export type SkillGroup = {
   label: string;
+  // Short flag-style identifier for the terminal-styled Stack section
+  // (e.g. "frontend", not "Frontend"). Separate from `label` so the
+  // display label can stay more descriptive.
+  flag: string;
   icon: IconComponent;
-  items: string[];
+  items: SkillItem[];
 };
 
 export type ContactLink = {
