@@ -48,7 +48,7 @@ Blue/maroon/green/red each have exactly one job in the *UI* — don't repurpose 
 
 ## Explicitly Out of Scope
 - Blog/CMS integration, multi-page routing, analytics dashboard, persistent rate-limiting infra (would need Redis/KV).
-- Footer, About panel.
+- About panel. (Footer shipped — see `src/components/layout/Footer.tsx`: brand mark doubling as back-to-top, plus Hero's "open to opportunities" status echoed, not a sitemap — this is a one-pager, the sticky Navbar already covers navigation.)
 - A custom cursor (replacing the OS pointer icon) — the cursor-reactive ambient glow is a background light layer, not a cursor replacement.
 - Any framing of Rafi as "a freelancer."
 - A standalone algorithm-visualization section — shipped, reviewed, cut. Don't re-add without being asked again.
