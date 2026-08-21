@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import { MotionConfig } from "framer-motion";
 import { CursorGlow } from "@/components/layout/CursorGlow";
 import { Navbar } from "@/components/layout/Navbar";
+import { SmoothScroll } from "@/components/layout/SmoothScroll";
 import "./globals.css";
 
 const inter = Inter({
@@ -60,6 +61,7 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <MotionConfig reducedMotion="user">
+          <SmoothScroll />
           <div className="grain-overlay" aria-hidden="true" />
           <CursorGlow />
           <Navbar />

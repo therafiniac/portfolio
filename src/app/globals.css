@@ -162,6 +162,14 @@ body {
     inset 0 1px 0 color-mix(in srgb, var(--text-primary) 10%, transparent),
     0 12px 32px -12px rgba(0, 0, 0, 0.35);
   pointer-events: none;
+  /* This sits on a `position: sticky` header, and Lenis (smooth scroll)
+     calls scrollTo() every animation frame rather than the browser's own
+     optimized native-scroll compositing path — without its own stable
+     GPU layer, that forces the blur to recompute against the shifting
+     page underneath on every frame, which shows up as a subtle shimmer
+     right around the navbar specifically. translateZ(0) promotes it to
+     its own layer so the backdrop composites once instead of repainting. */
+  transform: translateZ(0);
 }
 
 /* Reusable "lit from within on hover" accent glow — layer this onto a
