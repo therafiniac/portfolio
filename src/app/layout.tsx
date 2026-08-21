@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
+import { MotionConfig } from "framer-motion";
+import { CursorGlow } from "@/components/layout/CursorGlow";
+import { Navbar } from "@/components/layout/Navbar";
 import "./globals.css";
 
 const inter = Inter({
@@ -18,6 +21,19 @@ export const metadata: Metadata = {
     "Full Stack Developer (4+ yrs) — Next.js, TypeScript, systems that scale. Selected work, experience, and stack.",
 };
 
+// Runs before paint so the stored/system theme applies with no flash of the
+// wrong flavor. Kept as a tiny inline script rather than a React effect,
+// which would only run after the wrong theme had already painted once.
+const THEME_INIT_SCRIPT = `
+(function () {
+  try {
+    var stored = localStorage.getItem("theme");
+    var theme = stored || (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+    document.documentElement.setAttribute("data-theme", theme);
+  } catch (e) {}
+})();
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -26,10 +42,29 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-bg text-text-primary font-sans">
-        {children}
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
+      {/* suppressHydrationWarning here specifically guards against browser
+          extensions (ColorZilla, Grammarly, etc.) injecting attributes like
+          cz-shortcut-listen into <body> before React hydrates — that's a
+          client-environment mismatch outside the app's control, not a real
+          bug, so it's the correct/standard use of this prop (unlike the
+          ThemeToggle case, where the mismatch was actual app state logic
+          and needed a real fix, not suppression). */}
+      <body
+        className="min-h-full flex flex-col bg-bg text-text-primary font-sans"
+        suppressHydrationWarning
+      >
+        <MotionConfig reducedMotion="user">
+          <div className="grain-overlay" aria-hidden="true" />
+          <CursorGlow />
+          <Navbar />
+          {children}
+        </MotionConfig>
       </body>
     </html>
   );

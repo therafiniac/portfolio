@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Scratch output dir for isolated verification builds (see
+    // BUILD_VERIFY_DIR in next.config.ts) — never committed, but its
+    // generated type files shouldn't be linted as project source.
+    ".next-verify/**",
   ]),
 ]);
 
