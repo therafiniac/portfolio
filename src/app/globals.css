@@ -63,6 +63,19 @@ body {
     color 0.3s ease;
 }
 
+/* The native scrollbar is replaced by ScrollProgress.tsx's comet-trail
+   rail, not supplemented by it — scrolling itself (wheel/touch/keyboard,
+   and Lenis's own scrollTo calls) is completely unaffected by hiding the
+   OS-drawn indicator, only its visibility changes. */
+html {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
+}
+
 ::selection {
   background: var(--accent-dim);
   color: var(--accent);

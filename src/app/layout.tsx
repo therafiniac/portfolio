@@ -4,6 +4,7 @@ import { MotionConfig } from "framer-motion";
 import { CursorGlow } from "@/components/layout/CursorGlow";
 import { Navbar } from "@/components/layout/Navbar";
 import { SmoothScroll } from "@/components/layout/SmoothScroll";
+import { ScrollProgress } from "@/components/layout/ScrollProgress";
 import "./globals.css";
 
 const inter = Inter({
@@ -62,6 +63,7 @@ export default function RootLayout({
       >
         <MotionConfig reducedMotion="user">
           <SmoothScroll />
+          <ScrollProgress />
           <div className="grain-overlay" aria-hidden="true" />
           <CursorGlow />
           <Navbar />
