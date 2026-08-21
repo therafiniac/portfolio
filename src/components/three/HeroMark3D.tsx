@@ -126,7 +126,7 @@ function OrbitalMark({
       <mesh>
         <icosahedronGeometry args={[0.62, 3]} />
         <MeshDistortMaterial
-          color={accentSecondaryColor}
+          color={accentColor}
           factor={reducedMotion ? 0 : 0.4}
           speed={reducedMotion ? 0 : 1.6}
           roughness={0.3}
