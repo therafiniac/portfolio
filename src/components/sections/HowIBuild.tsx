@@ -2,25 +2,10 @@ import type { ReactElement, ReactNode } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { Section } from "@/components/layout/Section";
 import { CountUp } from "@/components/layout/CountUp";
+import { TileGlow } from "@/components/ui/TileGlow";
 import { GithubIcon } from "@/components/icons/BrandIcons";
 import { approachPoints, type ApproachPoint } from "@/lib/data/approach";
 import type { GithubStats } from "@/lib/github";
-
-// A soft off-center glow behind each tile's content — every card here is
-// icon+text (no photo), so this is what gives the panel depth instead of
-// a flat gradient fill.
-function TileGlow() {
-  return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-0"
-      style={{
-        background:
-          "radial-gradient(circle at 25% 20%, color-mix(in srgb, var(--accent-secondary) 20%, transparent), transparent 60%)",
-      }}
-    />
-  );
-}
 
 // Five small diagrams, one per point below — circles + thin connecting
 // lines, one node pulsing, a different topology per concept, so each card
@@ -209,7 +194,7 @@ function TileShell({
     <div
       className={`hover-glow-panel tile-signature flex h-full flex-col justify-between overflow-hidden rounded-2xl border p-6 transition-colors duration-300 ${borderClass}`}
     >
-      <TileGlow />
+      <TileGlow intensity={20} spread={60} originX={25} originY={20} />
       {children}
     </div>
   );

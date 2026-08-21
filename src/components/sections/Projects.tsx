@@ -4,6 +4,8 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 import { Section } from "@/components/layout/Section";
+import { TechChip } from "@/components/ui/TechChip";
+import { FieldLabel } from "@/components/ui/FieldLabel";
 import { GithubIcon } from "@/components/icons/BrandIcons";
 import { FlowSteps } from "@/components/sections/FlowSteps";
 import { projects } from "@/lib/data/projects";
@@ -126,9 +128,7 @@ export function Projects() {
                   it's three unrelated-looking elements stacked with no
                   context for what they are, instead of reading as
                   organized documentation the way a spec sheet would. */}
-              <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-accent-secondary">
-                The Approach
-              </p>
+              <FieldLabel>The Approach</FieldLabel>
               {/* The single most important technical claim in the row —
                   pulled into its own callout instead of reading as one
                   more paragraph, styled like an inline code comment. */}
@@ -141,22 +141,13 @@ export function Projects() {
                 </p>
               </div>
 
-              <p className="mt-6 font-mono text-[10px] uppercase tracking-[0.15em] text-accent-secondary">
-                Mechanism
-              </p>
+              <FieldLabel className="mt-6">Mechanism</FieldLabel>
               <FlowSteps steps={project.flow} />
 
-              <p className="mt-6 font-mono text-[10px] uppercase tracking-[0.15em] text-accent-secondary">
-                Stack
-              </p>
+              <FieldLabel className="mt-6">Stack</FieldLabel>
               <div className="mt-2 flex flex-wrap gap-2">
                 {project.tech.map((tech) => (
-                  <span
-                    key={tech}
-                    className="rounded-full border border-line/60 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.1em] text-text-muted"
-                  >
-                    {tech}
-                  </span>
+                  <TechChip key={tech}>{tech}</TechChip>
                 ))}
               </div>
             </div>

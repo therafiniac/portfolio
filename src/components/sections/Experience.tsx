@@ -1,5 +1,6 @@
 import { GraduationCap } from "lucide-react";
 import { Section } from "@/components/layout/Section";
+import { TechChip } from "@/components/ui/TechChip";
 import { experience } from "@/lib/data/experience";
 import { education } from "@/lib/data/education";
 
@@ -80,12 +81,15 @@ export function Experience() {
               {/* Current role gets the same pulsing --status-live treatment
                   as the Hero status dot and the live GitHub stat — it's a
                   genuinely live/ongoing status, the token's actual role,
-                  not a repurposed accent color. */}
+                  not a repurposed accent color. The shadow color-mixes
+                  the same token rather than a hardcoded rgb() literal —
+                  a literal baked in the dark-theme hex would silently
+                  mismatch the actual (different) light-theme color. */}
               <span
                 className={`absolute left-0 top-1.5 h-[10px] w-[10px] rounded-full ${
                   isCurrent
-                    ? "bg-status-live shadow-[0_0_12px_2px_rgb(166_227_161_/_50%)] motion-safe:animate-pulse"
-                    : "bg-accent shadow-[0_0_12px_2px_rgb(137_180_250_/_40%)]"
+                    ? "bg-status-live shadow-[0_0_12px_2px_color-mix(in_srgb,var(--status-live)_50%,transparent)] motion-safe:animate-pulse"
+                    : "bg-accent shadow-[0_0_12px_2px_color-mix(in_srgb,var(--accent)_40%,transparent)]"
                 }`}
                 aria-hidden="true"
               />
@@ -116,12 +120,7 @@ export function Experience() {
                 </ul>
                 <div className="mt-4 flex flex-wrap gap-2">
                   {entry.tech.map((tech) => (
-                    <span
-                      key={tech}
-                      className="rounded-full border border-line/60 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.1em] text-text-muted"
-                    >
-                      {tech}
-                    </span>
+                    <TechChip key={tech}>{tech}</TechChip>
                   ))}
                 </div>
               </div>
