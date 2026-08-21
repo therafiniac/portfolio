@@ -125,6 +125,35 @@ body {
     0 12px 32px -12px rgba(0, 0, 0, 0.35);
 }
 
+/* Same look as nav-glass, but a standalone absolutely-positioned layer
+   behind the header pill's content instead of on the content element
+   itself — so its opacity can be scroll-animated (transparent over Hero,
+   fading in as you scroll) without fading the brand mark/links/icons
+   sitting on top of it, which need to stay fully legible at all times.
+   Its own `position: absolute` here (not a Tailwind utility) matters:
+   nav-glass's plain-CSS `position: relative` is unlayered and beats a
+   layered Tailwind utility regardless of source order (see glass-panel's
+   backdrop-filter note below for the same cascade-layer behavior), so a
+   Tailwind `absolute` class on an element also carrying nav-glass would
+   silently lose. This class owns its own position instead of relying on one.
+   Same trap almost hit the radius: an earlier `border-radius: inherit` here
+   (also unlayered) beat the element's own Tailwind `rounded-full` utility
+   the same way, leaving square corners regardless of the parent's radius —
+   removed, so `rounded-full` is this class's only radius source, same as
+   nav-glass deliberately carries none of its own. */
+.nav-glass-backdrop {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--text-primary) 10%, transparent),
+    0 12px 32px -12px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+
 /* Reusable "lit from within on hover" accent glow — layer this onto a
    card you've already styled yourself (border, radius, background) for
    a soft accent-tinted glow on hover/focus, the same feel glass-panel's
