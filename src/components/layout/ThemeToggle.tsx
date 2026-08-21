@@ -1,43 +1,13 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
 import { Moon, Sun } from "lucide-react";
-
-type Theme = "dark" | "light";
-
-// MutationObserver picks up both the toggle() call below and the
-// pre-hydration script in layout.tsx setting data-theme initially — either
-// one fires this and useSyncExternalStore re-reads the snapshot.
-function subscribe(callback: () => void) {
-  const observer = new MutationObserver(callback);
-  observer.observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ["data-theme"],
-  });
-  return () => observer.disconnect();
-}
-
-function getSnapshot(): Theme {
-  return document.documentElement.getAttribute("data-theme") === "light"
-    ? "light"
-    : "dark";
-}
-
-// The server has no idea what the pre-hydration script will pick, so this
-// must match the CSS default (:root with no [data-theme] override) to keep
-// the very first client render identical to the server's — that's what
-// avoids the hydration mismatch. useSyncExternalStore then corrects to the
-// real value right after hydration, as a normal (not hydration-time)
-// update, which is the whole point of this hook over a lazy useState.
-function getServerSnapshot(): Theme {
-  return "dark";
-}
+import { useTheme } from "@/lib/useTheme";
 
 export function ThemeToggle() {
-  const theme = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const theme = useTheme();
 
   function toggle() {
-    const next: Theme = theme === "light" ? "dark" : "light";
+    const next = theme === "light" ? "dark" : "light";
     document.documentElement.setAttribute("data-theme", next);
     localStorage.setItem("theme", next);
   }

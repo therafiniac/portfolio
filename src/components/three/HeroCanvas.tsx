@@ -3,8 +3,16 @@
 import { useEffect, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import type { Points as ThreePoints } from "three";
+import { useTheme, type Theme } from "@/lib/useTheme";
 
 const PARTICLE_COUNT = 220;
+
+// Same two token values as HeroMark3D — WebGL materials take real colors,
+// not CSS custom properties, so these were previously hardcoded to the
+// dark-theme value only, meaning light-theme visitors saw dark-accent-
+// blue particles instead of their actual theme's accent. useTheme fixes
+// that the same way HeroMark3D already does.
+const ACCENT: Record<Theme, string> = { dark: "#89b4fa", light: "#1e66f5" };
 
 // Generated once at module load, not during render — a fixed field is
 // indistinguishable from a per-mount random one once it's drifting.
@@ -20,7 +28,7 @@ function createDriftPositions() {
 
 const driftPositions = createDriftPositions();
 
-function DriftField() {
+function DriftField({ color }: { color: string }) {
   const pointsRef = useRef<ThreePoints>(null);
 
   useFrame((state) => {
@@ -40,7 +48,7 @@ function DriftField() {
       </bufferGeometry>
       <pointsMaterial
         size={0.035}
-        color="#89b4fa"
+        color={color}
         transparent
         opacity={0.5}
         sizeAttenuation
@@ -79,6 +87,7 @@ function isWebglAvailable() {
 export function HeroCanvas() {
   const reducedMotion = usePrefersReducedMotion();
   const [webglAvailable] = useState(isWebglAvailable);
+  const theme = useTheme();
 
   if (reducedMotion || !webglAvailable) return null;
 
@@ -89,7 +98,7 @@ export function HeroCanvas() {
       dpr={[1, 1.5]}
       gl={{ antialias: false, alpha: true }}
     >
-      <DriftField />
+      <DriftField color={ACCENT[theme]} />
     </Canvas>
   );
 }

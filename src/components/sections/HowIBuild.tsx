@@ -23,10 +23,10 @@ function TileGlow() {
 }
 
 // Five small diagrams, one per point below — same node/edge vocabulary as
-// HeroSchematic/the Work section's MiniSchematic (circles + thin
-// connecting lines, one node pulsing), just a different topology per
-// concept, so each card gets something that actually illustrates its point
-// instead of empty gradient space between the icon and the text.
+// the Work section's MiniSchematic (circles + thin connecting lines, one
+// node pulsing), just a different topology per concept, so each card gets
+// something that actually illustrates its point instead of empty gradient
+// space between the icon and the text.
 function edgeProps() {
   return { stroke: "var(--accent)", strokeWidth: 1.25, opacity: 0.35 } as const;
 }

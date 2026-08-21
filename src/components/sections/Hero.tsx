@@ -2,11 +2,9 @@
 
 import { motion } from "framer-motion";
 import { HeroCanvasLoader } from "@/components/three/HeroCanvasLoader";
+import { HeroMark3DLoader } from "@/components/three/HeroMark3DLoader";
 import { CountUp } from "@/components/layout/CountUp";
 import { Magnetic } from "@/components/layout/Magnetic";
-import { FramedImage } from "@/components/layout/FramedImage";
-import { TiltCard } from "@/components/layout/TiltCard";
-import { HeroSchematic } from "@/components/sections/HeroSchematic";
 import { heroRoles, heroStatusLine, heroStats } from "@/lib/data/hero";
 import type { GithubStats } from "@/lib/github";
 
@@ -44,11 +42,10 @@ export function Hero({ githubStats }: HeroProps) {
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         <div className="aurora-blob absolute -left-32 top-1/4 h-96 w-96 rounded-full bg-accent/15 blur-[120px]" />
         <div className="aurora-blob absolute -right-24 bottom-1/4 h-96 w-96 rounded-full bg-accent-secondary/10 blur-[120px] [animation-delay:-9s]" />
-        <HeroSchematic />
         <HeroCanvasLoader />
       </div>
 
-      <div className="relative z-10 mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-12 lg:grid-cols-[1fr_340px] lg:gap-16">
+      <div className="relative z-10 mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-12 lg:grid-cols-[1fr_520px] lg:gap-16">
         {/* Only the CTA button is a bordered/filled element here —
             everything else (kicker, role, stats) is differentiated by
             typography alone, so the eye has one clear place to land
@@ -67,7 +64,7 @@ export function Hero({ githubStats }: HeroProps) {
 
           <motion.h1
             variants={item}
-            className="text-glow mt-4 bg-gradient-to-br from-text-primary via-text-primary to-accent bg-clip-text font-mono text-[clamp(2.75rem,9vw,7rem)] font-medium leading-[0.95] tracking-tight text-transparent"
+            className="text-glow mt-4 bg-gradient-to-br from-text-primary via-text-primary to-accent bg-clip-text font-mono text-[clamp(2.5rem,7vw,5.5rem)] font-medium leading-[0.95] tracking-tight text-transparent"
           >
             Rafi Ahmed
             <br />
@@ -88,9 +85,14 @@ export function Hero({ githubStats }: HeroProps) {
 
           <motion.div variants={item} className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
             <Magnetic>
+              {/* --gradient-signature, not flat bg-accent — AGENTS.md
+                  calls for the gradient on the primary CTA specifically,
+                  "repeatedly... so it reads as a signature." This is
+                  that CTA; Contact's submit button already matches it. */}
               <a
                 href="#work"
-                className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 font-mono text-sm font-medium text-bg transition-opacity hover:opacity-90"
+                className="inline-flex items-center gap-2 rounded-full px-6 py-3 font-mono text-sm font-medium text-bg transition-opacity hover:opacity-90"
+                style={{ backgroundImage: "var(--gradient-signature)" }}
               >
                 View My Work
                 <span aria-hidden="true">→</span>
@@ -141,14 +143,17 @@ export function Hero({ githubStats }: HeroProps) {
           transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
           className="flex justify-center lg:justify-start"
         >
-          {/* w-full needs a definite-width ancestor to resolve against —
+          {/* The brand mark (navbar/footer/favicon — a round accent-ring
+              "R") scaled up into an actual 3D object instead of a
+              portrait photo: nothing to photograph once "no real photo"
+              was the ask, and unlike a stand-in diagram, this is a real
+              rendered scene, not a decoration pretending to be one.
+              w-full needs a definite-width ancestor to resolve against —
               a shrink-to-fit parent (e.g. justify-self-center on the grid
               item) collapses the whole chain to 0px, so sizing is capped
               here via max-w instead of on the flex container above. */}
-          <div className="w-full max-w-[260px] sm:max-w-xs lg:max-w-none">
-            <TiltCard className="block w-full">
-              <FramedImage src="/img1.jpeg" alt="Rafi Ahmed Laskar" priority />
-            </TiltCard>
+          <div className="w-full max-w-sm sm:max-w-md lg:max-w-none">
+            <HeroMark3DLoader />
           </div>
         </motion.div>
       </div>
