@@ -73,7 +73,11 @@
      Vercel) tint their shadows rather than using flat black. */
   --shadow-color: #2b2d4a;
   --shadow-elevated: rgba(43, 45, 74, 0.35);
-  --wash-boost: 12%;
+  /* Set back to 0 (matches dark's own value) — user wants the paler,
+     lower-contrast look this boost was originally added to fix. Not
+     removed outright: the calc() plumbing at every use site stays, so a
+     later ask to bring it back is a one-line change here, not a rewrite. */
+  --wash-boost: 0%;
 }
 
 @theme inline {
@@ -261,6 +265,14 @@ html::-webkit-scrollbar {
     color-mix(in srgb, var(--accent) calc(16% + var(--wash-boost)), var(--surface)) 0%,
     color-mix(in srgb, var(--accent-secondary) calc(16% + var(--wash-boost)), var(--surface)) 100%
   );
+}
+
+/* ClientWork's StatShowcase card specifically, light mode only — user
+   wants a plain neutral card there (closer to white/light gray, no
+   pink/purple tint) instead of TileGlow's wash, even boosted. Dark mode
+   keeps the glow exactly as before; this only hides it in light. */
+:root[data-theme="light"] .stat-tile-glow {
+  display: none;
 }
 
 .text-glow {

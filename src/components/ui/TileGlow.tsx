@@ -3,6 +3,7 @@ type TileGlowProps = {
   spread?: number;
   originX?: number;
   originY?: number;
+  className?: string;
 };
 
 // A soft off-center glow behind a tile's content — used by both
@@ -17,11 +18,11 @@ type TileGlowProps = {
 // additive, not a multiplier, specifically so StatShowcase's already-
 // boosted intensity={40} doesn't explode into an almost-solid card (see
 // --wash-boost in globals.css for the full reasoning).
-export function TileGlow({ intensity = 16, spread = 60, originX = 28, originY = 22 }: TileGlowProps) {
+export function TileGlow({ intensity = 16, spread = 60, originX = 28, originY = 22, className = "" }: TileGlowProps) {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0"
+      className={`pointer-events-none absolute inset-0 ${className}`}
       style={{
         background: `radial-gradient(circle at ${originX}% ${originY}%, color-mix(in srgb, var(--accent-secondary) calc(${intensity}% + var(--wash-boost)), transparent), transparent ${spread}%)`,
       }}

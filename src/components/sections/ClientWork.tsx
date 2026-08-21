@@ -116,7 +116,7 @@ function StatShowcase({ value, suffix, label }: { value: number; suffix?: string
       style={{ backgroundImage: "var(--gradient-signature)" }}
     >
       <div className="hover-glow-panel group relative flex h-full flex-col items-center justify-center gap-2 overflow-hidden rounded-xl bg-surface p-6 text-center">
-        <TileGlow intensity={40} spread={85} />
+        <TileGlow intensity={40} spread={85} className="stat-tile-glow" />
         <span
           className="bg-clip-text font-mono text-7xl font-semibold leading-none text-transparent"
           style={{ backgroundImage: "var(--gradient-signature)" }}
