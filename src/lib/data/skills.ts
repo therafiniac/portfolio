@@ -1,10 +1,12 @@
-import { Code2, LayoutTemplate, Database, Cloud, Sparkles } from "lucide-react";
+import { Code2, LayoutTemplate, Palette, Database, Cloud, GitBranch, Sparkles } from "lucide-react";
 import type { SkillGroup } from "@/types";
 
 // `core: true` marks the tools that repeat across the verified work in
 // experience.ts and projects.ts — checked against those files, not
 // self-rated. Left off items that are real but only show up once (or not
 // at all) in that data, even where they're genuinely used day to day.
+// (Design tools and Supabase currently fall in that "real but not yet
+// repeated in verified work" bucket too — none are marked core.)
 export const skillGroups: SkillGroup[] = [
   {
     label: "Languages",
@@ -30,6 +32,12 @@ export const skillGroups: SkillGroup[] = [
     ],
   },
   {
+    label: "Design",
+    flag: "design",
+    icon: Palette,
+    items: [{ name: "Figma" }, { name: "Photoshop" }, { name: "Illustrator" }, { name: "Canva" }],
+  },
+  {
     label: "Backend & Data",
     flag: "backend",
     icon: Database,
@@ -42,10 +50,12 @@ export const skillGroups: SkillGroup[] = [
       { name: "PostgreSQL", core: true },
       { name: "Prisma" },
       { name: "Firebase" },
+      { name: "Neon" },
+      { name: "Supabase" },
     ],
   },
   {
-    label: "Cloud, Auth & Tools",
+    label: "Cloud & Auth",
     flag: "cloud",
     icon: Cloud,
     items: [
@@ -54,6 +64,17 @@ export const skillGroups: SkillGroup[] = [
       { name: "Netlify" },
       { name: "JWT" },
       { name: "Better Auth" },
+    ],
+  },
+  {
+    // Version control and dev tooling, split out from Cloud & Auth —
+    // Git/GitHub aren't a hosting/cloud concern, and grouping them there
+    // just because both sections happened to be "infra-ish" was the
+    // exact miscategorization this split fixes.
+    label: "Dev Tools",
+    flag: "tools",
+    icon: GitBranch,
+    items: [
       { name: "Git", core: true },
       { name: "GitHub", core: true },
       { name: "Postman" },

@@ -2,8 +2,12 @@
 
 import { motion } from "framer-motion";
 import { Section } from "@/components/layout/Section";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import { skillGroups } from "@/lib/data/skills";
 import type { SkillGroup } from "@/types";
+
+const EYEBROW = "Capabilities";
+const TITLE = "Stack";
 
 // Reads as `$ rafi --stack` output rather than a data file — each group
 // is a flag, each entry after it the values that flag expands to. Rows
@@ -38,7 +42,7 @@ function StackRow({ group, delay }: { group: SkillGroup; delay: number }) {
 
 export function Skills() {
   return (
-    <Section id="stack" index="04" eyebrow="Capabilities" title="Stack" renderHeader={false}>
+    <Section id="stack" index="03" eyebrow={EYEBROW} title={TITLE} renderHeader={false}>
       {/* Same left-copy/right-artifact composition as Hero's own grid —
           the one other place on the page that pairs a text column with a
           single focal object — instead of stacking a left-aligned
@@ -46,12 +50,7 @@ export function Skills() {
           unrelated pieces before. */}
       <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-16">
         <div>
-          <span className="inline-block rounded-full border border-line/40 bg-surface/60 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.2em] text-accent-secondary backdrop-blur">
-            Capabilities
-          </span>
-          <h2 className="mt-4 font-mono text-3xl font-medium text-text-primary md:text-4xl">
-            Stack
-          </h2>
+          <SectionHeading eyebrow={EYEBROW} title={TITLE} />
           <p className="mt-4 text-text-muted">
             Four+ years across three roles — from early WordPress builds to the production SaaS
             above.
@@ -79,7 +78,7 @@ export function Skills() {
               real elevation via the shadow, so this reads as a floating
               panel rather than a flat bordered rectangle. */}
           <div
-            className="relative rounded-2xl p-px shadow-[0_25px_60px_-20px_rgba(0,0,0,0.5)]"
+            className="relative rounded-2xl p-px shadow-[0_25px_60px_-20px_color-mix(in_srgb,var(--shadow-color)_50%,transparent)]"
             style={{ backgroundImage: "var(--gradient-signature)" }}
           >
             <div className="overflow-hidden rounded-2xl bg-surface/95 backdrop-blur">

@@ -2,27 +2,13 @@ import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { Section } from "@/components/layout/Section";
 import { CountUp } from "@/components/layout/CountUp";
+import { TileGlow } from "@/components/ui/TileGlow";
+import { TechChip } from "@/components/ui/TechChip";
+import { FieldLabel } from "@/components/ui/FieldLabel";
 import { WorkFillerTile } from "@/components/sections/WorkFillerTile";
 import { clientProjects } from "@/lib/data/clientWork";
 import { heroStats } from "@/lib/data/hero";
 import type { ClientProject } from "@/types";
-
-// A soft off-center glow behind each tile's content — gives the flush,
-// borderless cell some depth instead of a flat fill. intensity/spread let
-// a specific cell (see StatShowcase) turn this up without every other
-// card following — defaults match the original always-on values, so
-// WorkCard's call below is a no-op.
-function TileGlow({ intensity = 16, spread = 60 }: { intensity?: number; spread?: number }) {
-  return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-0"
-      style={{
-        background: `radial-gradient(circle at 28% 22%, color-mix(in srgb, var(--accent-secondary) ${intensity}%, transparent), transparent ${spread}%)`,
-      }}
-    />
-  );
-}
 
 // Every project screenshot is captured the same way (hero/fold, fixed
 // viewport) and shown at this exact aspect ratio with object-cover — since
@@ -54,12 +40,9 @@ function TechChips({ tech }: { tech: string[] }) {
   return (
     <div className="mt-2 flex flex-wrap gap-1.5">
       {tech.map((t) => (
-        <span
-          key={t}
-          className="rounded border border-line/40 px-1.5 py-0.5 font-mono text-[9px] text-text-muted"
-        >
+        <TechChip key={t} size="sm">
           {t}
-        </span>
+        </TechChip>
       ))}
     </div>
   );
@@ -96,9 +79,7 @@ function WorkCard({ project }: { project: ClientProject }) {
         />
       </div>
       <div className="flex h-36 flex-col p-6">
-        <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-accent-secondary">
-          {project.category}
-        </span>
+        <FieldLabel>{project.category}</FieldLabel>
         <h3 className="mt-1 flex items-center gap-1 text-base text-text-primary">
           {project.name}
           <ArrowUpRight
@@ -131,11 +112,11 @@ function WorkCard({ project }: { project: ClientProject }) {
 function StatShowcase({ value, suffix, label }: { value: number; suffix?: string; label: string }) {
   return (
     <div
-      className="relative h-full rounded-xl p-px shadow-[0_25px_60px_-20px_rgba(0,0,0,0.5)]"
+      className="relative h-full rounded-xl p-px shadow-[0_25px_60px_-20px_color-mix(in_srgb,var(--shadow-color)_50%,transparent)]"
       style={{ backgroundImage: "var(--gradient-signature)" }}
     >
       <div className="hover-glow-panel group relative flex h-full flex-col items-center justify-center gap-2 overflow-hidden rounded-xl bg-surface p-6 text-center">
-        <TileGlow intensity={40} spread={85} />
+        <TileGlow intensity={40} spread={85} className="stat-tile-glow" />
         <span
           className="bg-clip-text font-mono text-7xl font-semibold leading-none text-transparent"
           style={{ backgroundImage: "var(--gradient-signature)" }}

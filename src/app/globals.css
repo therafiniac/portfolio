@@ -16,6 +16,45 @@
   --danger: #f38ba8;
   --accent-dim: color-mix(in srgb, var(--accent) 10%, transparent);
   --gradient-signature: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+  /* The glow behind Hero's 3D mark (see Hero.tsx) — a plain color isn't
+     valid for `background-image`, so light's override is a solid-white
+     gradient (both stops white) rather than a literal color value. */
+  --mark-glow: var(--gradient-signature);
+  /* Decorative-only — not part of the semantic token table above, never
+     used for anything interactive/status/error. AGENTS.md's one carve-out
+     for the wider Catppuccin palette (background blobs, cover art) — see
+     Services.tsx's moodboard cards, the one place this gets used. */
+  --hue-mauve: #cba6f7;
+  --hue-sapphire: #74c7ec;
+  --hue-teal: #94e2d5;
+  /* Added (not multiplied) onto every accent-tinted decorative wash
+     (TileGlow, .tile-signature, hover glows, cursor-glow) that mixes a
+     % of accent color into --surface/transparent — see TileGlow.tsx and
+     the rules below for how it's applied via calc(). Mixing the same low
+     percentage into a near-black surface (dark) vs. a much brighter one
+     (light) produces very different perceived contrast: dark shows a
+     rich tint at 16%, light barely shifts at all at the same 16%.
+     Additive, deliberately not a multiplier: a multiplier scales the
+     *already-strong* values (e.g. StatShowcase's boosted 40% intensity)
+     just as hard as the faint ones, which blew 40% up to ~88% — an
+     almost-solid card that swallowed its own gradient-clipped text. A
+     flat addition fixes the faint 16% cases (→28%, now visible) without
+     exploding the ones that didn't need it (→52%, stronger but sane).
+     Dark's stays 0 — a no-op, unchanged from before this existed. */
+  --wash-boost: 0%;
+  /* Elevation shadow color — pure black reads as real elevation against
+     a near-black surface (barely visible, which is the point: dark UIs
+     lean on light/glow for depth, not shadow). The exact same pure black
+     against light's much brighter surface is what a shadow *should* look
+     like there too, so dark's value is a no-op. */
+  --shadow-color: #000000;
+  /* Precomputed (not color-mix'd inline) specifically for nav-glass/
+     nav-glass-backdrop below — their box-shadow already spends this
+     declaration's one color-mix() call on the inset highlight, and
+     Lightning CSS silently drops an entire declaration that has 2+
+     color-mix() calls in it, so the outer drop shadow has to be a plain
+     var() reference instead of a second color-mix(). */
+  --shadow-elevated: rgba(0, 0, 0, 0.35);
 }
 
 :root[data-theme="light"] {
@@ -28,6 +67,22 @@
   --accent-secondary: #e64553;
   --status-live: #40a02b;
   --danger: #d20f39;
+  --hue-mauve: #8839ef;
+  --hue-sapphire: #209fb5;
+  --hue-teal: #179299;
+  --mark-glow: radial-gradient(circle, #ffffff, #ffffff);
+  /* A soft desaturated blue-gray (leaning on --text-primary's own hue)
+     instead of pure black — a heavy black shadow on a light surface
+     reads as muddy/heavy-handed; a tinted shadow reads as considered
+     elevation, the same way real light-mode design systems (Linear,
+     Vercel) tint their shadows rather than using flat black. */
+  --shadow-color: #2b2d4a;
+  --shadow-elevated: rgba(43, 45, 74, 0.35);
+  /* Set back to 0 (matches dark's own value) — user wants the paler,
+     lower-contrast look this boost was originally added to fix. Not
+     removed outright: the calc() plumbing at every use site stays, so a
+     later ask to bring it back is a one-line change here, not a rewrite. */
+  --wash-boost: 0%;
 }
 
 @theme inline {
@@ -51,6 +106,19 @@ body {
   transition:
     background-color 0.3s ease,
     color 0.3s ease;
+}
+
+/* The native scrollbar is replaced by ScrollProgress.tsx's comet-trail
+   rail, not supplemented by it — scrolling itself (wheel/touch/keyboard,
+   and Lenis's own scrollTo calls) is completely unaffected by hiding the
+   OS-drawn indicator, only its visibility changes. */
+html {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
 }
 
 ::selection {
@@ -91,7 +159,7 @@ body {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  box-shadow: 0 0 28px color-mix(in srgb, var(--accent) 16%, transparent);
+  box-shadow: 0 0 28px color-mix(in srgb, var(--accent) calc(16% + var(--wash-boost)), transparent);
   opacity: 0;
   transition: opacity 0.18s ease;
   pointer-events: none;
@@ -122,7 +190,7 @@ body {
   border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, var(--text-primary) 10%, transparent),
-    0 12px 32px -12px rgba(0, 0, 0, 0.35);
+    0 12px 32px -12px var(--shadow-elevated);
 }
 
 /* Same look as nav-glass, but a standalone absolutely-positioned layer
@@ -144,14 +212,22 @@ body {
 .nav-glass-backdrop {
   position: absolute;
   inset: 0;
-  background: color-mix(in srgb, var(--surface) 92%, transparent);
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
+  background: color-mix(in srgb, var(--surface) 65%, transparent);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, var(--text-primary) 10%, transparent),
-    0 12px 32px -12px rgba(0, 0, 0, 0.35);
+    0 12px 32px -12px var(--shadow-elevated);
   pointer-events: none;
+  /* This sits on a `position: sticky` header, and Lenis (smooth scroll)
+     calls scrollTo() every animation frame rather than the browser's own
+     optimized native-scroll compositing path — without its own stable
+     GPU layer, that forces the blur to recompute against the shifting
+     page underneath on every frame, which shows up as a subtle shimmer
+     right around the navbar specifically. translateZ(0) promotes it to
+     its own layer so the backdrop composites once instead of repainting. */
+  transform: translateZ(0);
 }
 
 /* Reusable "lit from within on hover" accent glow — layer this onto a
@@ -172,7 +248,7 @@ body {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  box-shadow: 0 0 28px color-mix(in srgb, var(--accent) 16%, transparent);
+  box-shadow: 0 0 28px color-mix(in srgb, var(--accent) calc(16% + var(--wash-boost)), transparent);
   opacity: 0;
   transition: opacity 0.18s ease;
   pointer-events: none;
@@ -184,13 +260,24 @@ body {
 }
 
 /* Diagonal accent wash for the same tiles — replaces the flat glass-panel
-   fill so they don't read as an empty cell next to full-bleed photos. */
+   fill so they don't read as an empty cell next to full-bleed photos.
+   calc() + --wash-boost: see TileGlow.tsx's comment — the same 16%
+   mix reads as a rich tint on dark's near-black --surface but washes out
+   almost flat on light's much brighter one at the identical percentage. */
 .tile-signature {
   background: linear-gradient(
     135deg,
-    color-mix(in srgb, var(--accent) 16%, var(--surface)) 0%,
-    color-mix(in srgb, var(--accent-secondary) 16%, var(--surface)) 100%
+    color-mix(in srgb, var(--accent) calc(16% + var(--wash-boost)), var(--surface)) 0%,
+    color-mix(in srgb, var(--accent-secondary) calc(16% + var(--wash-boost)), var(--surface)) 100%
   );
+}
+
+/* ClientWork's StatShowcase card specifically, light mode only — user
+   wants a plain neutral card there (closer to white/light gray, no
+   pink/purple tint) instead of TileGlow's wash, even boosted. Dark mode
+   keeps the glow exactly as before; this only hides it in light. */
+:root[data-theme="light"] .stat-tile-glow {
+  display: none;
 }
 
 .text-glow {
@@ -236,7 +323,7 @@ body {
   pointer-events: none;
   background: radial-gradient(
     600px circle at var(--x, 50%) var(--y, 50%),
-    color-mix(in srgb, var(--accent) 7%, transparent),
+    color-mix(in srgb, var(--accent) calc(7% + var(--wash-boost)), transparent),
     transparent 70%
   );
 }

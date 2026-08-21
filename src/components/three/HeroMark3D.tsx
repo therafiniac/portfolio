@@ -12,6 +12,22 @@ import { useTheme, type Theme } from "@/lib/useTheme";
 // supplies which of the two is actually active right now.
 const ACCENT: Record<Theme, string> = { dark: "#89b4fa", light: "#1e66f5" };
 const ACCENT_SECONDARY: Record<Theme, string> = { dark: "#eba0ac", light: "#e64553" };
+// Light theme's --accent (#1e66f5) is a considerably darker, more
+// saturated blue than dark theme's pastel #89b4fa — under the exact same
+// point-light rig the core rendered as a near-black navy blob instead of
+// a vibrant center, since the material had far less light hitting it
+// relative to how dark that base color already is. A brighter (still
+// neutral/white, not colored — colored point lights already blew out to
+// a flat white hotspot once at high intensity, see below) ambient fill
+// specifically for light lifts the core without recreating that.
+const AMBIENT_INTENSITY: Record<Theme, number> = { dark: 0.5, light: 1.6 };
+// Core opacity light-mode-only tweak — dark's value is unchanged from
+// before it existed. Outer mesh color went grey -> black -> back to
+// accent blue (matching the core) per iteration, so it's just ACCENT
+// itself now for both themes rather than a separate always-diverging
+// token.
+const CORE_OPACITY: Record<Theme, number> = { dark: 1, light: 0.88 };
+const OUTER_MESH_COLOR: Record<Theme, string> = ACCENT;
 
 function usePrefersReducedMotion() {
   const [reduced, setReduced] = useState(
@@ -75,10 +91,14 @@ function OrbitalMark({
   reducedMotion,
   accentColor,
   accentSecondaryColor,
+  outerMeshColor,
+  coreOpacity,
 }: {
   reducedMotion: boolean;
   accentColor: string;
   accentSecondaryColor: string;
+  outerMeshColor: string;
+  coreOpacity: number;
 }) {
   const groupRef = useRef<Group>(null);
   const ring1 = useRef<Mesh>(null);
@@ -114,23 +134,29 @@ function OrbitalMark({
     <group ref={groupRef}>
       <mesh>
         <sphereGeometry args={[2.15, 32, 20]} />
-        <meshBasicMaterial color={accentColor} wireframe transparent opacity={0.05} />
+        <meshBasicMaterial color={outerMeshColor} wireframe transparent opacity={0.05} />
       </mesh>
 
-      {/* Opaque, not translucent — a transparent core meant depth
-          sorting against it was per-object, not per-pixel (three.js's
-          normal transparency limitation), which is why the ring/trail
-          behind it could still show through when they shouldn't. Solid
-          occludes correctly and reliably, full stop, at the cost of the
-          glassier look translucency would have given it. */}
+      {/* Opaque in dark mode for the documented reason below; light mode
+          trades a little of that reliability for a lighter, less "solid
+          blob" look, at coreOpacity=0.88 (not lower — the depth-sorting
+          artifact this comment warns about becomes visible past ~0.8).
+          Original note: a transparent core meant depth sorting against it
+          was per-object, not per-pixel (three.js's normal transparency
+          limitation), which is why the ring/trail behind it could still
+          show through when they shouldn't. Solid occludes correctly and
+          reliably, full stop, at the cost of the glassier look
+          translucency would have given it. */}
       <mesh>
         <icosahedronGeometry args={[0.62, 3]} />
         <MeshDistortMaterial
-          color={accentSecondaryColor}
+          color={accentColor}
           factor={reducedMotion ? 0 : 0.4}
           speed={reducedMotion ? 0 : 1.6}
           roughness={0.3}
           metalness={0.15}
+          transparent={coreOpacity < 1}
+          opacity={coreOpacity}
         />
       </mesh>
 
@@ -212,7 +238,7 @@ export function HeroMark3D() {
             a flat white hotspot instead of tinting it — this is what
             actually made the whole thing read as "white," more than
             the trail did. */}
-        <ambientLight intensity={0.5} />
+        <ambientLight intensity={AMBIENT_INTENSITY[theme]} />
         <pointLight position={[3, 2, 4]} intensity={3} color={ACCENT[theme]} />
         <pointLight position={[-3, -2, -3]} intensity={1.5} color={ACCENT_SECONDARY[theme]} />
         <Float
@@ -224,6 +250,8 @@ export function HeroMark3D() {
             reducedMotion={reducedMotion}
             accentColor={ACCENT[theme]}
             accentSecondaryColor={ACCENT_SECONDARY[theme]}
+            outerMeshColor={OUTER_MESH_COLOR[theme]}
+            coreOpacity={CORE_OPACITY[theme]}
           />
         </Float>
       </Canvas>
