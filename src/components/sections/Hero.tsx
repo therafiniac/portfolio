@@ -6,7 +6,6 @@ import { HeroMark3DLoader } from "@/components/three/HeroMark3DLoader";
 import { CountUp } from "@/components/layout/CountUp";
 import { Magnetic } from "@/components/layout/Magnetic";
 import { heroRoles, heroStatusLine, heroStats } from "@/lib/data/hero";
-import type { GithubStats } from "@/lib/github";
 
 const container = {
   hidden: {},
@@ -29,11 +28,7 @@ const item = {
 // rather than two more boxed pills.
 const roleColors = ["text-accent", "text-accent-secondary"];
 
-type HeroProps = {
-  githubStats: GithubStats | null;
-};
-
-export function Hero({ githubStats }: HeroProps) {
+export function Hero() {
   return (
     <section
       id="top"
@@ -127,8 +122,28 @@ export function Hero({ githubStats }: HeroProps) {
               />
             </div>
             <dl className="flex flex-wrap gap-x-10 gap-y-6">
-              {heroStats.map((stat) => (
-                <div key={stat.label} className="lg:border-l lg:border-line/60 lg:pl-8 lg:first:border-l-0 lg:first:pl-0">
+              {heroStats.map((stat, i) => (
+                <div key={stat.label} className="relative lg:pl-8 lg:first:pl-0">
+                  {/* Every divider between stats gets the same trail-light
+                      treatment as the leading one above, not a plain
+                      static border — otherwise only the first divider
+                      reads as "lit" and the rest look inconsistent next
+                      to it. */}
+                  {i > 0 && (
+                    <div
+                      className="absolute inset-y-0 left-0 hidden w-px overflow-hidden lg:block"
+                      style={{
+                        background:
+                          "linear-gradient(to bottom, transparent, var(--line) 20%, var(--line) 80%, transparent)",
+                      }}
+                    >
+                      <span
+                        aria-hidden="true"
+                        className="trail-light absolute left-1/2 h-10 w-[2px] -translate-x-1/2 rounded-full bg-gradient-to-b from-transparent via-accent to-transparent blur-[1px]"
+                        style={{ animationDelay: "-1.5s" }}
+                      />
+                    </div>
+                  )}
                   <dd className="font-mono text-2xl text-accent-secondary">
                     <CountUp value={stat.value} suffix={stat.suffix} />
                   </dd>
@@ -137,20 +152,6 @@ export function Hero({ githubStats }: HeroProps) {
                   </dt>
                 </div>
               ))}
-              {githubStats && (
-                <div className="lg:border-l lg:border-line/60 lg:pl-8">
-                  <dd className="flex items-center gap-1.5 font-mono text-2xl text-accent-secondary">
-                    <span
-                      className="h-1.5 w-1.5 rounded-full bg-status-live motion-safe:animate-pulse"
-                      aria-hidden="true"
-                    />
-                    <CountUp value={githubStats.publicRepos} />
-                  </dd>
-                  <dt className="mt-1 font-mono text-[10px] uppercase tracking-[0.15em] text-text-muted">
-                    Public Repos (Live)
-                  </dt>
-                </div>
-              )}
             </dl>
           </motion.div>
         </motion.div>
