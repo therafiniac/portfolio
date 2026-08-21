@@ -47,7 +47,7 @@ export function Projects() {
         discussion instead of padding the count.
       </p>
 
-      <div className="flex gap-1 overflow-x-auto border-b border-line/40">
+      <div className="flex flex-wrap gap-1 border-b border-line/40">
         {projects.map((p, i) => (
           <button
             key={p.name}
@@ -122,10 +122,17 @@ export function Projects() {
             </div>
 
             <div>
+              {/* Each block gets its own small mono label — otherwise
+                  it's three unrelated-looking elements stacked with no
+                  context for what they are, instead of reading as
+                  organized documentation the way a spec sheet would. */}
+              <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-accent-secondary">
+                The Approach
+              </p>
               {/* The single most important technical claim in the row —
                   pulled into its own callout instead of reading as one
                   more paragraph, styled like an inline code comment. */}
-              <div className="rounded-lg border border-line/40 bg-surface/60 px-4 py-3">
+              <div className="mt-2 rounded-lg border border-line/40 bg-surface/60 px-4 py-3">
                 <p className="flex gap-3 font-mono text-sm text-text-primary">
                   <span className="shrink-0 text-accent-secondary" aria-hidden="true">
                     {"//"}
@@ -134,9 +141,15 @@ export function Projects() {
                 </p>
               </div>
 
+              <p className="mt-6 font-mono text-[10px] uppercase tracking-[0.15em] text-accent-secondary">
+                Mechanism
+              </p>
               <FlowSteps steps={project.flow} />
 
-              <div className="mt-6 flex flex-wrap gap-2">
+              <p className="mt-6 font-mono text-[10px] uppercase tracking-[0.15em] text-accent-secondary">
+                Stack
+              </p>
+              <div className="mt-2 flex flex-wrap gap-2">
                 {project.tech.map((tech) => (
                   <span
                     key={tech}
