@@ -71,8 +71,8 @@ body {
 .glass-panel {
   position: relative;
   background: color-mix(in srgb, var(--surface) 82%, transparent);
-  backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
   border: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
   border-radius: 0.75rem;
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--text-primary) 8%, transparent);
@@ -105,6 +105,24 @@ body {
 .glass-panel:hover::after,
 .glass-panel:focus-within::after {
   opacity: 1;
+}
+
+/* Stronger than glass-panel, and deliberately no border-radius of its
+   own (unlike glass-panel — see the bug note below) — the navbar is the
+   one element permanently floating over constantly changing content
+   (hero canvas, every section's background) as the page scrolls under
+   it, so it earns extra opacity/blur plus a real drop shadow for
+   elevation, neither of which glass-panel carries (a shadow on every
+   card in a grid would double up badly). */
+.nav-glass {
+  position: relative;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--text-primary) 10%, transparent),
+    0 12px 32px -12px rgba(0, 0, 0, 0.35);
 }
 
 /* A plain `border` only draws 4 straight sides — on an element with a
@@ -179,6 +197,38 @@ body {
 
 .text-glow {
   text-shadow: 0 0 56px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+/* Navbar scrollspy indicator, take three: a bordered/filled pill read as
+   "a box slid in" (take one); pure text-shadow with nothing behind it
+   read as too faint to call "lit up" (take two). This is a light source
+   behind the glass, not a shape drawn on it — a soft radial bloom with
+   no edge (fades to nothing well before its own box, so there's no
+   boundary to read as a pill), sized well past the label so it spills
+   outward, paired with a stronger two-layer glow on the letters
+   themselves (tight bright core + wider soft halo). */
+.nav-active-text-glow {
+  text-shadow:
+    0 0 10px color-mix(in srgb, var(--accent) 85%, transparent),
+    0 0 22px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+/* Single color-mix() call, deliberately — Lightning CSS's @supports
+   fallback generation silently drops the whole rule when a property
+   value has 2+ color-mix() calls (confirmed empirically; same class of
+   bug as the backdrop-filter ordering issue above). Ellipse, not
+   circle — a perfect circle behind a wide/short label reads as its own
+   round shape sitting under the text, not light bleeding from it; an
+   ellipse stretches to the box's own (wide) aspect ratio instead. Fades
+   out by the halfway point of an already-oversized box (set in
+   Navbar.tsx via -inset-6/-inset-5), then blurred hard on top of that —
+   the fade has to be most of the work; blur alone on a gradient that
+   still reaches full transparent right at its own edge still shows a
+   soft-but-findable boundary.
+*/
+.nav-active-torch {
+  background: radial-gradient(color-mix(in srgb, var(--accent) 45%, transparent) 0%, transparent 55%);
+  filter: blur(14px);
 }
 
 .cursor-glow {

@@ -15,14 +15,40 @@ function useActiveSection() {
       .map((link) => document.getElementById(link.id))
       .filter((el): el is HTMLElement => el !== null);
 
+    // Each callback only reports entries whose state *changed*, not every
+    // currently-intersecting section — so this tracks the running set
+    // across callbacks rather than judging only the latest batch. That's
+    // what makes clearing it safe: dropping to 0 here means nothing is
+    // intersecting *right now* (e.g. scrolled back above Work into Hero),
+    // not just that this particular batch didn't happen to mention one.
+    const intersecting = new Map<string, number>();
+
     const observer = new IntersectionObserver(
       (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (visible) setActiveId(visible.target.id);
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            intersecting.set(entry.target.id, entry.intersectionRatio);
+          } else {
+            intersecting.delete(entry.target.id);
+          }
+        }
+
+        if (intersecting.size === 0) {
+          setActiveId(null);
+          return;
+        }
+
+        const [topId] = [...intersecting.entries()].sort((a, b) => b[1] - a[1])[0];
+        setActiveId(topId);
       },
-      { rootMargin: "-40% 0px -50% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] },
+      // The trigger band sits low in the viewport (15%-25% down, just
+      // under the sticky navbar) rather than near center (the old
+      // 40%-50% band) — a tall section's *top* is what crosses this
+      // line first as you scroll, so a near-center band meant the next
+      // section lit up while the current one still filled most of the
+      // screen. Confirmed empirically: with the old band, "Work" went
+      // active ~350px before Hero's own bottom edge.
+      { rootMargin: "-15% 0px -75% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] },
     );
 
     sections.forEach((section) => observer.observe(section));
@@ -43,14 +69,14 @@ export function Navbar() {
     <header className="sticky top-4 z-40 mx-4 md:mx-8 md:top-6">
       <motion.div
         style={{ paddingTop: paddingY, paddingBottom: paddingY }}
-        className="glass-panel flex items-center justify-between gap-4 rounded-full px-5"
+        className="nav-glass flex items-center justify-between gap-4 rounded-full px-5"
       >
         <a
           href="#top"
           className="group flex items-center gap-2.5 font-mono text-sm text-text-primary transition-colors hover:text-accent"
         >
-          <BrandMark size={30} className="text-xs group-hover:bg-accent/15" />
-          RAL
+          <BrandMark size={30} shape="circle" className="text-xs group-hover:bg-accent/15" />
+          RAFI
         </a>
 
         <nav className="hidden gap-1 font-mono text-xs uppercase tracking-[0.15em] sm:flex">
@@ -60,15 +86,16 @@ export function Navbar() {
               href={link.href}
               className={`relative rounded-full px-3 py-1.5 transition-colors ${
                 activeId === link.id
-                  ? "text-accent"
+                  ? "nav-active-text-glow font-medium text-accent"
                   : "text-text-muted hover:text-accent"
               }`}
               aria-current={activeId === link.id ? "true" : undefined}
             >
               {activeId === link.id && (
                 <motion.span
-                  layoutId="nav-active-pill"
-                  className="absolute inset-0 -z-10 rounded-full border border-accent/30 bg-accent/10"
+                  layoutId="nav-active-torch"
+                  aria-hidden="true"
+                  className="nav-active-torch pointer-events-none absolute -inset-6 -z-10"
                   transition={{ type: "spring", stiffness: 380, damping: 32 }}
                 />
               )}
@@ -102,17 +129,23 @@ export function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2 }}
-            className="glass-panel mt-2 flex flex-col gap-1 rounded-2xl p-3 sm:hidden"
+            className="nav-glass mt-2 flex flex-col gap-1 rounded-2xl p-3 sm:hidden"
           >
             {navLinks.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
                 onClick={() => setMenuOpen(false)}
-                className={`rounded-lg px-3 py-2 font-mono text-xs uppercase tracking-[0.15em] transition-colors hover:text-accent ${
-                  activeId === link.id ? "text-accent" : "text-text-muted"
+                aria-current={activeId === link.id ? "true" : undefined}
+                className={`relative rounded-lg px-3 py-2 font-mono text-xs uppercase tracking-[0.15em] transition-colors hover:text-accent ${
+                  activeId === link.id
+                    ? "nav-active-text-glow font-medium text-accent"
+                    : "text-text-muted"
                 }`}
               >
+                {activeId === link.id && (
+                  <span aria-hidden="true" className="nav-active-torch pointer-events-none absolute -inset-4 -z-10" />
+                )}
                 {link.label}
               </a>
             ))}
