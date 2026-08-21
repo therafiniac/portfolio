@@ -125,51 +125,20 @@ body {
     0 12px 32px -12px rgba(0, 0, 0, 0.35);
 }
 
-/* A plain `border` only draws 4 straight sides — on an element with a
-   clip-path chamfer cut into one corner, that cut edge gets clipped away
-   with no border segment ever drawn along it, so it reads as a gap in the
-   outline. A `::before` at z-index:-1 doesn't fix this either: negative
-   z-index only outranks *other* stacking contexts, it can never paint
-   behind its own parent's background — only above it, below normal
-   content — so that approach just tints the whole card, not a ring.
-   The reliable fix is two real elements in plain DOM order: a full-size
-   "chamfer-border" layer painted first, then a content layer inset by
-   2px painted on top of it — the exposed margin is the border, on every
-   edge, cut corners included, no z-index involved. 2px (not 1px) because
-   a 1px ring anti-aliases away on a lot of real displays, especially
-   along the diagonal cut. */
-.chamfer-border {
-  background: color-mix(in srgb, var(--line) 85%, transparent);
-  transition: background-color 0.18s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.group:hover .chamfer-border,
-.group:focus-within .chamfer-border {
-  background: color-mix(in srgb, var(--accent) 80%, transparent);
-}
-
-/* Filler tiles (stat/CTA/schematic accents in the bento grids) default to
-   an accent-tinted ring instead of the neutral one, so they read as a
-   deliberate brand moment at rest, not just on hover like a content card. */
-.chamfer-border-accent {
-  background: color-mix(in srgb, var(--accent) 55%, transparent);
-}
-
-.group:hover .chamfer-border-accent,
-.group:focus-within .chamfer-border-accent {
-  background: color-mix(in srgb, var(--accent) 85%, transparent);
-}
-
-/* Inset content layer's hover glow — same idea as glass-panel's, but
-   deliberately without glass-panel's own `position: relative`: this
-   layer needs `position: absolute` (from the `absolute` utility) for its
-   1px inset to work, and glass-panel's unlayered `position` would win
-   that fight over Tailwind's layered utility regardless of class order. */
-.chamfer-panel {
+/* Reusable "lit from within on hover" accent glow — layer this onto a
+   card you've already styled yourself (border, radius, background) for
+   a soft accent-tinted glow on hover/focus, the same feel glass-panel's
+   own hover state has. Used to need a two-element layered-border trick
+   here too (a plain `border` can't follow a clip-path chamfer cut
+   corner — see git history if that ever comes back), but every card
+   using this is a plain rounded rectangle now, so a normal CSS `border`
+   utility works directly and this class only owns the glow. */
+.hover-glow-panel {
+  position: relative;
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--text-primary) 8%, transparent);
 }
 
-.chamfer-panel::after {
+.hover-glow-panel::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -180,8 +149,8 @@ body {
   pointer-events: none;
 }
 
-.group:hover .chamfer-panel::after,
-.group:focus-within .chamfer-panel::after {
+.group:hover .hover-glow-panel::after,
+.group:focus-within .hover-glow-panel::after {
   opacity: 1;
 }
 

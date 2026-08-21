@@ -35,11 +35,7 @@ const SHOT_ASPECT = "aspect-[16/10]";
 // explicitly as "a live website," not a generic photo, which matters most
 // while the images are still stock placeholders. Dots are neutral (not
 // literal red/yellow/green) since AGENTS.md reserves --danger/--status-live
-// for their actual semantic roles, not decoration. Plain rectangular
-// corners here on purpose — the site's chamfered signature shape reads as
-// a design contradiction on something meant to look like a browser window
-// (real browser chrome never has a diagonal-cut corner), so this card
-// style is the one deliberate exception to it.
+// for their actual semantic roles, not decoration.
 function BrowserChrome({ label }: { label: string }) {
   return (
     <div className="flex items-center gap-1.5 border-b border-line/40 bg-surface/90 px-3 py-2">
@@ -78,7 +74,7 @@ function WorkCard({ project }: { project: ClientProject }) {
   return (
     <a
       href={project.href}
-      className="chamfer-panel group relative block overflow-hidden rounded-xl border border-line/60 transition-colors duration-300 hover:border-accent/60"
+      className="hover-glow-panel group relative block overflow-hidden rounded-xl border border-line/60 transition-colors duration-300 hover:border-accent/60"
     >
       <TileGlow />
       <BrowserChrome label={project.category} />
@@ -120,7 +116,7 @@ function WorkCard({ project }: { project: ClientProject }) {
 // than a separate hardcoded number, so the two never drift apart.
 function StatShowcase({ value, suffix, label }: { value: number; suffix?: string; label: string }) {
   return (
-    <div className="chamfer-panel group relative flex flex-col items-center justify-center gap-2 overflow-hidden rounded-xl border border-line/60 p-6 text-center transition-colors duration-300 hover:border-accent/60">
+    <div className="hover-glow-panel group relative flex flex-col items-center justify-center gap-2 overflow-hidden rounded-xl border border-line/60 p-6 text-center transition-colors duration-300 hover:border-accent/60">
       <TileGlow />
       <span
         className="bg-clip-text font-mono text-7xl font-semibold leading-none text-transparent"

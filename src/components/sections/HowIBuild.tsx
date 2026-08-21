@@ -6,9 +6,6 @@ import { GithubIcon } from "@/components/icons/BrandIcons";
 import { approachPoints, type ApproachPoint } from "@/lib/data/approach";
 import type { GithubStats } from "@/lib/github";
 
-const CHAMFER_CLIP =
-  "polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px)";
-
 // A soft off-center glow behind each tile's content — every card here is
 // icon+text (no photo), so this is what gives the panel depth instead of
 // a flat gradient fill.
@@ -183,38 +180,39 @@ function PipelineGraphic({ className }: { className?: string }) {
 
 type TileHeight = "tall" | "short";
 
-// Same border-layer-then-inset-content-layer structure ClientWork's cards
-// use (see globals.css) — a plain `border` can't follow the chamfer's
-// diagonal cut, so the border is a separate full-size layer painted first,
-// with the actual panel inset on top of it.
+// Same rounded/bordered card ClientWork's cards use (see globals.css's
+// .hover-glow-panel) — this used to need a two-layer border trick for a
+// clip-path chamfer cut corner (a plain `border` can't follow one), but
+// every tile here is a plain rounded rectangle now, so a single element
+// with a normal border does the job directly.
 function TileShell({
   span,
   height,
   href,
+  // Filler tiles (stat/CTA) default to an accent-tinted ring instead of
+  // the neutral one, so they read as a deliberate brand moment at rest,
+  // not just on hover like a content card.
+  accent = false,
   children,
 }: {
   span: 1 | 2;
   height: TileHeight;
   href?: string;
+  accent?: boolean;
   children: ReactNode;
 }) {
   const heightClass = height === "tall" ? "h-80" : "h-48";
   const spanClass = span === 2 ? "sm:col-span-2" : "";
+  const borderClass = accent
+    ? "border-accent/55 group-hover:border-accent/85"
+    : "border-line/60 group-hover:border-accent/60";
   const inner = (
-    <>
-      <span
-        aria-hidden="true"
-        className="chamfer-border chamfer-border-accent absolute inset-0"
-        style={{ clipPath: CHAMFER_CLIP }}
-      />
-      <div
-        className="chamfer-panel tile-signature absolute inset-[2px] flex flex-col justify-between overflow-hidden p-6"
-        style={{ clipPath: CHAMFER_CLIP }}
-      >
-        <TileGlow />
-        {children}
-      </div>
-    </>
+    <div
+      className={`hover-glow-panel tile-signature flex h-full flex-col justify-between overflow-hidden rounded-2xl border p-6 transition-colors duration-300 ${borderClass}`}
+    >
+      <TileGlow />
+      {children}
+    </div>
   );
 
   if (href) {
@@ -225,7 +223,9 @@ function TileShell({
     );
   }
 
-  return <div className={`relative ${heightClass} ${spanClass}`}>{inner}</div>;
+  return (
+    <div className={`group relative ${heightClass} ${spanClass}`}>{inner}</div>
+  );
 }
 
 type PointGraphic = (props: { className?: string }) => ReactElement;
@@ -264,7 +264,7 @@ function PointCard({
 
 function StatTile({ value, label }: { value: number; label: string }) {
   return (
-    <TileShell span={1} height="short">
+    <TileShell span={1} height="short" accent>
       <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-bg/50 text-accent backdrop-blur">
         <GithubIcon className="h-4 w-4" aria-hidden="true" />
       </span>
@@ -285,7 +285,7 @@ function StatTile({ value, label }: { value: number; label: string }) {
 
 function CtaTile() {
   return (
-    <TileShell span={1} height="short" href="#contact">
+    <TileShell span={1} height="short" href="#contact" accent>
       <span className="font-mono text-sm text-text-primary">Open to new projects.</span>
       <span className="flex items-center gap-1 font-mono text-xs uppercase tracking-[0.15em] text-accent transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-0.5">
         Get in touch

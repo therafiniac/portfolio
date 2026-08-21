@@ -75,7 +75,7 @@ export function Navbar() {
           href="#top"
           className="group flex items-center gap-2.5 font-mono text-sm text-text-primary transition-colors hover:text-accent"
         >
-          <BrandMark size={30} shape="circle" className="text-xs group-hover:bg-accent/15" />
+          <BrandMark size={30} className="text-xs group-hover:bg-accent/15" />
           RAFI
         </a>
 
