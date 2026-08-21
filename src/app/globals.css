@@ -154,9 +154,9 @@ body {
 .nav-glass-backdrop {
   position: absolute;
   inset: 0;
-  background: color-mix(in srgb, var(--surface) 92%, transparent);
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
+  background: color-mix(in srgb, var(--surface) 65%, transparent);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, var(--text-primary) 10%, transparent),
