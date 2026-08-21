@@ -34,9 +34,13 @@ export function Hero() {
       id="top"
       className="relative flex min-h-screen scroll-mt-24 flex-col justify-center overflow-hidden px-6 md:px-12"
     >
+      {/* Pulled in from the margins to sit directly behind the copy they
+          light — the headline and the stats row — instead of drifting in
+          empty space at the section's edges, where they read as ambient
+          background decoration rather than an actual light source. */}
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-        <div className="aurora-blob absolute -left-32 top-1/4 h-96 w-96 rounded-full bg-accent/15 blur-[120px]" />
-        <div className="aurora-blob absolute -right-24 bottom-1/4 h-96 w-96 rounded-full bg-accent-secondary/10 blur-[120px] [animation-delay:-9s]" />
+        <div className="aurora-blob absolute left-4 top-[12%] h-96 w-96 rounded-full bg-accent/20 blur-[120px] md:left-10" />
+        <div className="aurora-blob absolute bottom-[8%] left-[18%] h-96 w-96 rounded-full bg-accent-secondary/14 blur-[120px] [animation-delay:-9s]" />
         <HeroCanvasLoader />
       </div>
 
@@ -160,8 +164,19 @@ export function Hero() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
-          className="flex justify-center lg:justify-start"
+          className="relative flex justify-center lg:justify-start"
         >
+          {/* The mark IS the light source — a bright signature-gradient
+              glow bleeding out from directly behind it, sized to the mark's
+              own box so it reads as light the object is casting, not
+              another ambient blob floating nearby. First in DOM order
+              (and -z-10, for safety) so it paints behind the mark without
+              needing to fight it for stacking. */}
+          <div
+            aria-hidden="true"
+            className="aurora-blob pointer-events-none absolute inset-0 -z-10 scale-90 rounded-full opacity-40 blur-[90px]"
+            style={{ backgroundImage: "var(--gradient-signature)" }}
+          />
           {/* The brand mark (navbar/footer/favicon — a round accent-ring
               "R") scaled up into an actual 3D object instead of a
               portrait photo: nothing to photograph once "no real photo"
