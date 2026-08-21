@@ -112,7 +112,7 @@ function WorkCard({ project }: { project: ClientProject }) {
 function StatShowcase({ value, suffix, label }: { value: number; suffix?: string; label: string }) {
   return (
     <div
-      className="relative h-full rounded-xl p-px shadow-[0_25px_60px_-20px_rgba(0,0,0,0.5)]"
+      className="relative h-full rounded-xl p-px shadow-[0_25px_60px_-20px_color-mix(in_srgb,var(--shadow-color)_50%,transparent)]"
       style={{ backgroundImage: "var(--gradient-signature)" }}
     >
       <div className="hover-glow-panel group relative flex h-full flex-col items-center justify-center gap-2 overflow-hidden rounded-xl bg-surface p-6 text-center">

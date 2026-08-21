@@ -23,7 +23,7 @@ function ServiceCard({
 }: Service & { hue: string; rotate: string; offset: string }) {
   return (
     <div
-      className={`group relative w-full max-w-[17rem] shrink-0 rounded-lg border border-line/50 bg-surface p-6 shadow-[0_24px_48px_-28px_rgba(0,0,0,0.65)] transition-transform duration-300 ease-out hover:-translate-y-1.5 hover:rotate-0 hover:shadow-[0_32px_60px_-24px_rgba(0,0,0,0.7)] ${rotate} ${offset}`}
+      className={`group relative w-full max-w-[17rem] shrink-0 rounded-lg border border-line/50 bg-surface p-6 shadow-[0_24px_48px_-28px_color-mix(in_srgb,var(--shadow-color)_65%,transparent)] transition-transform duration-300 ease-out hover:-translate-y-1.5 hover:rotate-0 hover:shadow-[0_32px_60px_-24px_color-mix(in_srgb,var(--shadow-color)_70%,transparent)] ${rotate} ${offset}`}
       style={{
         backgroundImage: `linear-gradient(165deg, color-mix(in srgb, var(${hue}) 16%, var(--surface)), var(--surface) 70%)`,
       }}
@@ -32,7 +32,7 @@ function ServiceCard({
           rotation alone does. */}
       <span
         aria-hidden="true"
-        className="absolute -top-2 left-1/2 h-4 w-4 -translate-x-1/2 rounded-full shadow-[0_2px_6px_rgba(0,0,0,0.4)]"
+        className="absolute -top-2 left-1/2 h-4 w-4 -translate-x-1/2 rounded-full shadow-[0_2px_6px_color-mix(in_srgb,var(--shadow-color)_40%,transparent)]"
         style={{ background: `var(${hue})` }}
       />
       {/* No backdrop-blur here — a blurred child under a transforming

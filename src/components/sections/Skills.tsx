@@ -78,7 +78,7 @@ export function Skills() {
               real elevation via the shadow, so this reads as a floating
               panel rather than a flat bordered rectangle. */}
           <div
-            className="relative rounded-2xl p-px shadow-[0_25px_60px_-20px_rgba(0,0,0,0.5)]"
+            className="relative rounded-2xl p-px shadow-[0_25px_60px_-20px_color-mix(in_srgb,var(--shadow-color)_50%,transparent)]"
             style={{ backgroundImage: "var(--gradient-signature)" }}
           >
             <div className="overflow-hidden rounded-2xl bg-surface/95 backdrop-blur">
