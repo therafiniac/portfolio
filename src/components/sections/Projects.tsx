@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 import { Section } from "@/components/layout/Section";
 import { GithubIcon } from "@/components/icons/BrandIcons";
@@ -27,103 +31,125 @@ function LinkBadge({
   );
 }
 
+// Tabs, not stacked cards — deliberately the opposite structure from every
+// other grid/panel section on the site (no chrome bar, no dots, no
+// bordered card). One project's full deep-dive shows at a time, so the
+// content pane's height stays constant regardless of how many projects
+// exist — adding a third or fourth means one more tab, not more scroll.
 export function Projects() {
+  const [active, setActive] = useState(0);
+  const project = projects[active];
+
   return (
     <Section id="built" index="03" eyebrow="Independent Projects" title="What I've Built">
-      {/* Full-width stacked rows, not a matched-height grid — each entry
-          gets to be whatever height its own content needs, and there's
-          never a second card in the same row it has to line up with. */}
-      <div className="flex flex-col gap-10">
-        {projects.map((project, index) => {
-          const reversed = index % 2 === 1;
-          return (
-            <article
-              key={project.name}
-              className="overflow-hidden rounded-2xl border border-line/60 transition-colors duration-300 hover:border-accent/60"
-            >
-              <div className={`flex flex-col md:flex-row ${reversed ? "md:flex-row-reverse" : ""}`}>
-                {/* The real technical claim, in large type — not a
-                    decorative diagram standing in for it. The wash angle
-                    flips with `reversed` so it always flows toward the
-                    content column instead of looking identical (and
-                    unmirrored) regardless of which side it's on — that
-                    mismatch is exactly what broke the previous version of
-                    this section. */}
-                <div
-                  className={`flex flex-col items-center justify-center gap-2 p-10 text-center md:w-2/5 md:border-line/40 ${
-                    reversed ? "md:border-l" : "md:border-r"
-                  }`}
-                  style={{
-                    backgroundImage: `linear-gradient(${reversed ? 225 : 135}deg, color-mix(in srgb, var(--accent) 12%, var(--surface)), color-mix(in srgb, var(--accent-secondary) 12%, var(--surface)))`,
-                  }}
-                >
-                  <span
-                    className="bg-clip-text font-mono text-6xl font-semibold leading-none text-transparent"
-                    style={{ backgroundImage: "var(--gradient-signature)" }}
-                  >
-                    {project.stat.value}
-                  </span>
-                  <span className="max-w-[18ch] font-mono text-xs uppercase tracking-[0.15em] text-text-muted">
-                    {project.stat.label}
-                  </span>
-                </div>
+      <p className="-mt-6 mb-10 max-w-2xl text-text-muted">
+        A short list on purpose — every entry gets its full architecture
+        discussion instead of padding the count.
+      </p>
 
-                <div className="p-6 md:w-3/5 md:p-10">
-                  <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
-                    <h3 className="font-mono text-2xl text-text-primary">{project.name}</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {project.liveUrl && (
-                        <LinkBadge href={project.liveUrl} icon={ExternalLink}>
-                          Live Demo
-                        </LinkBadge>
-                      )}
-                      {project.githubUrl && (
-                        <LinkBadge href={project.githubUrl} icon={GithubIcon}>
-                          GitHub
-                        </LinkBadge>
-                      )}
-                      {project.private && (
-                        <span className="inline-flex items-center rounded-full border border-line/60 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.15em] text-text-muted">
-                          Private Repo
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  <p className="mt-3 text-text-muted">{project.tagline}</p>
-
-                  {/* The single most important technical claim in the
-                      row — pulled into its own callout instead of reading
-                      as one more paragraph, styled in mono like an inline
-                      code comment to match the "real code, not decorative
-                      chrome" idea the rest of this redesign leans on. */}
-                  <div className="mt-5 rounded-lg border border-line/40 bg-surface/60 px-4 py-3">
-                    <p className="flex gap-3 font-mono text-sm text-text-primary">
-                      <span className="shrink-0 text-accent-secondary" aria-hidden="true">
-                        {"//"}
-                      </span>
-                      <span>{project.highlight}</span>
-                    </p>
-                  </div>
-
-                  <FlowSteps steps={project.flow} />
-
-                  <div className="mt-6 flex flex-wrap gap-2">
-                    {project.tech.map((tech) => (
-                      <span
-                        key={tech}
-                        className="rounded-full border border-line/60 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.1em] text-text-muted"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </article>
-          );
-        })}
+      <div className="flex gap-1 overflow-x-auto border-b border-line/40">
+        {projects.map((p, i) => (
+          <button
+            key={p.name}
+            type="button"
+            onClick={() => setActive(i)}
+            className={`relative flex shrink-0 items-center gap-2 whitespace-nowrap px-5 py-3 font-mono text-sm transition-colors ${
+              active === i ? "text-text-primary" : "text-text-muted hover:text-accent"
+            }`}
+          >
+            {p.liveUrl && (
+              <span
+                className="h-1.5 w-1.5 shrink-0 rounded-full bg-status-live motion-safe:animate-pulse"
+                aria-hidden="true"
+              />
+            )}
+            {p.name}
+            {active === i && (
+              <motion.span
+                layoutId="project-tab-underline"
+                className="absolute inset-x-0 -bottom-px h-[2px]"
+                style={{ backgroundImage: "var(--gradient-signature)" }}
+                transition={{ type: "spring", stiffness: 380, damping: 32 }}
+              />
+            )}
+          </button>
+        ))}
       </div>
+
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={project.name}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.25, ease: "easeOut" }}
+          className="pt-8"
+        >
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+            <h3 className="font-mono text-2xl text-text-primary md:text-3xl">{project.name}</h3>
+            {project.private && (
+              <span className="rounded-full border border-line/60 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.15em] text-text-muted">
+                Private Repo
+              </span>
+            )}
+            <div className="ml-auto flex flex-wrap gap-2">
+              {project.liveUrl && (
+                <LinkBadge href={project.liveUrl} icon={ExternalLink}>
+                  Live Demo
+                </LinkBadge>
+              )}
+              {project.githubUrl && (
+                <LinkBadge href={project.githubUrl} icon={GithubIcon}>
+                  GitHub
+                </LinkBadge>
+              )}
+            </div>
+          </div>
+
+          <p className="mt-3 max-w-2xl text-text-muted">{project.tagline}</p>
+
+          <div className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-[auto_1fr]">
+            <div className="shrink-0 md:pr-8 md:border-r md:border-line/40">
+              <span
+                className="block bg-clip-text font-mono text-6xl font-semibold leading-none text-transparent"
+                style={{ backgroundImage: "var(--gradient-signature)" }}
+              >
+                {project.stat.value}
+              </span>
+              <span className="mt-2 block max-w-[18ch] font-mono text-xs uppercase tracking-[0.15em] text-text-muted">
+                {project.stat.label}
+              </span>
+            </div>
+
+            <div>
+              {/* The single most important technical claim in the row —
+                  pulled into its own callout instead of reading as one
+                  more paragraph, styled like an inline code comment. */}
+              <div className="rounded-lg border border-line/40 bg-surface/60 px-4 py-3">
+                <p className="flex gap-3 font-mono text-sm text-text-primary">
+                  <span className="shrink-0 text-accent-secondary" aria-hidden="true">
+                    {"//"}
+                  </span>
+                  <span>{project.highlight}</span>
+                </p>
+              </div>
+
+              <FlowSteps steps={project.flow} />
+
+              <div className="mt-6 flex flex-wrap gap-2">
+                {project.tech.map((tech) => (
+                  <span
+                    key={tech}
+                    className="rounded-full border border-line/60 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.1em] text-text-muted"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </AnimatePresence>
     </Section>
   );
 }
