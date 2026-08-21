@@ -16,6 +16,10 @@
   --danger: #f38ba8;
   --accent-dim: color-mix(in srgb, var(--accent) 10%, transparent);
   --gradient-signature: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+  /* The glow behind Hero's 3D mark (see Hero.tsx) — a plain color isn't
+     valid for `background-image`, so light's override is a solid-white
+     gradient (both stops white) rather than a literal color value. */
+  --mark-glow: var(--gradient-signature);
   /* Decorative-only — not part of the semantic token table above, never
      used for anything interactive/status/error. AGENTS.md's one carve-out
      for the wider Catppuccin palette (background blobs, cover art) — see
@@ -66,6 +70,7 @@
   --hue-mauve: #8839ef;
   --hue-sapphire: #209fb5;
   --hue-teal: #179299;
+  --mark-glow: radial-gradient(circle, #ffffff, #ffffff);
   /* A soft desaturated blue-gray (leaning on --text-primary's own hue)
      instead of pure black — a heavy black shadow on a light surface
      reads as muddy/heavy-handed; a tinted shadow reads as considered

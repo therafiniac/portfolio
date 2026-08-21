@@ -188,7 +188,7 @@ export function Hero() {
           <div
             aria-hidden="true"
             className="aurora-blob pointer-events-none absolute inset-0 -z-10 scale-90 rounded-full opacity-40 blur-[90px]"
-            style={{ backgroundImage: "var(--gradient-signature)" }}
+            style={{ backgroundImage: "var(--mark-glow)" }}
           />
           {/* The brand mark (navbar/footer/favicon — a round accent-ring
               "R") scaled up into an actual 3D object instead of a

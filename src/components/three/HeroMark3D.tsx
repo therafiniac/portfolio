@@ -21,11 +21,13 @@ const ACCENT_SECONDARY: Record<Theme, string> = { dark: "#eba0ac", light: "#e645
 // a flat white hotspot once at high intensity, see below) ambient fill
 // specifically for light lifts the core without recreating that.
 const AMBIENT_INTENSITY: Record<Theme, number> = { dark: 0.5, light: 1.6 };
-// Core opacity and the outer containment sphere's wireframe color, both
-// light-mode-only tweaks — dark's values are unchanged from before either
-// existed.
+// Core opacity light-mode-only tweak — dark's value is unchanged from
+// before it existed. Outer mesh color went grey -> black -> back to
+// accent blue (matching the core) per iteration, so it's just ACCENT
+// itself now for both themes rather than a separate always-diverging
+// token.
 const CORE_OPACITY: Record<Theme, number> = { dark: 1, light: 0.88 };
-const OUTER_MESH_COLOR: Record<Theme, string> = { dark: ACCENT.dark, light: "#000000" };
+const OUTER_MESH_COLOR: Record<Theme, string> = ACCENT;
 
 function usePrefersReducedMotion() {
   const [reduced, setReduced] = useState(
