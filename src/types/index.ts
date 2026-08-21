@@ -65,9 +65,20 @@ export type SkillGroup = {
   items: SkillItem[];
 };
 
-export type ContactLink = {
+// Read-worthy info — an email you'd copy, a location that tells you
+// where someone's based. Rendered as icon + value, no href required
+// (location has nowhere to link to).
+export type ContactInfo = {
   label: string;
   value: string;
+  icon: IconComponent;
+  href?: string;
+};
+
+// Click-through only — a profile you visit, not text you read. Icon
+// only; the href is the whole point, there's nothing else to show.
+export type ProfileLink = {
+  label: string;
   href: string;
   icon: IconComponent;
 };

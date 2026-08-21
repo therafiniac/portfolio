@@ -176,11 +176,16 @@ export function ContactForm() {
         </p>
       )}
 
+      {/* The one other bordered/filled CTA on the page besides Hero's
+          "View My Work" — same signature-gradient fill, so the site's
+          two real conversion moments (come look at the work, get in
+          touch) read as the same kind of action. */}
       <Magnetic className="block w-full" strength={0.15}>
         <button
           type="submit"
           disabled={pending}
-          className="flex w-full items-center justify-center gap-2 rounded-full border border-line px-5 py-3 font-mono text-sm text-text-primary transition-colors hover:border-accent hover:text-accent disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 font-mono text-sm font-medium text-bg transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+          style={{ backgroundImage: "var(--gradient-signature)" }}
         >
           <Send className="h-4 w-4" aria-hidden="true" />
           {pending ? "Sending…" : "Send Message"}
