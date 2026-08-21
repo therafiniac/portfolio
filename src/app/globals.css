@@ -261,6 +261,39 @@ body {
   }
 }
 
+@keyframes cta-glow-pulse {
+  0%,
+  100% {
+    opacity: 0.16;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* A soft pulsing glow behind Hero's primary CTA — the button is already
+   the --gradient-signature fill, so this reads as that fill breathing
+   light outward rather than a separate colored halo. Its own dedicated
+   keyframe (lower opacity range, tight inset/blur) — an earlier version
+   shared a louder ambient keyframe and overwhelmed the button. */
+.cta-glow {
+  position: absolute;
+  inset: -3px;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--gradient-signature);
+  filter: blur(10px);
+  opacity: 0.16;
+  animation: cta-glow-pulse 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta-glow {
+    animation: none;
+  }
+}
+
 /* A small bright segment traveling down the Experience timeline's static
    gradient line — top/opacity only (no height/width change), so it's cheap.
    Percentage-based top works regardless of how tall the line ends up being

@@ -94,9 +94,10 @@ export function Hero({ githubStats }: HeroProps) {
                   that CTA; Contact's submit button already matches it. */}
               <a
                 href="#work"
-                className="inline-flex items-center gap-2 rounded-full px-6 py-3 font-mono text-sm font-medium text-bg transition-opacity hover:opacity-90"
+                className="relative inline-flex items-center gap-2 rounded-full px-6 py-3 font-mono text-sm font-medium text-bg transition-opacity hover:opacity-90"
                 style={{ backgroundImage: "var(--gradient-signature)" }}
               >
+                <span className="cta-glow" aria-hidden="true" />
                 View My Work
                 <span aria-hidden="true">→</span>
               </a>

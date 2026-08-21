@@ -123,17 +123,27 @@ function WorkCard({ project }: { project: ClientProject }) {
 // a copy of it. Sourced from heroStats (same "150+ Sites Shipped" fact
 // Hero already states) rather than a separate hardcoded number, so the
 // two never drift apart.
+// Same gradient-ring border Stack's terminal panel uses (see Skills.tsx —
+// the border is 1px of --gradient-signature itself, showing through a
+// 1px inset, rather than a color-mix ring on top of a flat fill) — this
+// card is the section's other brand moment, so it gets the same signature
+// treatment instead of the neutral hairline the project cards use.
 function StatShowcase({ value, suffix, label }: { value: number; suffix?: string; label: string }) {
   return (
-    <div className="hover-glow-panel group relative flex flex-col items-center justify-center gap-2 overflow-hidden rounded-xl border border-line/60 p-6 text-center transition-colors duration-300 hover:border-accent/60">
-      <TileGlow intensity={40} spread={85} />
-      <span
-        className="bg-clip-text font-mono text-7xl font-semibold leading-none text-transparent"
-        style={{ backgroundImage: "var(--gradient-signature)" }}
-      >
-        <CountUp value={value} suffix={suffix} />
-      </span>
-      <span className="font-mono text-xs uppercase tracking-[0.2em] text-text-muted">{label}</span>
+    <div
+      className="relative h-full rounded-xl p-px shadow-[0_25px_60px_-20px_rgba(0,0,0,0.5)]"
+      style={{ backgroundImage: "var(--gradient-signature)" }}
+    >
+      <div className="hover-glow-panel group relative flex h-full flex-col items-center justify-center gap-2 overflow-hidden rounded-xl bg-surface p-6 text-center">
+        <TileGlow intensity={40} spread={85} />
+        <span
+          className="bg-clip-text font-mono text-7xl font-semibold leading-none text-transparent"
+          style={{ backgroundImage: "var(--gradient-signature)" }}
+        >
+          <CountUp value={value} suffix={suffix} />
+        </span>
+        <span className="font-mono text-xs uppercase tracking-[0.2em] text-text-muted">{label}</span>
+      </div>
     </div>
   );
 }
