@@ -1,4 +1,3 @@
-import { LayoutGrid } from "lucide-react";
 import { Section } from "@/components/layout/Section";
 import { services, type Service } from "@/lib/data/services";
 
@@ -58,20 +57,17 @@ export function Services() {
       <p className="-mt-6 mb-10 max-w-2xl text-text-muted">
         Design and creative work alongside engineering, for clients who need more than just code.
       </p>
-      {/* Same "flush panel, chrome bar on top" grammar as Work's browser
-          chrome and Stack's terminal bar — every major panel on the site
-          gets one, so this reads as part of the same system even though
-          what's under the bar (a dot-grid canvas, not a screenshot or
-          command output) is unique to this section. */}
-      <div className="overflow-hidden rounded-xl border border-line/60">
-        <div className="flex items-center gap-1.5 border-b border-line/40 bg-surface/90 px-4 py-2.5">
-          <LayoutGrid className="h-3 w-3 text-text-muted" aria-hidden="true" />
-          <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-muted">
-            moodboard — services
-          </span>
-        </div>
+      <div className="relative">
+        {/* Same recipe as Stack's panel glow (see Skills.tsx) — the
+            site's own signature gradient, sitting close behind the box
+            (-inset-6, blur-3xl), not the wider decorative palette. */}
         <div
-          className="flex flex-wrap items-start justify-center gap-8 px-6 py-16 sm:px-12"
+          aria-hidden="true"
+          className="aurora-blob pointer-events-none absolute -inset-6 rounded-[2rem] opacity-30 blur-3xl"
+          style={{ backgroundImage: "var(--gradient-signature)" }}
+        />
+        <div
+          className="relative flex flex-wrap items-start justify-center gap-8 overflow-hidden rounded-xl border border-line/60 bg-surface px-6 py-16 sm:px-12"
           style={{
             backgroundImage:
               "radial-gradient(circle, color-mix(in srgb, var(--line) 70%, transparent) 1px, transparent 1px)",
