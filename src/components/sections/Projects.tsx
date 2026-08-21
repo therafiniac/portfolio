@@ -29,7 +29,7 @@ function LinkBadge({
 
 export function Projects() {
   return (
-    <Section id="built" index="02" eyebrow="Independent Projects" title="What I've Built">
+    <Section id="built" index="03" eyebrow="Independent Projects" title="What I've Built">
       {/* Full-width stacked rows, not a matched-height grid — each entry
           gets to be whatever height its own content needs, and there's
           never a second card in the same row it has to line up with. */}

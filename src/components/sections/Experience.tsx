@@ -48,7 +48,7 @@ function renderHighlight(text: string) {
 
 export function Experience() {
   return (
-    <Section id="experience" index="03" tint eyebrow="Track Record" title="Experience">
+    <Section id="experience" index="04" tint eyebrow="Track Record" title="Experience">
       <div className="relative space-y-12">
         {/* Green at the top (the current-role segment) fading into the
             regular accent/muted fade below — a color echo of the pulsing

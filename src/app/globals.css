@@ -16,6 +16,13 @@
   --danger: #f38ba8;
   --accent-dim: color-mix(in srgb, var(--accent) 10%, transparent);
   --gradient-signature: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+  /* Decorative-only — not part of the semantic token table above, never
+     used for anything interactive/status/error. AGENTS.md's one carve-out
+     for the wider Catppuccin palette (background blobs, cover art) — see
+     Services.tsx's moodboard cards, the one place this gets used. */
+  --hue-mauve: #cba6f7;
+  --hue-sapphire: #74c7ec;
+  --hue-teal: #94e2d5;
 }
 
 :root[data-theme="light"] {
@@ -28,6 +35,9 @@
   --accent-secondary: #e64553;
   --status-live: #40a02b;
   --danger: #d20f39;
+  --hue-mauve: #8839ef;
+  --hue-sapphire: #209fb5;
+  --hue-teal: #179299;
 }
 
 @theme inline {

@@ -302,7 +302,7 @@ export function HowIBuild({ githubStats }: HowIBuildProps) {
   const [fullStack, performance, typeSafe, devDesign, prodGrade] = approachPoints;
 
   return (
-    <Section id="approach" index="05" eyebrow="Philosophy" title="How I Build">
+    <Section id="approach" index="06" eyebrow="Philosophy" title="How I Build">
       <p className="-mt-6 mb-10 max-w-2xl text-text-muted">
         A few things that stay true across every project, regardless of stack.
       </p>

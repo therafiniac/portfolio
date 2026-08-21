@@ -38,7 +38,7 @@ function StackRow({ group, delay }: { group: SkillGroup; delay: number }) {
 
 export function Skills() {
   return (
-    <Section id="stack" index="04" eyebrow="Capabilities" title="Stack" renderHeader={false}>
+    <Section id="stack" index="05" eyebrow="Capabilities" title="Stack" renderHeader={false}>
       {/* Same left-copy/right-artifact composition as Hero's own grid —
           the one other place on the page that pairs a text column with a
           single focal object — instead of stacking a left-aligned
