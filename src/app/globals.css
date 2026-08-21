@@ -245,6 +245,42 @@ body {
   }
 }
 
+/* Horizontal counterpart of trail-light-travel above, for the project
+   FlowSteps diagram — same mechanism (percentage-based, so it works at
+   any track width; ease-in-out; fade in/out over the first/last 15%),
+   just left/opacity instead of top/opacity. The element this animates
+   sits inside a container sized to exactly [first dot, last dot] with
+   overflow-hidden, so -8%/108% overshoot gets clipped the same way it
+   does in the vertical version — the light never renders past either
+   end dot. */
+@keyframes flow-light-travel {
+  0% {
+    left: -8%;
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    left: 108%;
+    opacity: 0;
+  }
+}
+
+.flow-light {
+  animation: flow-light-travel 3.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flow-light {
+    animation: none;
+    display: none;
+  }
+}
+
 @keyframes marquee-scroll {
   from {
     transform: translateX(0);

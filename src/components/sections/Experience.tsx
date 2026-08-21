@@ -32,6 +32,20 @@ function formatDuration(start: string, end: string): string {
   return parts.join(" ");
 }
 
+// Bolds figures (150+, 3, etc.) in a highlight bullet so scan-reading the
+// timeline surfaces the concrete claim instead of losing it inside a sentence.
+function renderHighlight(text: string) {
+  return text.split(/(\d[\d,]*\+?%?)/g).map((part, i) =>
+    /^\d/.test(part) ? (
+      <strong key={i} className="font-semibold text-accent-secondary">
+        {part}
+      </strong>
+    ) : (
+      part
+    ),
+  );
+}
+
 export function Experience() {
   return (
     <Section id="experience" index="03" tint eyebrow="Track Record" title="Experience">
@@ -96,7 +110,7 @@ export function Experience() {
                       <span className="text-accent-secondary" aria-hidden="true">
                         →
                       </span>
-                      <span>{highlight}</span>
+                      <span>{renderHighlight(highlight)}</span>
                     </li>
                   ))}
                 </ul>
