@@ -53,7 +53,7 @@ function ServiceCard({
 
 export function Services() {
   return (
-    <Section id="services" index="02" eyebrow="Additional Services" title="Beyond Development">
+    <Section id="services" index="06" eyebrow="Additional Services" title="Beyond Development">
       <p className="-mt-6 mb-10 max-w-2xl text-text-muted">
         Design and creative work alongside engineering, for clients who need more than just code.
       </p>

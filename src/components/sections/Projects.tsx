@@ -41,7 +41,7 @@ export function Projects() {
   const project = projects[active];
 
   return (
-    <Section id="built" index="03" eyebrow="Independent Projects" title="What I've Built">
+    <Section id="built" index="02" eyebrow="Independent Projects" title="What I've Built">
       <p className="-mt-6 mb-10 max-w-2xl text-text-muted">
         A short list on purpose — every entry gets its full architecture
         discussion instead of padding the count.

@@ -17,11 +17,11 @@ export default async function Home() {
       <main className="flex flex-1 flex-col">
         <Hero />
         <ClientWork />
-        <Services />
         <Projects />
-        <Experience />
         <Skills />
+        <Experience />
         <HowIBuild githubStats={githubStats} />
+        <Services />
         <Contact />
       </main>
       <Footer />
