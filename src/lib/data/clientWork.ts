@@ -40,7 +40,7 @@ export const clientProjects: ClientProject[] = [
   },
   {
     name: "Client Project 02",
-    category: "Agency / Portfolio",
+    category: "Agency",
     description: "Marketing site with a case-study driven layout.",
     coverImage:
       "https://images.unsplash.com/photo-1581079289196-67865ea83118?w=1200&q=80&auto=format&fit=crop",
@@ -50,7 +50,7 @@ export const clientProjects: ClientProject[] = [
   },
   {
     name: "Client Project 03",
-    category: "Corporate / Business",
+    category: "Business",
     description: "Multi-page business site with service and contact flows.",
     coverImage:
       "https://images.unsplash.com/photo-1758518731706-be5d5230e5a5?w=1200&q=80&auto=format&fit=crop",
@@ -80,7 +80,7 @@ export const clientProjects: ClientProject[] = [
   },
   {
     name: "Client Project 06",
-    category: "SaaS / Web App",
+    category: "SaaS",
     description: "Product dashboard with account and billing flows.",
     coverImage:
       "https://images.unsplash.com/photo-1686061593213-98dad7c599b9?w=1200&q=80&auto=format&fit=crop",
