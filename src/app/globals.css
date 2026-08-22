@@ -1,26 +1,585 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #11111b;
+  --surface: #181825;
+  --line: #45475a;
+  --text-primary: #cdd6f4;
+  --text-muted: #a6adc8;
+  /* Blue/maroon, not the teal/peach pairing Catppuccin's own marketing
+     showcases everywhere — same family, far less instantly recognizable
+     as "a Catppuccin site." Blue also happens to land close to GitHub's
+     own brand blue, which doesn't hurt. */
+  --accent: #89b4fa;
+  --accent-secondary: #eba0ac;
+  --status-live: #a6e3a1;
+  --danger: #f38ba8;
+  --accent-dim: color-mix(in srgb, var(--accent) 10%, transparent);
+  --gradient-signature: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+  /* The glow behind Hero's 3D mark (see Hero.tsx) — a plain color isn't
+     valid for `background-image`, so light's override is a solid-white
+     gradient (both stops white) rather than a literal color value. */
+  --mark-glow: var(--gradient-signature);
+  /* Decorative-only — not part of the semantic token table above, never
+     used for anything interactive/status/error. AGENTS.md's one carve-out
+     for the wider Catppuccin palette (background blobs, cover art) — see
+     Services.tsx's moodboard cards, the one place this gets used. */
+  --hue-mauve: #cba6f7;
+  --hue-sapphire: #74c7ec;
+  --hue-teal: #94e2d5;
+  /* Added (not multiplied) onto every accent-tinted decorative wash
+     (TileGlow, .tile-signature, hover glows, cursor-glow) that mixes a
+     % of accent color into --surface/transparent — see TileGlow.tsx and
+     the rules below for how it's applied via calc(). Mixing the same low
+     percentage into a near-black surface (dark) vs. a much brighter one
+     (light) produces very different perceived contrast: dark shows a
+     rich tint at 16%, light barely shifts at all at the same 16%.
+     Additive, deliberately not a multiplier: a multiplier scales the
+     *already-strong* values (e.g. StatShowcase's boosted 40% intensity)
+     just as hard as the faint ones, which blew 40% up to ~88% — an
+     almost-solid card that swallowed its own gradient-clipped text. A
+     flat addition fixes the faint 16% cases (→28%, now visible) without
+     exploding the ones that didn't need it (→52%, stronger but sane).
+     Dark's stays 0 — a no-op, unchanged from before this existed. */
+  --wash-boost: 0%;
+  /* Elevation shadow color — pure black reads as real elevation against
+     a near-black surface (barely visible, which is the point: dark UIs
+     lean on light/glow for depth, not shadow). The exact same pure black
+     against light's much brighter surface is what a shadow *should* look
+     like there too, so dark's value is a no-op. */
+  --shadow-color: #000000;
+  /* Precomputed (not color-mix'd inline) specifically for nav-glass/
+     nav-glass-backdrop below — their box-shadow already spends this
+     declaration's one color-mix() call on the inset highlight, and
+     Lightning CSS silently drops an entire declaration that has 2+
+     color-mix() calls in it, so the outer drop shadow has to be a plain
+     var() reference instead of a second color-mix(). */
+  --shadow-elevated: rgba(0, 0, 0, 0.35);
+}
+
+:root[data-theme="light"] {
+  --bg: #dce0e8;
+  --surface: #e6e9ef;
+  --line: #bcc0cc;
+  --text-primary: #4c4f69;
+  --text-muted: #6c6f85;
+  --accent: #1e66f5;
+  --accent-secondary: #e64553;
+  --status-live: #40a02b;
+  --danger: #d20f39;
+  --hue-mauve: #8839ef;
+  --hue-sapphire: #209fb5;
+  --hue-teal: #179299;
+  --mark-glow: radial-gradient(circle, #ffffff, #ffffff);
+  /* A soft desaturated blue-gray (leaning on --text-primary's own hue)
+     instead of pure black — a heavy black shadow on a light surface
+     reads as muddy/heavy-handed; a tinted shadow reads as considered
+     elevation, the same way real light-mode design systems (Linear,
+     Vercel) tint their shadows rather than using flat black. */
+  --shadow-color: #2b2d4a;
+  --shadow-elevated: rgba(43, 45, 74, 0.35);
+  /* Set back to 0 (matches dark's own value) — user wants the paler,
+     lower-contrast look this boost was originally added to fix. Not
+     removed outright: the calc() plumbing at every use site stays, so a
+     later ask to bring it back is a one-line change here, not a rewrite. */
+  --wash-boost: 0%;
+}
+
+/* The uppercase micro-labels sprinkled across every section (eyebrows,
+   field labels, tech chips, tab badges) use these three sizes as
+   arbitrary text-[Npx] values rather than Tailwind's xs/sm scale — named
+   here as tokens (instead of leaving them as bare literals) purely so
+   the Bengali override below has something to hook into per-size,
+   without touching any of the surrounding padding/gap/width utilities
+   that happen to sit in the same className string. */
+:root {
+  --text-3xs: 9px;
+  --text-2xs: 10px;
+  --text-1xs: 11px;
+  /* The two large display headlines (Hero's name, Contact's headline) —
+     already clamp()-based, so exposed as tokens for the same reason as
+     the micro sizes above: something size-only for Bengali to override. */
+  --text-display-hero: clamp(2.5rem, 7vw, 5.5rem);
+  --text-display-contact: clamp(2rem, 6vw, 4rem);
+}
+
+/* Neither JetBrains Mono nor Inter cover Bengali glyphs, and there's no
+   real monospace Bengali typeface to swap to specifically — the chosen
+   Bengali typeface (--font-bengali, loaded in layout.tsx — currently
+   Hind Siliguri, swappable there without touching this file) stands in
+   for both roles in Bengali mode. This can't be done by overriding the
+   --font-mono/--font-sans *variables* (tried first, didn't work):
+   Tailwind's `@theme inline` resolves each utility's font stack at
+   build time and bakes the resolved reference directly into the rule —
+   the compiled output is literally `.font-sans { font-family:
+   var(--font-inter); }`, which never reads --font-sans at runtime, so
+   overriding that variable later is a no-op. Overriding the compiled
+   .font-sans/.font-mono classes' own font-family here instead — plain
+   CSS, unlayered, so it still beats the `@layer utilities` rule
+   regardless of selector order — reaches every font-mono/font-sans
+   utility site-wide with no per-component changes needed, same as the
+   original variable-override attempt intended. */
+:root[data-lang="bn"] .font-mono,
+:root[data-lang="bn"] .font-sans {
+  font-family: var(--font-bengali);
+}
+
+/* The --text-* overrides below correct a real but separate problem: the
+   Bengali typeface's glyphs sit visibly smaller than the Latin faces'
+   at the same nominal font-size (a shorter cap-height-equivalent, common
+   across Bengali/Devanagari typefaces vs. Latin ones). The first attempt
+   at fixing this bumped the *root* font-size, which also scaled every
+   rem-based spacing/width/height utility site-wide (Tailwind's spacing
+   scale is rem-based too) and visibly widened the whole layout — wrong
+   fix. This instead overrides only Tailwind's own --text-* scale tokens
+   (each utility's compiled CSS reads font-size from these via var(), so
+   overriding the token here reaches every text-xs/sm/base/xl/2xl/3xl/
+   4xl/6xl/7xl usage at once) plus the micro/display tokens above —
+   typography only, spacing and sizing utilities are untouched. */
+:root[data-lang="bn"] {
+  --text-3xs: 10px;
+  --text-2xs: 11.2px;
+  --text-1xs: 12.3px;
+  --text-display-hero: clamp(2.7rem, 7.5vw, 5.9rem);
+  --text-display-contact: clamp(2.2rem, 6.5vw, 4.3rem);
+
+  --text-xs: 0.84rem;
+  --text-sm: 0.98rem;
+  --text-base: 1.12rem;
+  --text-xl: 1.4rem;
+  --text-2xl: 1.68rem;
+  --text-3xl: 2.1rem;
+  --text-4xl: 2.5rem;
+  --text-6xl: 4.2rem;
+  --text-7xl: 5rem;
+}
+
+/* .gradient-heading (Hero's name, Contact's headline — the only two
+   `bg-clip-text` gradient headings on the site) breaks specifically in
+   Bengali: `background-clip: text` corrupts the rendering of Bengali's
+   reordered pre-base vowel signs (ি ইত্যাদি — the glyph visually sits
+   *before* the consonant it modifies even though it's typed after it),
+   confirmed by isolating the two variables in a standalone test — a
+   *flat single-color* "gradient" clipped to text still broke the same
+   glyph, while plain `color:` text with the identical font/size/weight
+   did not. So this isn't a sizing or overflow bug (tighter/looser
+   line-height didn't change it either) — it's this specific clip
+   mechanism corrupting complex-script glyph compositing, apparently
+   independent of the gradient itself. No CSS fix keeps the gradient
+   working here, so Bengali mode falls back to solid --accent instead:
+   loses the signature two-color gradient on these two headings only,
+   keeps the glyphs intact everywhere else the gradient is still used
+   (CTA buttons, stat numbers — plain Latin/numeral glyphs, unaffected). */
+:root[data-lang="bn"] .gradient-heading {
+  background-image: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  color: var(--accent);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-line: var(--line);
+  --color-text-primary: var(--text-primary);
+  --color-text-muted: var(--text-muted);
+  --color-accent: var(--accent);
+  --color-accent-dim: var(--accent-dim);
+  --color-accent-secondary: var(--accent-secondary);
+  --color-status-live: var(--status-live);
+  --color-danger: var(--danger);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+/* The native scrollbar is replaced by ScrollProgress.tsx's comet-trail
+   rail, not supplemented by it — scrolling itself (wheel/touch/keyboard,
+   and Lenis's own scrollTo calls) is completely unaffected by hiding the
+   OS-drawn indicator, only its visibility changes. */
+html {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
+}
+
+::selection {
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Crisp, mostly-opaque surface with a thin high-contrast border and a
+   subtle inset top highlight — closer to Vercel/Linear's "engineered"
+   card language than a soft blurred glass sheet. Named glass-panel for
+   historical reasons (still has a little blur/translucency) but the
+   emphasis moved from "glass" to "precise." */
+.glass-panel {
+  position: relative;
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
+  border-radius: 0.75rem;
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--text-primary) 8%, transparent);
+  /* Deliberately not transitioning box-shadow's blur radius — animating
+     blur-radius shadows forces a repaint every frame on top of
+     backdrop-filter, which is what made hover feel janky. Border/
+     background are cheap; the glow appears via the (cheap, GPU-composited)
+     opacity fade below. */
+  transition:
+    border-color 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.18s ease;
+}
+
+.glass-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 28px color-mix(in srgb, var(--accent) calc(16% + var(--wash-boost)), transparent);
+  opacity: 0;
+  transition: opacity 0.18s ease;
+  pointer-events: none;
+}
+
+.glass-panel:hover,
+.glass-panel:focus-within {
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+.glass-panel:hover::after,
+.glass-panel:focus-within::after {
+  opacity: 1;
+}
+
+/* Stronger than glass-panel, and deliberately no border-radius of its
+   own (unlike glass-panel — see the bug note below) — the navbar is the
+   one element permanently floating over constantly changing content
+   (hero canvas, every section's background) as the page scrolls under
+   it, so it earns extra opacity/blur plus a real drop shadow for
+   elevation, neither of which glass-panel carries (a shadow on every
+   card in a grid would double up badly). */
+.nav-glass {
+  position: relative;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--text-primary) 10%, transparent),
+    0 12px 32px -12px var(--shadow-elevated);
+}
+
+/* Same look as nav-glass, but a standalone absolutely-positioned layer
+   behind the header pill's content instead of on the content element
+   itself — so its opacity can be scroll-animated (transparent over Hero,
+   fading in as you scroll) without fading the brand mark/links/icons
+   sitting on top of it, which need to stay fully legible at all times.
+   Its own `position: absolute` here (not a Tailwind utility) matters:
+   nav-glass's plain-CSS `position: relative` is unlayered and beats a
+   layered Tailwind utility regardless of source order (see glass-panel's
+   backdrop-filter note below for the same cascade-layer behavior), so a
+   Tailwind `absolute` class on an element also carrying nav-glass would
+   silently lose. This class owns its own position instead of relying on one.
+   Same trap almost hit the radius: an earlier `border-radius: inherit` here
+   (also unlayered) beat the element's own Tailwind `rounded-full` utility
+   the same way, leaving square corners regardless of the parent's radius —
+   removed, so `rounded-full` is this class's only radius source, same as
+   nav-glass deliberately carries none of its own. */
+.nav-glass-backdrop {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--surface) 65%, transparent);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--text-primary) 10%, transparent),
+    0 12px 32px -12px var(--shadow-elevated);
+  pointer-events: none;
+  /* This sits on a `position: sticky` header, and Lenis (smooth scroll)
+     calls scrollTo() every animation frame rather than the browser's own
+     optimized native-scroll compositing path — without its own stable
+     GPU layer, that forces the blur to recompute against the shifting
+     page underneath on every frame, which shows up as a subtle shimmer
+     right around the navbar specifically. translateZ(0) promotes it to
+     its own layer so the backdrop composites once instead of repainting. */
+  transform: translateZ(0);
+}
+
+/* Reusable "lit from within on hover" accent glow — layer this onto a
+   card you've already styled yourself (border, radius, background) for
+   a soft accent-tinted glow on hover/focus, the same feel glass-panel's
+   own hover state has. Used to need a two-element layered-border trick
+   here too (a plain `border` can't follow a clip-path chamfer cut
+   corner — see git history if that ever comes back), but every card
+   using this is a plain rounded rectangle now, so a normal CSS `border`
+   utility works directly and this class only owns the glow. */
+.hover-glow-panel {
+  position: relative;
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--text-primary) 8%, transparent);
+}
+
+.hover-glow-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 28px color-mix(in srgb, var(--accent) calc(16% + var(--wash-boost)), transparent);
+  opacity: 0;
+  transition: opacity 0.18s ease;
+  pointer-events: none;
+}
+
+.group:hover .hover-glow-panel::after,
+.group:focus-within .hover-glow-panel::after {
+  opacity: 1;
+}
+
+/* Diagonal accent wash for the same tiles — replaces the flat glass-panel
+   fill so they don't read as an empty cell next to full-bleed photos.
+   calc() + --wash-boost: see TileGlow.tsx's comment — the same 16%
+   mix reads as a rich tint on dark's near-black --surface but washes out
+   almost flat on light's much brighter one at the identical percentage. */
+.tile-signature {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent) calc(16% + var(--wash-boost)), var(--surface)) 0%,
+    color-mix(in srgb, var(--accent-secondary) calc(16% + var(--wash-boost)), var(--surface)) 100%
+  );
+}
+
+/* ClientWork's StatShowcase card specifically, light mode only — user
+   wants a plain neutral card there (closer to white/light gray, no
+   pink/purple tint) instead of TileGlow's wash, even boosted. Dark mode
+   keeps the glow exactly as before; this only hides it in light. */
+:root[data-theme="light"] .stat-tile-glow {
+  display: none;
+}
+
+.text-glow {
+  text-shadow: 0 0 56px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+/* Navbar scrollspy indicator, take three: a bordered/filled pill read as
+   "a box slid in" (take one); pure text-shadow with nothing behind it
+   read as too faint to call "lit up" (take two). This is a light source
+   behind the glass, not a shape drawn on it — a soft radial bloom with
+   no edge (fades to nothing well before its own box, so there's no
+   boundary to read as a pill), sized well past the label so it spills
+   outward, paired with a stronger two-layer glow on the letters
+   themselves (tight bright core + wider soft halo). */
+.nav-active-text-glow {
+  text-shadow:
+    0 0 10px color-mix(in srgb, var(--accent) 85%, transparent),
+    0 0 22px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+/* Single color-mix() call, deliberately — Lightning CSS's @supports
+   fallback generation silently drops the whole rule when a property
+   value has 2+ color-mix() calls (confirmed empirically; same class of
+   bug as the backdrop-filter ordering issue above). Ellipse, not
+   circle — a perfect circle behind a wide/short label reads as its own
+   round shape sitting under the text, not light bleeding from it; an
+   ellipse stretches to the box's own (wide) aspect ratio instead. Fades
+   out by the halfway point of an already-oversized box (set in
+   Navbar.tsx via -inset-6/-inset-5), then blurred hard on top of that —
+   the fade has to be most of the work; blur alone on a gradient that
+   still reaches full transparent right at its own edge still shows a
+   soft-but-findable boundary.
+*/
+.nav-active-torch {
+  background: radial-gradient(color-mix(in srgb, var(--accent) 45%, transparent) 0%, transparent 55%);
+  filter: blur(14px);
+}
+
+.cursor-glow {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+  background: radial-gradient(
+    600px circle at var(--x, 50%) var(--y, 50%),
+    color-mix(in srgb, var(--accent) calc(7% + var(--wash-boost)), transparent),
+    transparent 70%
+  );
+}
+
+@keyframes aurora-drift {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(4%, -5%) scale(1.1);
+  }
+}
+
+.aurora-blob {
+  animation: aurora-drift 20s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora-blob {
+    animation: none;
+  }
+}
+
+@keyframes cta-glow-pulse {
+  0%,
+  100% {
+    opacity: 0.16;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* A soft pulsing glow behind Hero's primary CTA — the button is already
+   the --gradient-signature fill, so this reads as that fill breathing
+   light outward rather than a separate colored halo. Its own dedicated
+   keyframe (lower opacity range, tight inset/blur) — an earlier version
+   shared a louder ambient keyframe and overwhelmed the button. */
+.cta-glow {
+  position: absolute;
+  inset: -3px;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--gradient-signature);
+  filter: blur(10px);
+  opacity: 0.16;
+  animation: cta-glow-pulse 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta-glow {
+    animation: none;
+  }
+}
+
+/* A small bright segment traveling down the Experience timeline's static
+   gradient line — top/opacity only (no height/width change), so it's cheap.
+   Percentage-based top works regardless of how tall the line ends up being
+   (it grows with however many entries are on it). */
+@keyframes trail-light-travel {
+  0% {
+    top: -8%;
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    top: 108%;
+    opacity: 0;
+  }
+}
+
+.trail-light {
+  animation: trail-light-travel 3.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trail-light {
+    animation: none;
+    display: none;
+  }
+}
+
+/* Horizontal counterpart of trail-light-travel above, for the project
+   FlowSteps diagram — same mechanism (percentage-based, so it works at
+   any track width; ease-in-out; fade in/out over the first/last 15%),
+   just left/opacity instead of top/opacity. The element this animates
+   sits inside a container sized to exactly [first dot, last dot] with
+   overflow-hidden, so -8%/108% overshoot gets clipped the same way it
+   does in the vertical version — the light never renders past either
+   end dot. */
+@keyframes flow-light-travel {
+  0% {
+    left: -8%;
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    left: 108%;
+    opacity: 0;
+  }
+}
+
+.flow-light {
+  animation: flow-light-travel 3.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flow-light {
+    animation: none;
+    display: none;
+  }
+}
+
+/* Blinking prompt cursor for the Stack section's terminal panel — same
+   "continuous CSS animation, guarded for reduced motion" pattern as
+   trail-light/flow-light above. steps(1, end) instead of an eased
+   opacity ramp: a caret should snap on/off, not fade. */
+@keyframes terminal-caret-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.terminal-caret {
+  display: inline-block;
+  width: 0.55em;
+  height: 1em;
+  vertical-align: text-bottom;
+  background: var(--accent-secondary);
+  animation: terminal-caret-blink 1s steps(1, end) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .terminal-caret {
+    animation: none;
+  }
+}
+
+/* Static film-grain texture — cheap perceived depth/premium feel. Not
+   animated: an animated grain would repaint every frame for very little
+   extra effect, this is the same visual win at zero ongoing cost. */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
 }
