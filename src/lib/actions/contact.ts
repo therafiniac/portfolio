@@ -1,6 +1,8 @@
 "use server";
 
+import { headers } from "next/headers";
 import { contactSchema } from "@/lib/validation/contact";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export type ContactFormState = {
   status: "idle" | "success" | "error";
@@ -13,6 +15,17 @@ const GENERIC_ERROR: ContactFormState = {
   message: `Something went wrong sending your message. Please email me directly instead.`,
 };
 
+// Vercel's edge network sets this on every request before it reaches the
+// app; in local dev (no proxy in front) it's absent, so every request
+// shares one "unknown" bucket — harmless, and it's actually how the rate
+// limit gets exercised in local testing.
+async function getClientIp(): Promise<string> {
+  const headersList = await headers();
+  const forwardedFor = headersList.get("x-forwarded-for");
+  if (forwardedFor) return forwardedFor.split(",")[0].trim();
+  return headersList.get("x-real-ip") ?? "unknown";
+}
+
 export async function submitContactForm(
   _prevState: ContactFormState,
   formData: FormData,
@@ -22,6 +35,16 @@ export async function submitContactForm(
   // for a different tell.
   if (formData.get("company")) {
     return { status: "success" };
+  }
+
+  const ip = await getClientIp();
+  const rateLimit = checkRateLimit(ip);
+  if (!rateLimit.allowed) {
+    const minutes = Math.ceil((rateLimit.retryAfterSeconds ?? 60) / 60);
+    return {
+      status: "error",
+      message: `Too many messages sent. Please try again in about ${minutes} minute${minutes === 1 ? "" : "s"}.`,
+    };
   }
 
   const parsed = contactSchema.safeParse({
