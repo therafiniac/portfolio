@@ -56,7 +56,7 @@ export const strings = {
       bn: "মানে সেটা প্রজেক্ট ও অভিজ্ঞতার বাস্তব কাজে বারবার এসেছে — এটা নিজে-রেট-করা তালিকা নয়।",
     } satisfies Localized,
     boldWord: { en: "Bold", bn: "বোল্ড" } satisfies Localized,
-    terminalTitle: { en: "rafi@portfolio — zsh", bn: "rafi@portfolio — zsh" } satisfies Localized,
+    terminalTitle: { en: "rafi@portfolio — zsh", bn: "রাফি@পোর্টফোলিও — zsh" } satisfies Localized,
     prompt: { en: "rafi --stack", bn: "rafi --stack" } satisfies Localized,
   },
   experience: {
@@ -110,6 +110,19 @@ export const strings = {
   footer: {
     backToTop: { en: "Back to top", bn: "উপরে ফিরে যান" } satisfies Localized,
   },
+  // Phonetic transliteration, not translation — the browser-chrome tech
+  // label on each Client Work card (BrowserChrome in ClientWork.tsx)
+  // spells the same brand name in Bengali script by sound, the way
+  // Bengali tech writing normally handles a foreign product name,
+  // rather than keeping it in Latin or inventing a Bengali equivalent
+  // meaning. Only covers the values that actually appear as tech[0] in
+  // clientWork.ts today; unlisted names fall back to their own spelling
+  // (see t() usage in ClientWork.tsx) so a new project's data never
+  // silently renders blank.
+  techSounds: {
+    "Next.js": "নেক্সট.জেএস",
+    WordPress: "ওয়ার্ডপ্রেস",
+  } as Record<string, string>,
   nav: {
     openMenu: { en: "Open menu", bn: "মেনু খুলুন" } satisfies Localized,
     closeMenu: { en: "Close menu", bn: "মেনু বন্ধ করুন" } satisfies Localized,

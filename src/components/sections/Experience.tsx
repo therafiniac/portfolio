@@ -179,14 +179,14 @@ export function Experience() {
         </p>
         <div className="mt-5 space-y-5">
           {education.map((entry) => (
-            <div key={entry.institution} className="flex items-start gap-4">
+            <div key={entry.institution.en} className="flex items-start gap-4">
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-line/60 bg-surface text-accent">
                 <GraduationCap className="h-4 w-4" aria-hidden="true" />
               </span>
               <div>
                 <h3 className="text-text-primary">{t(entry.degree, language)}</h3>
                 <p className="mt-1 font-mono text-xs uppercase tracking-[0.1em] text-text-muted">
-                  {entry.institution} · {t(entry.location, language)}
+                  {t(entry.institution, language)} · {t(entry.location, language)}
                 </p>
               </div>
             </div>

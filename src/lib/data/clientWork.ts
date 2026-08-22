@@ -29,7 +29,7 @@ import type { ClientProject } from "@/types";
 // tile before shipping.
 export const clientProjects: ClientProject[] = [
   {
-    name: "Client Project 01",
+    name: { en: "Client Project 01", bn: "ক্লায়েন্ট প্রজেক্ট ০১" },
     category: { en: "E-Commerce", bn: "ই-কমার্স" },
     description: {
       en: "Online storefront with catalog browsing and checkout.",
@@ -42,7 +42,7 @@ export const clientProjects: ClientProject[] = [
     tech: ["Next.js", "Shopify", "Stripe"],
   },
   {
-    name: "Client Project 02",
+    name: { en: "Client Project 02", bn: "ক্লায়েন্ট প্রজেক্ট ০২" },
     category: { en: "Agency", bn: "এজেন্সি" },
     description: {
       en: "Marketing site with a case-study driven layout.",
@@ -55,7 +55,7 @@ export const clientProjects: ClientProject[] = [
     tech: ["Next.js", "Framer Motion", "Tailwind CSS"],
   },
   {
-    name: "Client Project 03",
+    name: { en: "Client Project 03", bn: "ক্লায়েন্ট প্রজেক্ট ০৩" },
     category: { en: "Business", bn: "ব্যবসা" },
     description: {
       en: "Multi-page business site with service and contact flows.",
@@ -68,7 +68,7 @@ export const clientProjects: ClientProject[] = [
     tech: ["WordPress", "ACF", "MySQL"],
   },
   {
-    name: "Client Project 04",
+    name: { en: "Client Project 04", bn: "ক্লায়েন্ট প্রজেক্ট ০৪" },
     category: { en: "Landing Page", bn: "ল্যান্ডিং পেজ" },
     description: {
       en: "Single-page conversion site for a product launch.",
@@ -81,7 +81,7 @@ export const clientProjects: ClientProject[] = [
     tech: ["Next.js", "Tailwind CSS", "Vercel"],
   },
   {
-    name: "Client Project 05",
+    name: { en: "Client Project 05", bn: "ক্লায়েন্ট প্রজেক্ট ০৫" },
     category: { en: "Restaurant & Hospitality", bn: "রেস্তোরাঁ ও আতিথেয়তা" },
     description: {
       en: "Menu, reservations, and location info for a local business.",
@@ -94,7 +94,7 @@ export const clientProjects: ClientProject[] = [
     tech: ["Next.js", "Sanity CMS", "Tailwind CSS"],
   },
   {
-    name: "Client Project 06",
+    name: { en: "Client Project 06", bn: "ক্লায়েন্ট প্রজেক্ট ০৬" },
     category: { en: "SaaS", bn: "SaaS" },
     description: {
       en: "Product dashboard with account and billing flows.",
@@ -107,7 +107,7 @@ export const clientProjects: ClientProject[] = [
     tech: ["Next.js", "TypeScript", "PostgreSQL"],
   },
   {
-    name: "Client Project 07",
+    name: { en: "Client Project 07", bn: "ক্লায়েন্ট প্রজেক্ট ০৭" },
     category: { en: "Real Estate", bn: "রিয়েল এস্টেট" },
     description: {
       en: "Property listings with search, filters, and inquiry forms.",

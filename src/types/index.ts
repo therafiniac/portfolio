@@ -7,8 +7,11 @@ export type IconComponent = ComponentType<SVGProps<SVGSVGElement>>;
 // Any user-facing copy that needs a Bengali counterpart — inline on the
 // same field rather than a parallel bn/ data directory, so English and
 // Bengali for one entry can never drift out of sync with each other.
-// Proper nouns (people/company/tech names), URLs, and raw stat numbers
-// stay plain strings — only actual prose gets this. Consumed via
+// Real proper nouns that should never change spelling regardless of
+// language (companies, institutions kept in Latin, tech/tool/brand
+// names, URLs) and raw stat/notation numbers stay plain strings; the
+// site's own name/title-style content (person's name, project titles)
+// gets a transliterated bn value like anything else. Consumed via
 // `t(field)` (src/lib/i18n.ts), never `.en`/`.bn` accessed directly, so
 // the fallback-to-English behavior lives in exactly one place.
 export type Localized = { en: string; bn: string };
@@ -25,12 +28,12 @@ export type ExperienceEntry = {
 
 export type EducationEntry = {
   degree: Localized;
-  institution: string;
+  institution: Localized;
   location: Localized;
 };
 
 export type Project = {
-  name: string;
+  name: Localized;
   tagline: Localized;
   tech: string[];
   highlight: Localized;
@@ -48,7 +51,7 @@ export type Project = {
 };
 
 export type ClientProject = {
-  name: string;
+  name: Localized;
   category: Localized;
   description: Localized;
   coverImage: string;
@@ -58,7 +61,9 @@ export type ClientProject = {
 };
 
 export type SkillItem = {
-  name: string;
+  // Phonetic transliteration in bn, not translation — same tool/tech
+  // name spelled in Bengali script by sound (see skills.ts).
+  name: Localized;
   // Marks tools that repeat across the verified data in experience.ts and
   // projects.ts — a real, checkable signal, not a self-rated proficiency
   // score (AGENTS.md: every claim here has to be interview-defensible).
@@ -69,19 +74,22 @@ export type SkillGroup = {
   label: Localized;
   // Short flag-style identifier for the terminal-styled Stack section
   // (e.g. "frontend", not "Frontend"). Separate from `label` so the
-  // display label can stay more descriptive. Stays plain/English — it's
-  // presented as literal `--flag` CLI syntax, not prose.
-  flag: string;
+  // display label can stay more descriptive. Localized like everything
+  // else here — bn is a phonetic transliteration, still presented as
+  // literal `--flag` CLI syntax either way.
+  flag: Localized;
   icon: IconComponent;
   items: SkillItem[];
 };
 
 // Read-worthy info — an email you'd copy, a location that tells you
 // where someone's based. Rendered as icon + value, no href required
-// (location has nowhere to link to).
+// (location has nowhere to link to). value is a plain string for rows
+// that must never translate (the email address) and Localized for rows
+// that should (the city name) — see contact.ts.
 export type ContactInfo = {
   label: Localized;
-  value: string;
+  value: string | Localized;
   icon: IconComponent;
   href?: string;
 };

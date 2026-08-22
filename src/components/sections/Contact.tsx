@@ -3,9 +3,17 @@
 import { Section } from "@/components/layout/Section";
 import { ContactForm } from "@/components/sections/ContactForm";
 import { contactInfo, profileLinks } from "@/lib/data/contact";
-import { useLanguage } from "@/lib/useLanguage";
+import { useLanguage, type Language } from "@/lib/useLanguage";
 import { t } from "@/lib/i18n";
 import { strings } from "@/lib/i18n-strings";
+import type { Localized } from "@/types";
+
+// contactInfo's `value` is a plain string for rows that must never
+// translate (email) and Localized for rows that should (location) — see
+// contact.ts.
+function resolveValue(value: string | Localized, language: Language): string {
+  return typeof value === "string" ? value : t(value, language);
+}
 
 // No portrait here — Hero already carries the one photo of Rafi on the
 // page, so a second one in the closing section would just be repeating
@@ -20,7 +28,7 @@ export function Contact() {
     <Section id="contact" index="07" tint eyebrow={strings.contact.eyebrow} title={strings.contact.title}>
       <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-[1fr_440px] lg:gap-16">
         <div>
-          <p className="text-glow bg-gradient-to-br from-text-primary via-text-primary to-accent bg-clip-text text-[length:var(--text-display-contact)] font-mono font-medium leading-[1.05] tracking-tight text-transparent">
+          <p className="gradient-heading text-glow bg-gradient-to-br from-text-primary via-text-primary to-accent bg-clip-text text-[length:var(--text-display-contact)] font-mono font-medium leading-[1.05] tracking-tight text-transparent">
             {t(strings.contact.headline, language)}
           </p>
 
@@ -40,13 +48,13 @@ export function Contact() {
                     aria-hidden="true"
                   />
                   <span className="font-mono text-sm text-text-primary transition-colors group-hover:text-accent">
-                    {info.value}
+                    {resolveValue(info.value, language)}
                   </span>
                 </a>
               ) : (
                 <div key={info.label.en} className="flex items-center gap-2.5">
                   <info.icon className="h-4 w-4 text-text-muted" aria-hidden="true" />
-                  <span className="font-mono text-sm text-text-primary">{info.value}</span>
+                  <span className="font-mono text-sm text-text-primary">{resolveValue(info.value, language)}</span>
                 </div>
               ),
             )}

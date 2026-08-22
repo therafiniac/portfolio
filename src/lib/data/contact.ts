@@ -13,10 +13,9 @@ import type { ContactInfo, ProfileLink } from "@/types";
 // Read-worthy, not a link to click through — an address to copy, a city
 // that tells you where to expect timezone/response-time overlap.
 // "Kolkata, India" is the same verified location used on every entry in
-// experience.ts, not a new claim. `value` stays plain/English even in
-// Bengali mode (an email address is never translated, and keeping the
-// city name in the same script here avoids the two rows visually
-// disagreeing on convention).
+// experience.ts, not a new claim. Email's `value` stays a plain string —
+// never translated, in any mode — while location's is Localized like
+// the same city name already is in experience.ts/education.ts.
 export const contactInfo: ContactInfo[] = [
   {
     label: { en: "Email", bn: "ইমেইল" },
@@ -26,7 +25,7 @@ export const contactInfo: ContactInfo[] = [
   },
   {
     label: { en: "Location", bn: "অবস্থান" },
-    value: "Kolkata, India",
+    value: { en: "Kolkata, India", bn: "কলকাতা, ভারত" },
     icon: MapPin,
   },
 ];

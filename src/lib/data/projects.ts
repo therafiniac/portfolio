@@ -5,11 +5,12 @@ import type { Project } from "@/types";
 // projects). Keep this list small: every entry earns its full deep-dive
 // treatment (real architecture detail, defensible in an interview) rather
 // than padding the count — add another only when there's a build that's
-// genuinely as deep as these two. name/tech/stat.value stay plain
-// (proper nouns and notation, not prose); everything else is Localized.
+// genuinely as deep as these two. tech/stat.value stay plain (proper
+// nouns and notation, not prose); everything else, including name, is
+// Localized.
 export const projects: Project[] = [
   {
-    name: "Reddit Clone",
+    name: { en: "Reddit Clone", bn: "রেডিট ক্লোন" },
     tagline: {
       en: "Full-stack Reddit clone with real-time voting and infinite-depth threads.",
       bn: "রিয়েল-টাইম ভোটিং এবং অসীম-গভীরতার থ্রেড সহ ফুল-স্ট্যাক রেডিট ক্লোন।",
@@ -34,7 +35,7 @@ export const projects: Project[] = [
     githubUrl: "#",
   },
   {
-    name: "Blog Manager & CMS Dashboard",
+    name: { en: "Blog Manager & CMS Dashboard", bn: "ব্লগ ম্যানেজার ও সিএমএস ড্যাশবোর্ড" },
     tagline: {
       en: "Multi-role CMS platform built as a pluggable SaaS product.",
       bn: "একটি প্লাগেবল SaaS প্রোডাক্ট হিসেবে তৈরি মাল্টি-রোল CMS প্ল্যাটফর্ম।",

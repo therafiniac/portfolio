@@ -5,7 +5,7 @@ import { HeroCanvasLoader } from "@/components/three/HeroCanvasLoader";
 import { HeroMark3DLoader } from "@/components/three/HeroMark3DLoader";
 import { CountUp } from "@/components/layout/CountUp";
 import { Magnetic } from "@/components/layout/Magnetic";
-import { heroRoles, heroStatusLine, heroStats } from "@/lib/data/hero";
+import { heroRoles, heroStatusLine, heroStats, heroNameLine1, heroNameLine2 } from "@/lib/data/hero";
 import { useLanguage } from "@/lib/useLanguage";
 import { t } from "@/lib/i18n";
 import { strings } from "@/lib/i18n-strings";
@@ -78,11 +78,11 @@ export function Hero() {
 
           <motion.h1
             variants={item}
-            className="text-glow mt-4 bg-gradient-to-br from-text-primary via-text-primary to-accent bg-clip-text font-mono text-[length:var(--text-display-hero)] font-medium leading-[0.95] tracking-tight text-transparent"
+            className="gradient-heading text-glow mt-4 bg-gradient-to-br from-text-primary via-text-primary to-accent bg-clip-text font-mono text-[length:var(--text-display-hero)] font-medium leading-[0.95] tracking-tight text-transparent"
           >
-            Rafi Ahmed
+            {t(heroNameLine1, language)}
             <br />
-            Laskar
+            {t(heroNameLine2, language)}
           </motion.h1>
 
           <motion.p

@@ -1,9 +1,9 @@
 "use client";
 
 import { BrandMark } from "@/components/layout/BrandMark";
-import { heroStatusLine } from "@/lib/data/hero";
+import { heroStatusLine, fullName } from "@/lib/data/hero";
 import { useLanguage } from "@/lib/useLanguage";
-import { t } from "@/lib/i18n";
+import { t, localizeNumber } from "@/lib/i18n";
 import { strings } from "@/lib/i18n-strings";
 
 // Deliberately thin — a sign-off, not a second navigation layer (the
@@ -25,7 +25,7 @@ export function Footer() {
             <BrandMark size={28} className="text-xs transition-colors group-hover:bg-accent/15" />
           </a>
           <span className="font-mono text-xs text-text-muted">
-            © {year} Rafi Ahmed Laskar
+            © {localizeNumber(year, language)} {t(fullName, language)}
           </span>
         </div>
 

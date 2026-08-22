@@ -29,13 +29,16 @@ const SHOT_ASPECT = "aspect-[16/10]";
 // red/yellow/green, since AGENTS.md reserves --danger/--status-live for
 // their actual semantic roles, and there's no yellow token in the palette.
 function BrowserChrome({ label }: { label: string }) {
+  const language = useLanguage();
+  const displayLabel = language === "bn" ? (strings.techSounds[label] ?? label) : label;
+
   return (
     <div className="flex items-center gap-1.5 border-b border-line/40 bg-surface/90 px-3 py-2">
       <span className="h-1.5 w-1.5 rounded-full bg-line transition-colors duration-300 group-hover:bg-accent" />
       <span className="h-1.5 w-1.5 rounded-full bg-line transition-colors delay-75 duration-300 group-hover:bg-[color-mix(in_srgb,var(--accent),var(--accent-secondary))]" />
       <span className="h-1.5 w-1.5 rounded-full bg-line transition-colors delay-150 duration-300 group-hover:bg-accent-secondary" />
       <span className="ml-2 truncate rounded-full bg-bg/60 px-2 py-0.5 font-mono text-[length:var(--text-3xs)] uppercase tracking-[0.1em] text-text-muted">
-        {label}
+        {displayLabel}
       </span>
     </div>
   );
@@ -79,7 +82,7 @@ function WorkCard({ project }: { project: ClientProject }) {
         </div>
         <Image
           src={project.coverImage}
-          alt={`${project.name} ${t(strings.clientWork.preview, language)}`}
+          alt={`${t(project.name, language)} ${t(strings.clientWork.preview, language)}`}
           fill
           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
           className="object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
@@ -88,7 +91,7 @@ function WorkCard({ project }: { project: ClientProject }) {
       <div className="flex h-36 flex-col p-6">
         <FieldLabel>{t(project.category, language)}</FieldLabel>
         <h3 className="mt-1 flex items-center gap-1 text-base text-text-primary">
-          {project.name}
+          {t(project.name, language)}
           <ArrowUpRight
             className="h-3.5 w-3.5 -translate-x-1 opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100"
             aria-hidden="true"
@@ -183,7 +186,7 @@ export function ClientWork() {
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item, index) =>
           item.kind === "project" ? (
-            <WorkCard key={item.project.name} project={item.project} />
+            <WorkCard key={item.project.name.en} project={item.project} />
           ) : item.kind === "stat" ? (
             <StatShowcase key={`stat-${index}`} value={item.value} suffix={item.suffix} label={item.label} />
           ) : (

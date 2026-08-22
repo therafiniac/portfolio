@@ -17,6 +17,8 @@ const TITLE = strings.skills.title;
 // stagger in once on scroll, not a loop, so this arrives like real
 // command output rather than an ambient marquee.
 function StackRow({ group, delay }: { group: SkillGroup; delay: number }) {
+  const language = useLanguage();
+
   return (
     <motion.div
       className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-4"
@@ -27,13 +29,13 @@ function StackRow({ group, delay }: { group: SkillGroup; delay: number }) {
     >
       <span className="flex shrink-0 items-center gap-2 font-mono text-sm text-accent-secondary sm:w-40">
         <group.icon className="h-4 w-4" aria-hidden="true" />
-        --{group.flag}
+        --{t(group.flag, language)}
       </span>
       <span className="font-mono text-sm leading-relaxed sm:text-base">
         {group.items.map((item, i) => (
-          <span key={item.name}>
+          <span key={item.name.en}>
             <span className={item.core ? "font-semibold text-text-primary" : "text-text-muted"}>
-              {item.name}
+              {t(item.name, language)}
             </span>
             {i < group.items.length - 1 && <span className="text-text-muted">, </span>}
           </span>

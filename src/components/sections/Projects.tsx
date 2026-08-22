@@ -53,7 +53,7 @@ export function Projects() {
       <div className="flex flex-wrap gap-1 border-b border-line/40">
         {projects.map((p, i) => (
           <button
-            key={p.name}
+            key={p.name.en}
             type="button"
             onClick={() => setActive(i)}
             className={`relative flex shrink-0 items-center gap-2 whitespace-nowrap px-5 py-3 font-mono text-sm transition-colors ${
@@ -66,7 +66,7 @@ export function Projects() {
                 aria-hidden="true"
               />
             )}
-            {p.name}
+            {t(p.name, language)}
             {active === i && (
               <motion.span
                 layoutId="project-tab-underline"
@@ -81,7 +81,7 @@ export function Projects() {
 
       <AnimatePresence mode="wait">
         <motion.div
-          key={project.name}
+          key={project.name.en}
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
@@ -89,7 +89,7 @@ export function Projects() {
           className="pt-8"
         >
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-            <h3 className="font-mono text-2xl text-text-primary md:text-3xl">{project.name}</h3>
+            <h3 className="font-mono text-2xl text-text-primary md:text-3xl">{t(project.name, language)}</h3>
             {project.private && (
               <span className="rounded-full border border-line/60 px-3 py-1 font-mono text-[length:var(--text-2xs)] uppercase tracking-[0.15em] text-text-muted">
                 {t(strings.projects.privateRepo, language)}

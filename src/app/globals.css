@@ -153,6 +153,29 @@
   --text-7xl: 5rem;
 }
 
+/* .gradient-heading (Hero's name, Contact's headline — the only two
+   `bg-clip-text` gradient headings on the site) breaks specifically in
+   Bengali: `background-clip: text` corrupts the rendering of Bengali's
+   reordered pre-base vowel signs (ি ইত্যাদি — the glyph visually sits
+   *before* the consonant it modifies even though it's typed after it),
+   confirmed by isolating the two variables in a standalone test — a
+   *flat single-color* "gradient" clipped to text still broke the same
+   glyph, while plain `color:` text with the identical font/size/weight
+   did not. So this isn't a sizing or overflow bug (tighter/looser
+   line-height didn't change it either) — it's this specific clip
+   mechanism corrupting complex-script glyph compositing, apparently
+   independent of the gradient itself. No CSS fix keeps the gradient
+   working here, so Bengali mode falls back to solid --accent instead:
+   loses the signature two-color gradient on these two headings only,
+   keeps the glyphs intact everywhere else the gradient is still used
+   (CTA buttons, stat numbers — plain Latin/numeral glyphs, unaffected). */
+:root[data-lang="bn"] .gradient-heading {
+  background-image: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  color: var(--accent);
+}
+
 @theme inline {
   --color-bg: var(--bg);
   --color-surface: var(--surface);

@@ -7,6 +7,7 @@ import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { LanguageToggle } from "@/components/layout/LanguageToggle";
 import { BrandMark } from "@/components/layout/BrandMark";
 import { navLinks } from "@/lib/data/nav";
+import { wordmark } from "@/lib/data/hero";
 import { useLanguage } from "@/lib/useLanguage";
 import { t } from "@/lib/i18n";
 import { strings } from "@/lib/i18n-strings";
@@ -92,7 +93,7 @@ export function Navbar() {
             className="group flex items-center gap-2.5 font-mono text-sm text-text-primary transition-colors hover:text-accent"
           >
             <BrandMark size={30} className="text-xs group-hover:bg-accent/15" />
-            RAFI
+            {t(wordmark, language)}
           </a>
 
           <nav className="hidden gap-1 font-mono text-xs uppercase tracking-[0.15em] sm:flex">
