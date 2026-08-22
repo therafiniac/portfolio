@@ -528,6 +528,16 @@ updated across audits. Don't delete resolved rows — mark them Fixed.
 | Date | Section | Finding | Severity | Status |
 |---|---|---|---|---|
 | _(example)_ 2026-01-01 | §3 Access Control | `deleteUser` endpoint had no ownership check | High | Fixed 2026-01-05 (PR #42) |
+| 2026-08-22 | §9 Dependencies | `next@16.2.1` had 22 known advisories (several High: CSP-nonce XSS, middleware/proxy bypass, SSRF in Server Actions, DoS) — directly relevant, this app uses middleware + Server Actions + (as of this audit) CSP nonces | High | Fixed — upgraded to `next@16.3.2`; `npm audit` now reports 0 vulnerabilities |
+| 2026-08-22 | §6 Security Headers | No CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, HSTS, or Permissions-Policy set at all | High | Fixed — nonce-based CSP in `src/middleware.ts` (script-src locked to per-request nonce + `strict-dynamic`; style-src keeps `unsafe-inline` since the site uses React `style={{}}` extensively for CSS-var-driven gradients — narrower risk than inline script); remaining static headers in `next.config.ts` |
+| 2026-08-22 | §10 Configuration | `X-Powered-By: Next.js` leaked framework/version fingerprint | Low | Fixed — `poweredByHeader: false` in `next.config.ts` |
+| 2026-08-22 | §4 Input Validation | Contact form's `name` field (interpolated into the outgoing email's subject line, see `src/lib/actions/contact.ts`) had no control-character check — `.trim()` alone doesn't stop embedded CR/LF | Medium | Fixed — regex guard added to `contactSchema.name` in `src/lib/validation/contact.ts` |
+| 2026-08-22 | §5 Secrets | `.env*` gitignored, no secret committed in history, `RESEND_API_KEY` sourced from env with no hardcoded fallback, `.env.example` present with no real value | — | Pass |
+| 2026-08-22 | §8 Error Handling | Contact form: generic error to client, real error (incl. Resend API response) logged server-side only; no stack traces/internal details ever reach the client | — | Pass |
+| 2026-08-22 | §12 Client-Side | `localStorage` used only for theme/language preference, no tokens/PII; zero `dangerouslySetInnerHTML` usages take user input (only 4 sites, all static developer-authored constants) — no active XSS sink found | — | Pass |
+| 2026-08-22 | §6 CSRF | Server Actions get Next.js's built-in Origin-vs-Host same-origin check automatically (framework default, no custom API routes exist) | — | Pass |
+| 2026-08-22 | §6 Rate Limiting | Contact form has no rate limiting beyond the existing honeypot field | Medium | Fixed 2026-08-22 — in-memory sliding-window limiter (`src/lib/rate-limit.ts`, 3 requests / 10 min per IP), wired into `submitContactForm`. Deliberately not a persistent store (Redis/KV stays out of scope per AGENTS.md) — resets on cold start, not shared across instances; verified working end-to-end (4th rapid submission correctly blocked). |
+| 2026-08-22 | §1/§2/§3/§7/§11/§13/§14 | Authentication, Session Management, most of Access Control, File Upload, most of Data Protection, Business Logic, CI/CD | — | N/A — no auth, no user accounts, no database, no file uploads, no CI/CD pipeline in this repo; static contact-form site with no persisted user data |
 
 ---
 
