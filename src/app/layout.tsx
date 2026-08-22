@@ -31,10 +31,62 @@ const hindSiliguri = Hind_Siliguri({
   weight: ["400", "500", "600", "700"],
 });
 
+const SITE_URL = "https://rafiera.com";
+const SITE_TITLE = "Rafi Ahmed Laskar — Full Stack Developer";
+const SITE_DESCRIPTION =
+  "Full Stack Developer (4+ yrs) — Next.js, TypeScript, systems that scale. Selected work, experience, and stack.";
+
 export const metadata: Metadata = {
-  title: "Rafi Ahmed Laskar — Full Stack Developer",
-  description:
-    "Full Stack Developer (4+ yrs) — Next.js, TypeScript, systems that scale. Selected work, experience, and stack.",
+  // Required for every relative URL below (og:image, canonical, etc.) to
+  // resolve to a real absolute URL instead of localhost in production.
+  metadataBase: new URL(SITE_URL),
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
+  keywords: ["Rafi Ahmed Laskar", "Full Stack Developer", "Next.js Developer", "TypeScript", "Web Designer", "Kolkata"],
+  authors: [{ name: "Rafi Ahmed Laskar", url: SITE_URL }],
+  alternates: {
+    canonical: SITE_URL,
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  openGraph: {
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+    siteName: SITE_TITLE,
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+  },
+};
+
+// Person + WebSite structured data (JSON-LD) — the schema.org types that
+// actually match a personal portfolio's content (§3 of the SEO audit
+// standard: type must match content, not a generic/mismatched one).
+// Values mirror what's literally visible on the page (name, role, the
+// same verified profile links Contact.tsx renders) rather than claiming
+// anything not shown to users.
+const PERSON_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Rafi Ahmed Laskar",
+  url: SITE_URL,
+  jobTitle: "Full Stack Developer",
+  email: "mailto:therafiniac@gmail.com",
+  sameAs: ["https://github.com/therafiniac", "https://linkedin.com/in/therafiniac"],
+};
+
+const WEBSITE_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: SITE_TITLE,
+  url: SITE_URL,
 };
 
 // Runs before paint so the stored/system theme applies with no flash of the
@@ -78,6 +130,14 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <script dangerouslySetInnerHTML={{ __html: LANG_INIT_SCRIPT }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(PERSON_JSON_LD) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBSITE_JSON_LD) }}
+        />
       </head>
       {/* suppressHydrationWarning here specifically guards against browser
           extensions (ColorZilla, Grammarly, etc.) injecting attributes like
