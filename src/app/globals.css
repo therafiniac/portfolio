@@ -104,9 +104,10 @@
 }
 
 /* Neither JetBrains Mono nor Inter cover Bengali glyphs, and there's no
-   real monospace Bengali typeface to swap to specifically — Noto Serif
-   Bengali (--font-bengali, loaded in layout.tsx) stands in for both
-   roles in Bengali mode. This can't be done by overriding the
+   real monospace Bengali typeface to swap to specifically — the chosen
+   Bengali typeface (--font-bengali, loaded in layout.tsx — currently
+   Hind Siliguri, swappable there without touching this file) stands in
+   for both roles in Bengali mode. This can't be done by overriding the
    --font-mono/--font-sans *variables* (tried first, didn't work):
    Tailwind's `@theme inline` resolves each utility's font stack at
    build time and bakes the resolved reference directly into the rule —
@@ -123,8 +124,8 @@
   font-family: var(--font-bengali);
 }
 
-/* The --text-* overrides below correct a real but separate problem:
-   Noto Serif Bengali's glyphs sit visibly smaller than the Latin faces'
+/* The --text-* overrides below correct a real but separate problem: the
+   Bengali typeface's glyphs sit visibly smaller than the Latin faces'
    at the same nominal font-size (a shorter cap-height-equivalent, common
    across Bengali/Devanagari typefaces vs. Latin ones). The first attempt
    at fixing this bumped the *root* font-size, which also scaled every
