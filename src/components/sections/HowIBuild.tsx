@@ -267,7 +267,7 @@ function StatTile({ value }: { value: number }) {
         >
           <CountUp value={value} />
         </span>
-        <span className="mt-1 block font-mono text-[10px] uppercase tracking-[0.15em] text-text-muted">
+        <span className="mt-1 block font-mono text-[length:var(--text-2xs)] uppercase tracking-[0.15em] text-text-muted">
           {t(strings.howIBuild.publicRepos, language)}
         </span>
       </div>

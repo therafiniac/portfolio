@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono, Hind_Siliguri } from "next/font/google";
+import { Inter, JetBrains_Mono, Noto_Serif_Bengali } from "next/font/google";
 import { MotionConfig } from "framer-motion";
 import { CursorGlow } from "@/components/layout/CursorGlow";
 import { Navbar } from "@/components/layout/Navbar";
@@ -18,12 +18,12 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 // JetBrains Mono/Inter have zero Bengali glyph coverage, and there's no
-// real monospace Bengali typeface to reach for — Hind Siliguri (a clean,
-// modern Bengali sans) stands in for BOTH --font-mono and --font-sans
-// when data-lang="bn" (see globals.css), so the mono-everywhere aesthetic
-// intentionally doesn't carry over to Bengali mode, it becomes one
-// considered Bengali typeface instead.
-const hindSiliguri = Hind_Siliguri({
+// real monospace Bengali typeface to reach for — Noto Serif Bengali
+// stands in for BOTH --font-mono and --font-sans when data-lang="bn"
+// (see globals.css), so the mono-everywhere aesthetic intentionally
+// doesn't carry over to Bengali mode, it becomes one considered Bengali
+// typeface instead.
+const notoSerifBengali = Noto_Serif_Bengali({
   variable: "--font-bengali",
   subsets: ["bengali"],
   weight: ["400", "500", "600", "700"],
@@ -71,7 +71,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${inter.variable} ${jetbrainsMono.variable} ${hindSiliguri.variable} h-full antialiased`}
+      className={`${inter.variable} ${jetbrainsMono.variable} ${notoSerifBengali.variable} h-full antialiased`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />

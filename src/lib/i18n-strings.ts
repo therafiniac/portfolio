@@ -15,6 +15,7 @@ export const strings = {
       en: "A sample from 150+ client sites delivered across industries — the actual, shipped, paid-for work.",
       bn: "বিভিন্ন ইন্ডাস্ট্রি জুড়ে ডেলিভার করা 150+ ক্লায়েন্ট সাইট থেকে একটি নমুনা — প্রকৃত, শিপড, পেইড কাজ।",
     } satisfies Localized,
+    preview: { en: "preview", bn: "প্রিভিউ" } satisfies Localized,
   },
   workFiller: {
     heading: { en: "Open to new projects.", bn: "নতুন প্রজেক্টের জন্য উন্মুক্ত।" } satisfies Localized,

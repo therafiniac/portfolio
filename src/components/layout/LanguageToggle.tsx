@@ -21,7 +21,7 @@ export function LanguageToggle() {
       aria-label={
         language === "en" ? t(strings.nav.switchToBengali, "en") : t(strings.nav.switchToBengali, "bn")
       }
-      className="flex h-9 shrink-0 items-center justify-center rounded-full px-2.5 font-mono text-[11px] font-semibold uppercase tracking-[0.1em] text-text-muted transition-colors hover:text-accent"
+      className="flex h-9 shrink-0 items-center justify-center rounded-full px-2.5 font-mono text-[length:var(--text-1xs)] font-semibold uppercase tracking-[0.1em] text-text-muted transition-colors hover:text-accent"
     >
       {language === "en" ? "বাং" : "EN"}
     </button>

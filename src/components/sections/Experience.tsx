@@ -7,10 +7,33 @@ import { experience } from "@/lib/data/experience";
 import { education } from "@/lib/data/education";
 import type { Language } from "@/lib/useLanguage";
 import { useLanguage } from "@/lib/useLanguage";
-import { t } from "@/lib/i18n";
+import { t, localizeNumber } from "@/lib/i18n";
 import { strings } from "@/lib/i18n-strings";
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+// Gregorian month names transliterated into Bengali script (not the
+// Bengali/Bangla calendar's own month names — this timeline stays on the
+// Gregorian calendar in both languages, only the digits and the month
+// label's script change).
+const MONTHS_BN = [
+  "জানু", "ফেব্রু", "মার্চ", "এপ্রিল", "মে", "জুন",
+  "জুলাই", "আগস্ট", "সেপ্ট", "অক্টো", "নভে", "ডিসে",
+];
+
+// Same three shapes parseEntryDate understands ("MMM YYYY" / "YYYY" /
+// "Present") but for display: month name and digits switch script in
+// Bengali, "Present" resolves through strings.experience.present.
+function formatEntryDate(value: string, language: Language): string {
+  if (value === "Present") return t(strings.experience.present, language);
+  if (language !== "bn") return value;
+  const [month, year] = value.split(" ");
+  if (year) {
+    const idx = MONTHS.indexOf(month);
+    return `${idx >= 0 ? MONTHS_BN[idx] : month} ${localizeNumber(year, language)}`;
+  }
+  return localizeNumber(month, language);
+}
 
 // Dates in the data are "MMM YYYY", a bare "YYYY", or "Present" — this
 // parses all three into a real Date so a duration can be computed, rather
@@ -34,19 +57,28 @@ function formatDuration(start: string, end: string, language: Language): string 
   const years = Math.floor(months / 12);
   const remainder = months % 12;
   const parts: string[] = [];
-  if (years > 0) parts.push(`${years} ${t(years > 1 ? strings.experience.years : strings.experience.year, language)}`);
+  if (years > 0)
+    parts.push(
+      `${localizeNumber(years, language)} ${t(years > 1 ? strings.experience.years : strings.experience.year, language)}`,
+    );
   if (remainder > 0)
-    parts.push(`${remainder} ${t(remainder > 1 ? strings.experience.months : strings.experience.month, language)}`);
+    parts.push(
+      `${localizeNumber(remainder, language)} ${t(remainder > 1 ? strings.experience.months : strings.experience.month, language)}`,
+    );
   return parts.join(" ");
 }
 
 // Bolds figures (150+, 3, etc.) in a highlight bullet so scan-reading the
 // timeline surfaces the concrete claim instead of losing it inside a sentence.
-function renderHighlight(text: string) {
+// The source Bengali translations still write these figures with Arabic
+// digits (see experience.ts) — localizeNumber converts them here, at the
+// one place every highlight actually renders, rather than hand-writing
+// Bengali digits into every data string.
+function renderHighlight(text: string, language: Language) {
   return text.split(/(\d[\d,]*\+?%?)/g).map((part, i) =>
     /^\d/.test(part) ? (
       <strong key={i} className="font-semibold text-accent-secondary">
-        {part}
+        {localizeNumber(part, language)}
       </strong>
     ) : (
       part
@@ -104,9 +136,9 @@ export function Experience() {
               />
               <div>
                 <p className="font-mono text-xs uppercase tracking-[0.15em] text-accent-secondary">
-                  {entry.start} — {isCurrent ? t(strings.experience.present, language) : entry.end}
+                  {formatEntryDate(entry.start, language)} — {formatEntryDate(entry.end, language)}
                 </p>
-                <p className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.1em] text-text-muted">
+                <p className="mt-0.5 font-mono text-[length:var(--text-2xs)] uppercase tracking-[0.1em] text-text-muted">
                   {formatDuration(entry.start, entry.end, language)}
                 </p>
               </div>
@@ -123,7 +155,7 @@ export function Experience() {
                       <span className="text-accent-secondary" aria-hidden="true">
                         →
                       </span>
-                      <span>{renderHighlight(t(highlight, language))}</span>
+                      <span>{renderHighlight(t(highlight, language), language)}</span>
                     </li>
                   ))}
                 </ul>

@@ -20,7 +20,7 @@ export function Contact() {
     <Section id="contact" index="07" tint eyebrow={strings.contact.eyebrow} title={strings.contact.title}>
       <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-[1fr_440px] lg:gap-16">
         <div>
-          <p className="text-glow bg-gradient-to-br from-text-primary via-text-primary to-accent bg-clip-text text-[clamp(2rem,6vw,4rem)] font-mono font-medium leading-[1.05] tracking-tight text-transparent">
+          <p className="text-glow bg-gradient-to-br from-text-primary via-text-primary to-accent bg-clip-text text-[length:var(--text-display-contact)] font-mono font-medium leading-[1.05] tracking-tight text-transparent">
             {t(strings.contact.headline, language)}
           </p>
 
@@ -58,7 +58,7 @@ export function Contact() {
               a native tooltip without adding permanent visible text;
               aria-label covers screen readers. href is "#" for the ones
               not yet real — see AGENTS.md's placeholder-link rule. */}
-          <p className="mt-9 font-mono text-[11px] uppercase tracking-[0.15em] text-text-muted">
+          <p className="mt-9 font-mono text-[length:var(--text-1xs)] uppercase tracking-[0.15em] text-text-muted">
             {t(strings.contact.profiles, language)}
           </p>
           <div className="mt-3 flex flex-wrap gap-3">

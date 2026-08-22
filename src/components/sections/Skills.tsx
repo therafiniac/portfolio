@@ -57,7 +57,7 @@ export function Skills() {
         <div>
           <SectionHeading eyebrow={EYEBROW} title={TITLE} />
           <p className="mt-4 text-text-muted">{t(strings.skills.intro, language)}</p>
-          <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.1em] text-text-muted">
+          <p className="mt-4 font-mono text-[length:var(--text-1xs)] uppercase tracking-[0.1em] text-text-muted">
             <span className="font-semibold text-text-primary">{t(strings.skills.boldWord, language)}</span>{" "}
             {t(strings.skills.boldNote, language)}
           </p>
@@ -88,7 +88,7 @@ export function Skills() {
                 <span className="h-1.5 w-1.5 rounded-full bg-line" />
                 <span className="h-1.5 w-1.5 rounded-full bg-line" />
                 <span className="h-1.5 w-1.5 rounded-full bg-line" />
-                <span className="ml-2 font-mono text-[10px] uppercase tracking-[0.1em] text-text-muted">
+                <span className="ml-2 font-mono text-[length:var(--text-2xs)] uppercase tracking-[0.1em] text-text-muted">
                   {t(strings.skills.terminalTitle, language)}
                 </span>
               </div>

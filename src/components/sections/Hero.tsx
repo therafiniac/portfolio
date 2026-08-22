@@ -78,7 +78,7 @@ export function Hero() {
 
           <motion.h1
             variants={item}
-            className="text-glow mt-4 bg-gradient-to-br from-text-primary via-text-primary to-accent bg-clip-text font-mono text-[clamp(2.5rem,7vw,5.5rem)] font-medium leading-[0.95] tracking-tight text-transparent"
+            className="text-glow mt-4 bg-gradient-to-br from-text-primary via-text-primary to-accent bg-clip-text font-mono text-[length:var(--text-display-hero)] font-medium leading-[0.95] tracking-tight text-transparent"
           >
             Rafi Ahmed
             <br />
@@ -163,7 +163,7 @@ export function Hero() {
                   <dd className="font-mono text-2xl text-accent-secondary">
                     <CountUp value={stat.value} suffix={stat.suffix} />
                   </dd>
-                  <dt className="mt-1 font-mono text-[10px] uppercase tracking-[0.15em] text-text-muted">
+                  <dt className="mt-1 font-mono text-[length:var(--text-2xs)] uppercase tracking-[0.15em] text-text-muted">
                     {t(stat.label, language)}
                   </dt>
                 </div>
@@ -218,7 +218,7 @@ export function Hero() {
         className="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2 text-text-muted transition-colors hover:text-accent"
         aria-label={t(strings.hero.scrollToWork, language)}
       >
-        <span className="font-mono text-[10px] uppercase tracking-[0.2em]">
+        <span className="font-mono text-[length:var(--text-2xs)] uppercase tracking-[0.2em]">
           {t(strings.hero.scroll, language)}
         </span>
         <span className="h-8 w-px bg-current motion-safe:animate-bounce" />

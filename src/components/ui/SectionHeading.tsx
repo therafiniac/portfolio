@@ -17,7 +17,7 @@ export function SectionHeading({ eyebrow, title }: SectionHeadingProps) {
 
   return (
     <>
-      <span className="inline-block rounded-full border border-line/40 bg-surface/60 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.2em] text-accent-secondary backdrop-blur">
+      <span className="inline-block rounded-full border border-line/40 bg-surface/60 px-3 py-1 font-mono text-[length:var(--text-1xs)] uppercase tracking-[0.2em] text-accent-secondary backdrop-blur">
         {t(eyebrow, language)}
       </span>
       <h2 className="mt-4 font-mono text-3xl font-medium text-text-primary md:text-4xl">{t(title, language)}</h2>

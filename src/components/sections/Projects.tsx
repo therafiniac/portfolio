@@ -28,7 +28,7 @@ function LinkBadge({
       href={href}
       target={href.startsWith("http") ? "_blank" : undefined}
       rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
-      className="inline-flex items-center gap-1.5 rounded-full border border-line/60 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.15em] text-accent transition-colors duration-200 hover:border-accent/60 hover:bg-accent/10"
+      className="inline-flex items-center gap-1.5 rounded-full border border-line/60 px-3 py-1 font-mono text-[length:var(--text-2xs)] uppercase tracking-[0.15em] text-accent transition-colors duration-200 hover:border-accent/60 hover:bg-accent/10"
     >
       <Icon className="h-3 w-3" aria-hidden="true" />
       {children}
@@ -91,7 +91,7 @@ export function Projects() {
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
             <h3 className="font-mono text-2xl text-text-primary md:text-3xl">{project.name}</h3>
             {project.private && (
-              <span className="rounded-full border border-line/60 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.15em] text-text-muted">
+              <span className="rounded-full border border-line/60 px-3 py-1 font-mono text-[length:var(--text-2xs)] uppercase tracking-[0.15em] text-text-muted">
                 {t(strings.projects.privateRepo, language)}
               </span>
             )}

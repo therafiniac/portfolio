@@ -34,7 +34,7 @@ function BrowserChrome({ label }: { label: string }) {
       <span className="h-1.5 w-1.5 rounded-full bg-line transition-colors duration-300 group-hover:bg-accent" />
       <span className="h-1.5 w-1.5 rounded-full bg-line transition-colors delay-75 duration-300 group-hover:bg-[color-mix(in_srgb,var(--accent),var(--accent-secondary))]" />
       <span className="h-1.5 w-1.5 rounded-full bg-line transition-colors delay-150 duration-300 group-hover:bg-accent-secondary" />
-      <span className="ml-2 truncate rounded-full bg-bg/60 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.1em] text-text-muted">
+      <span className="ml-2 truncate rounded-full bg-bg/60 px-2 py-0.5 font-mono text-[length:var(--text-3xs)] uppercase tracking-[0.1em] text-text-muted">
         {label}
       </span>
     </div>
@@ -79,7 +79,7 @@ function WorkCard({ project }: { project: ClientProject }) {
         </div>
         <Image
           src={project.coverImage}
-          alt={`${project.name} preview`}
+          alt={`${project.name} ${t(strings.clientWork.preview, language)}`}
           fill
           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
           className="object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"

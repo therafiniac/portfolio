@@ -6,7 +6,7 @@ import type { ReactNode } from "react";
 // instances of the identical className string.
 export function FieldLabel({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
-    <p className={`font-mono text-[10px] uppercase tracking-[0.15em] text-accent-secondary ${className}`}>
+    <p className={`font-mono text-[length:var(--text-2xs)] uppercase tracking-[0.15em] text-accent-secondary ${className}`}>
       {children}
     </p>
   );

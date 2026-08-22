@@ -29,7 +29,7 @@ export function Footer() {
           </span>
         </div>
 
-        <p className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.15em] text-text-muted">
+        <p className="flex items-center gap-2 font-mono text-[length:var(--text-1xs)] uppercase tracking-[0.15em] text-text-muted">
           <span
             className="h-1.5 w-1.5 rounded-full bg-status-live motion-safe:animate-pulse"
             aria-hidden="true"
