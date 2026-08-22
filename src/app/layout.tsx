@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono, Hind_Siliguri } from "next/font/google";
 import { MotionConfig } from "framer-motion";
 import { CursorGlow } from "@/components/layout/CursorGlow";
 import { Navbar } from "@/components/layout/Navbar";
@@ -15,6 +15,18 @@ const inter = Inter({
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains-mono",
   subsets: ["latin"],
+});
+
+// JetBrains Mono/Inter have zero Bengali glyph coverage, and there's no
+// real monospace Bengali typeface to reach for — Hind Siliguri (a clean,
+// modern Bengali sans) stands in for BOTH --font-mono and --font-sans
+// when data-lang="bn" (see globals.css), so the mono-everywhere aesthetic
+// intentionally doesn't carry over to Bengali mode, it becomes one
+// considered Bengali typeface instead.
+const hindSiliguri = Hind_Siliguri({
+  variable: "--font-bengali",
+  subsets: ["bengali"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -36,6 +48,20 @@ const THEME_INIT_SCRIPT = `
 })();
 `;
 
+// Same reasoning/shape as THEME_INIT_SCRIPT — runs before paint so a
+// stored Bengali preference applies with no flash of English first.
+// Also sets the real lang attribute (not just data-lang) since that's
+// what matters for screen readers/SEO, not just CSS/JS.
+const LANG_INIT_SCRIPT = `
+(function () {
+  try {
+    var lang = localStorage.getItem("language") === "bn" ? "bn" : "en";
+    document.documentElement.setAttribute("data-lang", lang);
+    document.documentElement.setAttribute("lang", lang);
+  } catch (e) {}
+})();
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -45,10 +71,11 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${jetbrainsMono.variable} ${hindSiliguri.variable} h-full antialiased`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        <script dangerouslySetInnerHTML={{ __html: LANG_INIT_SCRIPT }} />
       </head>
       {/* suppressHydrationWarning here specifically guards against browser
           extensions (ColorZilla, Grammarly, etc.) injecting attributes like

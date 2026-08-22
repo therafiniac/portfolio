@@ -6,6 +6,9 @@ import { HeroMark3DLoader } from "@/components/three/HeroMark3DLoader";
 import { CountUp } from "@/components/layout/CountUp";
 import { Magnetic } from "@/components/layout/Magnetic";
 import { heroRoles, heroStatusLine, heroStats } from "@/lib/data/hero";
+import { useLanguage } from "@/lib/useLanguage";
+import { t } from "@/lib/i18n";
+import { strings } from "@/lib/i18n-strings";
 
 const container = {
   hidden: {},
@@ -29,6 +32,8 @@ const item = {
 const roleColors = ["text-accent", "text-accent-secondary"];
 
 export function Hero() {
+  const language = useLanguage();
+
   return (
     <section
       id="top"
@@ -68,7 +73,7 @@ export function Hero() {
               className="h-1.5 w-1.5 shrink-0 rounded-full bg-status-live motion-safe:animate-pulse"
               aria-hidden="true"
             />
-            {heroStatusLine}
+            {t(heroStatusLine, language)}
           </motion.p>
 
           <motion.h1
@@ -85,9 +90,9 @@ export function Hero() {
             className="mt-4 font-mono text-sm uppercase tracking-[0.2em]"
           >
             {heroRoles.map((role, i) => (
-              <span key={role}>
+              <span key={role.en}>
                 {i > 0 && <span className="mx-2 text-text-muted">·</span>}
-                <span className={roleColors[i % roleColors.length]}>{role}</span>
+                <span className={roleColors[i % roleColors.length]}>{t(role, language)}</span>
               </span>
             ))}
           </motion.p>
@@ -104,7 +109,7 @@ export function Hero() {
                 style={{ backgroundImage: "var(--gradient-signature)" }}
               >
                 <span className="cta-glow" aria-hidden="true" />
-                View My Work
+                {t(strings.hero.viewWork, language)}
                 <span aria-hidden="true">→</span>
               </a>
             </Magnetic>
@@ -112,7 +117,7 @@ export function Hero() {
               href="#contact"
               className="font-mono text-sm text-text-muted underline-offset-4 transition-colors hover:text-accent hover:underline"
             >
-              Get in Touch
+              {t(strings.hero.getInTouch, language)}
             </a>
           </motion.div>
 
@@ -134,7 +139,7 @@ export function Hero() {
             </div>
             <dl className="flex flex-wrap gap-x-10 gap-y-6">
               {heroStats.map((stat, i) => (
-                <div key={stat.label} className="relative lg:pl-8 lg:first:pl-0">
+                <div key={stat.label.en} className="relative lg:pl-8 lg:first:pl-0">
                   {/* Every divider between stats gets the same trail-light
                       treatment as the leading one above, not a plain
                       static border — otherwise only the first divider
@@ -159,7 +164,7 @@ export function Hero() {
                     <CountUp value={stat.value} suffix={stat.suffix} />
                   </dd>
                   <dt className="mt-1 font-mono text-[10px] uppercase tracking-[0.15em] text-text-muted">
-                    {stat.label}
+                    {t(stat.label, language)}
                   </dt>
                 </div>
               ))}
@@ -211,10 +216,10 @@ export function Hero() {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.8, duration: 0.6 }}
         className="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2 text-text-muted transition-colors hover:text-accent"
-        aria-label="Scroll to work"
+        aria-label={t(strings.hero.scrollToWork, language)}
       >
         <span className="font-mono text-[10px] uppercase tracking-[0.2em]">
-          Scroll
+          {t(strings.hero.scroll, language)}
         </span>
         <span className="h-8 w-px bg-current motion-safe:animate-bounce" />
       </motion.a>

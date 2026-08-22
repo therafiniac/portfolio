@@ -10,6 +10,9 @@ import { GithubIcon } from "@/components/icons/BrandIcons";
 import { FlowSteps } from "@/components/sections/FlowSteps";
 import { projects } from "@/lib/data/projects";
 import type { IconComponent } from "@/types";
+import { useLanguage } from "@/lib/useLanguage";
+import { t } from "@/lib/i18n";
+import { strings } from "@/lib/i18n-strings";
 
 function LinkBadge({
   href,
@@ -41,13 +44,11 @@ function LinkBadge({
 export function Projects() {
   const [active, setActive] = useState(0);
   const project = projects[active];
+  const language = useLanguage();
 
   return (
-    <Section id="built" index="02" eyebrow="Independent Projects" title="What I've Built">
-      <p className="-mt-6 mb-10 max-w-2xl text-text-muted">
-        A short list on purpose — every entry gets its full architecture
-        discussion instead of padding the count.
-      </p>
+    <Section id="built" index="02" eyebrow={strings.projects.eyebrow} title={strings.projects.title}>
+      <p className="-mt-6 mb-10 max-w-2xl text-text-muted">{t(strings.projects.intro, language)}</p>
 
       <div className="flex flex-wrap gap-1 border-b border-line/40">
         {projects.map((p, i) => (
@@ -91,24 +92,24 @@ export function Projects() {
             <h3 className="font-mono text-2xl text-text-primary md:text-3xl">{project.name}</h3>
             {project.private && (
               <span className="rounded-full border border-line/60 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.15em] text-text-muted">
-                Private Repo
+                {t(strings.projects.privateRepo, language)}
               </span>
             )}
             <div className="ml-auto flex flex-wrap gap-2">
               {project.liveUrl && (
                 <LinkBadge href={project.liveUrl} icon={ExternalLink}>
-                  Live Demo
+                  {t(strings.projects.liveDemo, language)}
                 </LinkBadge>
               )}
               {project.githubUrl && (
                 <LinkBadge href={project.githubUrl} icon={GithubIcon}>
-                  GitHub
+                  {t(strings.projects.github, language)}
                 </LinkBadge>
               )}
             </div>
           </div>
 
-          <p className="mt-3 max-w-2xl text-text-muted">{project.tagline}</p>
+          <p className="mt-3 max-w-2xl text-text-muted">{t(project.tagline, language)}</p>
 
           <div className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-[auto_1fr]">
             <div className="shrink-0 md:pr-8 md:border-r md:border-line/40">
@@ -119,7 +120,7 @@ export function Projects() {
                 {project.stat.value}
               </span>
               <span className="mt-2 block max-w-[18ch] font-mono text-xs uppercase tracking-[0.15em] text-text-muted">
-                {project.stat.label}
+                {t(project.stat.label, language)}
               </span>
             </div>
 
@@ -128,7 +129,7 @@ export function Projects() {
                   it's three unrelated-looking elements stacked with no
                   context for what they are, instead of reading as
                   organized documentation the way a spec sheet would. */}
-              <FieldLabel>The Approach</FieldLabel>
+              <FieldLabel>{t(strings.projects.theApproach, language)}</FieldLabel>
               {/* The single most important technical claim in the row —
                   pulled into its own callout instead of reading as one
                   more paragraph, styled like an inline code comment. */}
@@ -137,14 +138,14 @@ export function Projects() {
                   <span className="shrink-0 text-accent-secondary" aria-hidden="true">
                     {"//"}
                   </span>
-                  <span>{project.highlight}</span>
+                  <span>{t(project.highlight, language)}</span>
                 </p>
               </div>
 
-              <FieldLabel className="mt-6">Mechanism</FieldLabel>
+              <FieldLabel className="mt-6">{t(strings.projects.mechanism, language)}</FieldLabel>
               <FlowSteps steps={project.flow} />
 
-              <FieldLabel className="mt-6">Stack</FieldLabel>
+              <FieldLabel className="mt-6">{t(strings.projects.stack, language)}</FieldLabel>
               <div className="mt-2 flex flex-wrap gap-2">
                 {project.tech.map((tech) => (
                   <TechChip key={tech}>{tech}</TechChip>

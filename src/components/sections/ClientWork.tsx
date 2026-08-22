@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { Section } from "@/components/layout/Section";
@@ -8,7 +10,10 @@ import { FieldLabel } from "@/components/ui/FieldLabel";
 import { WorkFillerTile } from "@/components/sections/WorkFillerTile";
 import { clientProjects } from "@/lib/data/clientWork";
 import { heroStats } from "@/lib/data/hero";
-import type { ClientProject } from "@/types";
+import type { ClientProject, Localized } from "@/types";
+import { useLanguage } from "@/lib/useLanguage";
+import { t } from "@/lib/i18n";
+import { strings } from "@/lib/i18n-strings";
 
 // Every project screenshot is captured the same way (hero/fold, fixed
 // viewport) and shown at this exact aspect ratio with object-cover — since
@@ -55,6 +60,8 @@ function TechChips({ tech }: { tech: string[] }) {
 // a fixed-aspect image slot is what keeps every row even regardless of
 // description length.
 function WorkCard({ project }: { project: ClientProject }) {
+  const language = useLanguage();
+
   return (
     <a
       href={project.href}
@@ -79,7 +86,7 @@ function WorkCard({ project }: { project: ClientProject }) {
         />
       </div>
       <div className="flex h-36 flex-col p-6">
-        <FieldLabel>{project.category}</FieldLabel>
+        <FieldLabel>{t(project.category, language)}</FieldLabel>
         <h3 className="mt-1 flex items-center gap-1 text-base text-text-primary">
           {project.name}
           <ArrowUpRight
@@ -87,7 +94,7 @@ function WorkCard({ project }: { project: ClientProject }) {
             aria-hidden="true"
           />
         </h3>
-        <p className="mt-1 line-clamp-2 text-xs text-text-muted">{project.description}</p>
+        <p className="mt-1 line-clamp-2 text-xs text-text-muted">{t(project.description, language)}</p>
         <div className="mt-auto">
           <TechChips tech={project.tech.slice(0, 2)} />
         </div>
@@ -109,7 +116,9 @@ function WorkCard({ project }: { project: ClientProject }) {
 // 1px inset, rather than a color-mix ring on top of a flat fill) — this
 // card is the section's other brand moment, so it gets the same signature
 // treatment instead of the neutral hairline the project cards use.
-function StatShowcase({ value, suffix, label }: { value: number; suffix?: string; label: string }) {
+function StatShowcase({ value, suffix, label }: { value: number; suffix?: string; label: Localized }) {
+  const language = useLanguage();
+
   return (
     <div
       className="relative h-full rounded-xl p-px shadow-[0_25px_60px_-20px_color-mix(in_srgb,var(--shadow-color)_50%,transparent)]"
@@ -123,7 +132,9 @@ function StatShowcase({ value, suffix, label }: { value: number; suffix?: string
         >
           <CountUp value={value} suffix={suffix} />
         </span>
-        <span className="font-mono text-xs uppercase tracking-[0.2em] text-text-muted">{label}</span>
+        <span className="font-mono text-xs uppercase tracking-[0.2em] text-text-muted">
+          {t(label, language)}
+        </span>
       </div>
     </div>
   );
@@ -131,7 +142,7 @@ function StatShowcase({ value, suffix, label }: { value: number; suffix?: string
 
 type GridItem =
   | { kind: "project"; project: ClientProject }
-  | { kind: "stat"; value: number; suffix?: string; label: string }
+  | { kind: "stat"; value: number; suffix?: string; label: Localized }
   | { kind: "filler" };
 
 // Deliberately curated, not algorithmic: with today's 7 projects, the stat
@@ -142,7 +153,7 @@ type GridItem =
 // formula that "just happens" to land on 5 and 9 isn't worth the
 // complexity for a curated placeholder set this small.
 function buildGridItems(projects: ClientProject[]): GridItem[] {
-  const sitesShipped = heroStats.find((s) => s.label === "Sites Shipped");
+  const sitesShipped = heroStats.find((s) => s.label.en === "Sites Shipped");
   const items: GridItem[] = [];
 
   projects.forEach((project, i) => {
@@ -164,13 +175,11 @@ function buildGridItems(projects: ClientProject[]): GridItem[] {
 
 export function ClientWork() {
   const items = buildGridItems(clientProjects);
+  const language = useLanguage();
 
   return (
-    <Section id="work" index="01" tint eyebrow="Client Work" title="Work I've Delivered">
-      <p className="-mt-6 mb-10 max-w-2xl text-text-muted">
-        A sample from 150+ client sites delivered across industries — the
-        actual, shipped, paid-for work.
-      </p>
+    <Section id="work" index="01" tint eyebrow={strings.clientWork.eyebrow} title={strings.clientWork.title}>
+      <p className="-mt-6 mb-10 max-w-2xl text-text-muted">{t(strings.clientWork.intro, language)}</p>
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item, index) =>
           item.kind === "project" ? (

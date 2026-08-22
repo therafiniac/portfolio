@@ -1,8 +1,14 @@
+"use client";
+
 import { GraduationCap } from "lucide-react";
 import { Section } from "@/components/layout/Section";
 import { TechChip } from "@/components/ui/TechChip";
 import { experience } from "@/lib/data/experience";
 import { education } from "@/lib/data/education";
+import type { Language } from "@/lib/useLanguage";
+import { useLanguage } from "@/lib/useLanguage";
+import { t } from "@/lib/i18n";
+import { strings } from "@/lib/i18n-strings";
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -19,7 +25,7 @@ function parseEntryDate(value: string): Date {
   return new Date(Number(month), 0, 1);
 }
 
-function formatDuration(start: string, end: string): string {
+function formatDuration(start: string, end: string, language: Language): string {
   const months = Math.max(
     1,
     (parseEntryDate(end).getFullYear() - parseEntryDate(start).getFullYear()) * 12 +
@@ -28,8 +34,9 @@ function formatDuration(start: string, end: string): string {
   const years = Math.floor(months / 12);
   const remainder = months % 12;
   const parts: string[] = [];
-  if (years > 0) parts.push(`${years} yr${years > 1 ? "s" : ""}`);
-  if (remainder > 0) parts.push(`${remainder} mo${remainder > 1 ? "s" : ""}`);
+  if (years > 0) parts.push(`${years} ${t(years > 1 ? strings.experience.years : strings.experience.year, language)}`);
+  if (remainder > 0)
+    parts.push(`${remainder} ${t(remainder > 1 ? strings.experience.months : strings.experience.month, language)}`);
   return parts.join(" ");
 }
 
@@ -48,8 +55,10 @@ function renderHighlight(text: string) {
 }
 
 export function Experience() {
+  const language = useLanguage();
+
   return (
-    <Section id="experience" index="04" tint eyebrow="Track Record" title="Experience">
+    <Section id="experience" index="04" tint eyebrow={strings.experience.eyebrow} title={strings.experience.title}>
       <div className="relative space-y-12">
         {/* Green at the top (the current-role segment) fading into the
             regular accent/muted fade below — a color echo of the pulsing
@@ -95,26 +104,26 @@ export function Experience() {
               />
               <div>
                 <p className="font-mono text-xs uppercase tracking-[0.15em] text-accent-secondary">
-                  {entry.start} — {entry.end}
+                  {entry.start} — {isCurrent ? t(strings.experience.present, language) : entry.end}
                 </p>
                 <p className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.1em] text-text-muted">
-                  {formatDuration(entry.start, entry.end)}
+                  {formatDuration(entry.start, entry.end, language)}
                 </p>
               </div>
               <div>
                 <h3 className="text-text-primary">
-                  {entry.role} <span className="text-text-muted">· {entry.org}</span>
+                  {t(entry.role, language)} <span className="text-text-muted">· {entry.org}</span>
                 </h3>
                 <p className="mt-1 font-mono text-xs uppercase tracking-[0.1em] text-text-muted">
-                  {entry.location}
+                  {t(entry.location, language)}
                 </p>
                 <ul className="mt-3 space-y-1.5 text-sm text-text-muted">
                   {entry.highlights.map((highlight) => (
-                    <li key={highlight} className="flex gap-3">
+                    <li key={highlight.en} className="flex gap-3">
                       <span className="text-accent-secondary" aria-hidden="true">
                         →
                       </span>
-                      <span>{renderHighlight(highlight)}</span>
+                      <span>{renderHighlight(t(highlight, language))}</span>
                     </li>
                   ))}
                 </ul>
@@ -133,7 +142,9 @@ export function Experience() {
           dots or connecting line, so it reads as its own thing rather than
           another entry on the "track record" trail. */}
       <div className="mt-16 border-t border-line/40 pt-10">
-        <p className="font-mono text-xs uppercase tracking-[0.2em] text-accent-secondary">Education</p>
+        <p className="font-mono text-xs uppercase tracking-[0.2em] text-accent-secondary">
+          {t(strings.experience.education, language)}
+        </p>
         <div className="mt-5 space-y-5">
           {education.map((entry) => (
             <div key={entry.institution} className="flex items-start gap-4">
@@ -141,9 +152,9 @@ export function Experience() {
                 <GraduationCap className="h-4 w-4" aria-hidden="true" />
               </span>
               <div>
-                <h3 className="text-text-primary">{entry.degree}</h3>
+                <h3 className="text-text-primary">{t(entry.degree, language)}</h3>
                 <p className="mt-1 font-mono text-xs uppercase tracking-[0.1em] text-text-muted">
-                  {entry.institution} · {entry.location}
+                  {entry.institution} · {t(entry.location, language)}
                 </p>
               </div>
             </div>

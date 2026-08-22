@@ -2,6 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import type { Localized } from "@/types";
+import { useLanguage } from "@/lib/useLanguage";
+import { t } from "@/lib/i18n";
 
 type Track = { left: number; width: number };
 
@@ -14,10 +17,11 @@ type Track = { left: number; width: number };
 // Client component (the rest of Projects.tsx stays a server component) —
 // only the connecting lines need Framer Motion, for the left-to-right
 // scaleX reveal below.
-export function FlowSteps({ steps }: { steps: string[] }) {
+export function FlowSteps({ steps }: { steps: Localized[] }) {
   const rowRef = useRef<HTMLDivElement>(null);
   const dotRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const [track, setTrack] = useState<Track | null>(null);
+  const language = useLanguage();
 
   useEffect(() => {
     const row = rowRef.current;
@@ -56,7 +60,7 @@ export function FlowSteps({ steps }: { steps: string[] }) {
       {steps.map((step, i) => {
         const isLast = i === steps.length - 1;
         return (
-          <div key={step} className="contents">
+          <div key={step.en} className="contents">
             <div className="flex flex-col items-center gap-2 px-1">
               <span
                 ref={(el) => {
@@ -73,7 +77,7 @@ export function FlowSteps({ steps }: { steps: string[] }) {
                   diagram reads as messy. whitespace-nowrap is the hard
                   guarantee on top of that. */}
               <span className="whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.08em] text-text-muted">
-                {step}
+                {t(step, language)}
               </span>
             </div>
             {!isLast && (

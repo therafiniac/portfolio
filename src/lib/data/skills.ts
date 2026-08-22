@@ -6,10 +6,12 @@ import type { SkillGroup } from "@/types";
 // self-rated. Left off items that are real but only show up once (or not
 // at all) in that data, even where they're genuinely used day to day.
 // (Design tools and Supabase currently fall in that "real but not yet
-// repeated in verified work" bucket too — none are marked core.)
+// repeated in verified work" bucket too — none are marked core.) Item
+// names stay plain/English — tool and technology proper nouns aren't
+// translated; only the group label is.
 export const skillGroups: SkillGroup[] = [
   {
-    label: "Languages",
+    label: { en: "Languages", bn: "ভাষা" },
     flag: "lang",
     icon: Code2,
     items: [
@@ -18,7 +20,7 @@ export const skillGroups: SkillGroup[] = [
     ],
   },
   {
-    label: "Frontend",
+    label: { en: "Frontend", bn: "ফ্রন্টএন্ড" },
     flag: "frontend",
     icon: LayoutTemplate,
     items: [
@@ -32,13 +34,13 @@ export const skillGroups: SkillGroup[] = [
     ],
   },
   {
-    label: "Design",
+    label: { en: "Design", bn: "ডিজাইন" },
     flag: "design",
     icon: Palette,
     items: [{ name: "Figma" }, { name: "Photoshop" }, { name: "Illustrator" }, { name: "Canva" }],
   },
   {
-    label: "Backend & Data",
+    label: { en: "Backend & Data", bn: "ব্যাকএন্ড ও ডেটা" },
     flag: "backend",
     icon: Database,
     items: [
@@ -55,7 +57,7 @@ export const skillGroups: SkillGroup[] = [
     ],
   },
   {
-    label: "Cloud & Auth",
+    label: { en: "Cloud & Auth", bn: "ক্লাউড ও অথ" },
     flag: "cloud",
     icon: Cloud,
     items: [
@@ -71,7 +73,7 @@ export const skillGroups: SkillGroup[] = [
     // Git/GitHub aren't a hosting/cloud concern, and grouping them there
     // just because both sections happened to be "infra-ish" was the
     // exact miscategorization this split fixes.
-    label: "Dev Tools",
+    label: { en: "Dev Tools", bn: "ডেভ টুলস" },
     flag: "tools",
     icon: GitBranch,
     items: [
@@ -82,7 +84,7 @@ export const skillGroups: SkillGroup[] = [
     ],
   },
   {
-    label: "AI-Assisted Workflow",
+    label: { en: "AI-Assisted Workflow", bn: "AI-সহায়ক ওয়ার্কফ্লো" },
     flag: "workflow",
     icon: Sparkles,
     items: [{ name: "GitHub Copilot" }, { name: "ChatGPT" }, { name: "Claude" }],

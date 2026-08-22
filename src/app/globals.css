@@ -85,6 +85,17 @@
   --wash-boost: 0%;
 }
 
+/* Neither JetBrains Mono nor Inter cover Bengali glyphs, and there's no
+   real monospace Bengali typeface to swap --font-mono to specifically —
+   Hind Siliguri (--font-bengali, loaded in layout.tsx) stands in for
+   both roles in Bengali mode, so every existing font-mono/font-sans
+   Tailwind utility across the whole site switches automatically with no
+   component changes needed. */
+:root[data-lang="bn"] {
+  --font-mono: var(--font-bengali);
+  --font-sans: var(--font-bengali);
+}
+
 @theme inline {
   --color-bg: var(--bg);
   --color-surface: var(--surface);

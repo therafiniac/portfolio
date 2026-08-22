@@ -3,12 +3,13 @@
 import { motion } from "framer-motion";
 import type { ReactNode } from "react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import type { Localized } from "@/types";
 
 type SectionProps = {
   id?: string;
   index?: string;
-  eyebrow: string;
-  title: string;
+  eyebrow: Localized;
+  title: Localized;
   tint?: boolean;
   // False lets the caller compose its own eyebrow/heading inside
   // children instead of the default stacked-above-children layout — e.g.

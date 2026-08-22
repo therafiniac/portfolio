@@ -4,8 +4,12 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { LanguageToggle } from "@/components/layout/LanguageToggle";
 import { BrandMark } from "@/components/layout/BrandMark";
 import { navLinks } from "@/lib/data/nav";
+import { useLanguage } from "@/lib/useLanguage";
+import { t } from "@/lib/i18n";
+import { strings } from "@/lib/i18n-strings";
 
 function useActiveSection() {
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -61,6 +65,7 @@ function useActiveSection() {
 export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const activeId = useActiveSection();
+  const language = useLanguage();
 
   const { scrollY } = useScroll();
   const paddingY = useTransform(scrollY, [0, 120], [14, 8]);
@@ -110,18 +115,19 @@ export function Navbar() {
                     transition={{ type: "spring", stiffness: 380, damping: 32 }}
                   />
                 )}
-                {link.label}
+                {t(link.label, language)}
               </a>
             ))}
           </nav>
 
           <div className="flex items-center gap-1">
+            <LanguageToggle />
             <ThemeToggle />
             <button
               type="button"
               onClick={() => setMenuOpen((open) => !open)}
               aria-expanded={menuOpen}
-              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              aria-label={t(menuOpen ? strings.nav.closeMenu : strings.nav.openMenu, language)}
               className="flex h-9 w-9 items-center justify-center rounded-full text-text-muted transition-colors hover:text-accent sm:hidden"
             >
               {menuOpen ? (
@@ -158,7 +164,7 @@ export function Navbar() {
                 {activeId === link.id && (
                   <span aria-hidden="true" className="nav-active-torch pointer-events-none absolute -inset-4 -z-10" />
                 )}
-                {link.label}
+                {t(link.label, language)}
               </a>
             ))}
           </motion.nav>

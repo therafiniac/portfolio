@@ -2,9 +2,13 @@
 
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "@/lib/useTheme";
+import { useLanguage } from "@/lib/useLanguage";
+import { t } from "@/lib/i18n";
+import { strings } from "@/lib/i18n-strings";
 
 export function ThemeToggle() {
   const theme = useTheme();
+  const language = useLanguage();
 
   function toggle() {
     const next = theme === "light" ? "dark" : "light";
@@ -16,7 +20,7 @@ export function ThemeToggle() {
     <button
       type="button"
       onClick={toggle}
-      aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+      aria-label={t(theme === "light" ? strings.nav.switchToDark : strings.nav.switchToLight, language)}
       aria-pressed={theme === "light"}
       className="group flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-text-muted transition-colors hover:text-accent"
     >

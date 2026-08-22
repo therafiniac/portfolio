@@ -5,9 +5,12 @@ import { Section } from "@/components/layout/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { skillGroups } from "@/lib/data/skills";
 import type { SkillGroup } from "@/types";
+import { useLanguage } from "@/lib/useLanguage";
+import { t } from "@/lib/i18n";
+import { strings } from "@/lib/i18n-strings";
 
-const EYEBROW = "Capabilities";
-const TITLE = "Stack";
+const EYEBROW = strings.skills.eyebrow;
+const TITLE = strings.skills.title;
 
 // Reads as `$ rafi --stack` output rather than a data file — each group
 // is a flag, each entry after it the values that flag expands to. Rows
@@ -41,6 +44,8 @@ function StackRow({ group, delay }: { group: SkillGroup; delay: number }) {
 }
 
 export function Skills() {
+  const language = useLanguage();
+
   return (
     <Section id="stack" index="03" eyebrow={EYEBROW} title={TITLE} renderHeader={false}>
       {/* Same left-copy/right-artifact composition as Hero's own grid —
@@ -51,13 +56,10 @@ export function Skills() {
       <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-16">
         <div>
           <SectionHeading eyebrow={EYEBROW} title={TITLE} />
-          <p className="mt-4 text-text-muted">
-            Four+ years across three roles — from early WordPress builds to the production SaaS
-            above.
-          </p>
+          <p className="mt-4 text-text-muted">{t(strings.skills.intro, language)}</p>
           <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.1em] text-text-muted">
-            <span className="font-semibold text-text-primary">Bold</span> marks what recurs in
-            that real work, in Projects and Experience — not a self-rated list.
+            <span className="font-semibold text-text-primary">{t(strings.skills.boldWord, language)}</span>{" "}
+            {t(strings.skills.boldNote, language)}
           </p>
         </div>
 
@@ -87,18 +89,18 @@ export function Skills() {
                 <span className="h-1.5 w-1.5 rounded-full bg-line" />
                 <span className="h-1.5 w-1.5 rounded-full bg-line" />
                 <span className="ml-2 font-mono text-[10px] uppercase tracking-[0.1em] text-text-muted">
-                  rafi@portfolio — zsh
+                  {t(strings.skills.terminalTitle, language)}
                 </span>
               </div>
 
               <div className="px-6 py-6 sm:px-9 sm:py-8">
                 <p className="font-mono text-sm text-text-primary sm:text-base">
-                  <span className="text-accent-secondary">$</span> rafi --stack
+                  <span className="text-accent-secondary">$</span> {t(strings.skills.prompt, language)}
                 </p>
 
                 <div className="mt-5 space-y-5">
                   {skillGroups.map((group, index) => (
-                    <StackRow key={group.label} group={group} delay={0.15 + index * 0.1} />
+                    <StackRow key={group.label.en} group={group} delay={0.15 + index * 0.1} />
                   ))}
                 </div>
 
