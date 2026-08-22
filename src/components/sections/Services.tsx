@@ -1,5 +1,10 @@
+"use client";
+
 import { Section } from "@/components/layout/Section";
 import { services, type Service } from "@/lib/data/services";
+import { useLanguage } from "@/lib/useLanguage";
+import { t } from "@/lib/i18n";
+import { strings } from "@/lib/i18n-strings";
 
 // Three pinned notes on a moodboard, not three copies of the same tinted
 // card — grounded in the subject (this section is about design work) and
@@ -21,6 +26,8 @@ function ServiceCard({
   rotate,
   offset,
 }: Service & { hue: string; rotate: string; offset: string }) {
+  const language = useLanguage();
+
   return (
     <div
       className={`group relative w-full max-w-[17rem] shrink-0 rounded-lg border border-line/50 bg-surface p-6 shadow-[0_24px_48px_-28px_color-mix(in_srgb,var(--shadow-color)_65%,transparent)] transition-transform duration-300 ease-out hover:-translate-y-1.5 hover:rotate-0 hover:shadow-[0_32px_60px_-24px_color-mix(in_srgb,var(--shadow-color)_70%,transparent)] ${rotate} ${offset}`}
@@ -45,18 +52,18 @@ function ServiceCard({
       >
         <Icon className="h-5 w-5" aria-hidden="true" />
       </span>
-      <h3 className="mt-4 text-base text-text-primary">{name}</h3>
-      <p className="mt-2 text-sm text-text-muted">{description}</p>
+      <h3 className="mt-4 text-base text-text-primary">{t(name, language)}</h3>
+      <p className="mt-2 text-sm text-text-muted">{t(description, language)}</p>
     </div>
   );
 }
 
 export function Services() {
+  const language = useLanguage();
+
   return (
-    <Section id="services" index="06" eyebrow="Additional Services" title="Beyond Development">
-      <p className="-mt-6 mb-10 max-w-2xl text-text-muted">
-        Design and creative work alongside engineering, for clients who need more than just code.
-      </p>
+    <Section id="services" index="06" eyebrow={strings.services.eyebrow} title={strings.services.title}>
+      <p className="-mt-6 mb-10 max-w-2xl text-text-muted">{t(strings.services.intro, language)}</p>
       <div className="relative">
         {/* Same recipe as Stack's panel glow (see Skills.tsx) — the
             site's own signature gradient, sitting close behind the box
@@ -75,7 +82,7 @@ export function Services() {
           }}
         >
           {services.map((service, i) => (
-            <ServiceCard key={service.name} {...service} {...cardStyle[i]} />
+            <ServiceCard key={service.name.en} {...service} {...cardStyle[i]} />
           ))}
         </div>
       </div>

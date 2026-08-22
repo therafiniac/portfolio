@@ -85,6 +85,98 @@
   --wash-boost: 0%;
 }
 
+/* The uppercase micro-labels sprinkled across every section (eyebrows,
+   field labels, tech chips, tab badges) use these three sizes as
+   arbitrary text-[Npx] values rather than Tailwind's xs/sm scale — named
+   here as tokens (instead of leaving them as bare literals) purely so
+   the Bengali override below has something to hook into per-size,
+   without touching any of the surrounding padding/gap/width utilities
+   that happen to sit in the same className string. */
+:root {
+  --text-3xs: 9px;
+  --text-2xs: 10px;
+  --text-1xs: 11px;
+  /* The two large display headlines (Hero's name, Contact's headline) —
+     already clamp()-based, so exposed as tokens for the same reason as
+     the micro sizes above: something size-only for Bengali to override. */
+  --text-display-hero: clamp(2.5rem, 7vw, 5.5rem);
+  --text-display-contact: clamp(2rem, 6vw, 4rem);
+}
+
+/* Neither JetBrains Mono nor Inter cover Bengali glyphs, and there's no
+   real monospace Bengali typeface to swap to specifically — the chosen
+   Bengali typeface (--font-bengali, loaded in layout.tsx — currently
+   Hind Siliguri, swappable there without touching this file) stands in
+   for both roles in Bengali mode. This can't be done by overriding the
+   --font-mono/--font-sans *variables* (tried first, didn't work):
+   Tailwind's `@theme inline` resolves each utility's font stack at
+   build time and bakes the resolved reference directly into the rule —
+   the compiled output is literally `.font-sans { font-family:
+   var(--font-inter); }`, which never reads --font-sans at runtime, so
+   overriding that variable later is a no-op. Overriding the compiled
+   .font-sans/.font-mono classes' own font-family here instead — plain
+   CSS, unlayered, so it still beats the `@layer utilities` rule
+   regardless of selector order — reaches every font-mono/font-sans
+   utility site-wide with no per-component changes needed, same as the
+   original variable-override attempt intended. */
+:root[data-lang="bn"] .font-mono,
+:root[data-lang="bn"] .font-sans {
+  font-family: var(--font-bengali);
+}
+
+/* The --text-* overrides below correct a real but separate problem: the
+   Bengali typeface's glyphs sit visibly smaller than the Latin faces'
+   at the same nominal font-size (a shorter cap-height-equivalent, common
+   across Bengali/Devanagari typefaces vs. Latin ones). The first attempt
+   at fixing this bumped the *root* font-size, which also scaled every
+   rem-based spacing/width/height utility site-wide (Tailwind's spacing
+   scale is rem-based too) and visibly widened the whole layout — wrong
+   fix. This instead overrides only Tailwind's own --text-* scale tokens
+   (each utility's compiled CSS reads font-size from these via var(), so
+   overriding the token here reaches every text-xs/sm/base/xl/2xl/3xl/
+   4xl/6xl/7xl usage at once) plus the micro/display tokens above —
+   typography only, spacing and sizing utilities are untouched. */
+:root[data-lang="bn"] {
+  --text-3xs: 10px;
+  --text-2xs: 11.2px;
+  --text-1xs: 12.3px;
+  --text-display-hero: clamp(2.7rem, 7.5vw, 5.9rem);
+  --text-display-contact: clamp(2.2rem, 6.5vw, 4.3rem);
+
+  --text-xs: 0.84rem;
+  --text-sm: 0.98rem;
+  --text-base: 1.12rem;
+  --text-xl: 1.4rem;
+  --text-2xl: 1.68rem;
+  --text-3xl: 2.1rem;
+  --text-4xl: 2.5rem;
+  --text-6xl: 4.2rem;
+  --text-7xl: 5rem;
+}
+
+/* .gradient-heading (Hero's name, Contact's headline — the only two
+   `bg-clip-text` gradient headings on the site) breaks specifically in
+   Bengali: `background-clip: text` corrupts the rendering of Bengali's
+   reordered pre-base vowel signs (ি ইত্যাদি — the glyph visually sits
+   *before* the consonant it modifies even though it's typed after it),
+   confirmed by isolating the two variables in a standalone test — a
+   *flat single-color* "gradient" clipped to text still broke the same
+   glyph, while plain `color:` text with the identical font/size/weight
+   did not. So this isn't a sizing or overflow bug (tighter/looser
+   line-height didn't change it either) — it's this specific clip
+   mechanism corrupting complex-script glyph compositing, apparently
+   independent of the gradient itself. No CSS fix keeps the gradient
+   working here, so Bengali mode falls back to solid --accent instead:
+   loses the signature two-color gradient on these two headings only,
+   keeps the glyphs intact everywhere else the gradient is still used
+   (CTA buttons, stat numbers — plain Latin/numeral glyphs, unaffected). */
+:root[data-lang="bn"] .gradient-heading {
+  background-image: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  color: var(--accent);
+}
+
 @theme inline {
   --color-bg: var(--bg);
   --color-surface: var(--surface);

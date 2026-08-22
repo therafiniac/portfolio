@@ -1,4 +1,9 @@
+"use client";
+
 import { ArrowUpRight, Send } from "lucide-react";
+import { useLanguage } from "@/lib/useLanguage";
+import { t } from "@/lib/i18n";
+import { strings } from "@/lib/i18n-strings";
 
 // The CTA's decoration: one big icon bleeding off the corner.
 function IconBleed() {
@@ -45,12 +50,14 @@ function TileFrame({ href, children }: { href: string; children: React.ReactNode
 }
 
 export function WorkFillerTile() {
+  const language = useLanguage();
+
   return (
     <TileFrame href="#contact">
       <TileBadge />
-      <span className="font-mono text-xl text-bg">Open to new projects.</span>
+      <span className="font-mono text-xl text-bg">{t(strings.workFiller.heading, language)}</span>
       <span className="flex items-center gap-1 font-mono text-xs uppercase tracking-[0.2em] text-bg/80 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1">
-        Get in touch
+        {t(strings.workFiller.cta, language)}
         <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
       </span>
     </TileFrame>

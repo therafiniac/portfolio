@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { Section } from "@/components/layout/Section";
@@ -8,7 +10,10 @@ import { FieldLabel } from "@/components/ui/FieldLabel";
 import { WorkFillerTile } from "@/components/sections/WorkFillerTile";
 import { clientProjects } from "@/lib/data/clientWork";
 import { heroStats } from "@/lib/data/hero";
-import type { ClientProject } from "@/types";
+import type { ClientProject, Localized } from "@/types";
+import { useLanguage } from "@/lib/useLanguage";
+import { t } from "@/lib/i18n";
+import { strings } from "@/lib/i18n-strings";
 
 // Every project screenshot is captured the same way (hero/fold, fixed
 // viewport) and shown at this exact aspect ratio with object-cover — since
@@ -24,13 +29,16 @@ const SHOT_ASPECT = "aspect-[16/10]";
 // red/yellow/green, since AGENTS.md reserves --danger/--status-live for
 // their actual semantic roles, and there's no yellow token in the palette.
 function BrowserChrome({ label }: { label: string }) {
+  const language = useLanguage();
+  const displayLabel = language === "bn" ? (strings.techSounds[label] ?? label) : label;
+
   return (
     <div className="flex items-center gap-1.5 border-b border-line/40 bg-surface/90 px-3 py-2">
       <span className="h-1.5 w-1.5 rounded-full bg-line transition-colors duration-300 group-hover:bg-accent" />
       <span className="h-1.5 w-1.5 rounded-full bg-line transition-colors delay-75 duration-300 group-hover:bg-[color-mix(in_srgb,var(--accent),var(--accent-secondary))]" />
       <span className="h-1.5 w-1.5 rounded-full bg-line transition-colors delay-150 duration-300 group-hover:bg-accent-secondary" />
-      <span className="ml-2 truncate rounded-full bg-bg/60 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.1em] text-text-muted">
-        {label}
+      <span className="ml-2 truncate rounded-full bg-bg/60 px-2 py-0.5 font-mono text-[length:var(--text-3xs)] uppercase tracking-[0.1em] text-text-muted">
+        {displayLabel}
       </span>
     </div>
   );
@@ -55,6 +63,8 @@ function TechChips({ tech }: { tech: string[] }) {
 // a fixed-aspect image slot is what keeps every row even regardless of
 // description length.
 function WorkCard({ project }: { project: ClientProject }) {
+  const language = useLanguage();
+
   return (
     <a
       href={project.href}
@@ -72,22 +82,22 @@ function WorkCard({ project }: { project: ClientProject }) {
         </div>
         <Image
           src={project.coverImage}
-          alt={`${project.name} preview`}
+          alt={`${t(project.name, language)} ${t(strings.clientWork.preview, language)}`}
           fill
           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
           className="object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
         />
       </div>
       <div className="flex h-36 flex-col p-6">
-        <FieldLabel>{project.category}</FieldLabel>
+        <FieldLabel>{t(project.category, language)}</FieldLabel>
         <h3 className="mt-1 flex items-center gap-1 text-base text-text-primary">
-          {project.name}
+          {t(project.name, language)}
           <ArrowUpRight
             className="h-3.5 w-3.5 -translate-x-1 opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100"
             aria-hidden="true"
           />
         </h3>
-        <p className="mt-1 line-clamp-2 text-xs text-text-muted">{project.description}</p>
+        <p className="mt-1 line-clamp-2 text-xs text-text-muted">{t(project.description, language)}</p>
         <div className="mt-auto">
           <TechChips tech={project.tech.slice(0, 2)} />
         </div>
@@ -109,7 +119,9 @@ function WorkCard({ project }: { project: ClientProject }) {
 // 1px inset, rather than a color-mix ring on top of a flat fill) — this
 // card is the section's other brand moment, so it gets the same signature
 // treatment instead of the neutral hairline the project cards use.
-function StatShowcase({ value, suffix, label }: { value: number; suffix?: string; label: string }) {
+function StatShowcase({ value, suffix, label }: { value: number; suffix?: string; label: Localized }) {
+  const language = useLanguage();
+
   return (
     <div
       className="relative h-full rounded-xl p-px shadow-[0_25px_60px_-20px_color-mix(in_srgb,var(--shadow-color)_50%,transparent)]"
@@ -123,7 +135,9 @@ function StatShowcase({ value, suffix, label }: { value: number; suffix?: string
         >
           <CountUp value={value} suffix={suffix} />
         </span>
-        <span className="font-mono text-xs uppercase tracking-[0.2em] text-text-muted">{label}</span>
+        <span className="font-mono text-xs uppercase tracking-[0.2em] text-text-muted">
+          {t(label, language)}
+        </span>
       </div>
     </div>
   );
@@ -131,7 +145,7 @@ function StatShowcase({ value, suffix, label }: { value: number; suffix?: string
 
 type GridItem =
   | { kind: "project"; project: ClientProject }
-  | { kind: "stat"; value: number; suffix?: string; label: string }
+  | { kind: "stat"; value: number; suffix?: string; label: Localized }
   | { kind: "filler" };
 
 // Deliberately curated, not algorithmic: with today's 7 projects, the stat
@@ -142,7 +156,7 @@ type GridItem =
 // formula that "just happens" to land on 5 and 9 isn't worth the
 // complexity for a curated placeholder set this small.
 function buildGridItems(projects: ClientProject[]): GridItem[] {
-  const sitesShipped = heroStats.find((s) => s.label === "Sites Shipped");
+  const sitesShipped = heroStats.find((s) => s.label.en === "Sites Shipped");
   const items: GridItem[] = [];
 
   projects.forEach((project, i) => {
@@ -164,17 +178,15 @@ function buildGridItems(projects: ClientProject[]): GridItem[] {
 
 export function ClientWork() {
   const items = buildGridItems(clientProjects);
+  const language = useLanguage();
 
   return (
-    <Section id="work" index="01" tint eyebrow="Client Work" title="Work I've Delivered">
-      <p className="-mt-6 mb-10 max-w-2xl text-text-muted">
-        A sample from 150+ client sites delivered across industries — the
-        actual, shipped, paid-for work.
-      </p>
+    <Section id="work" index="01" tint eyebrow={strings.clientWork.eyebrow} title={strings.clientWork.title}>
+      <p className="-mt-6 mb-10 max-w-2xl text-text-muted">{t(strings.clientWork.intro, language)}</p>
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item, index) =>
           item.kind === "project" ? (
-            <WorkCard key={item.project.name} project={item.project} />
+            <WorkCard key={item.project.name.en} project={item.project} />
           ) : item.kind === "stat" ? (
             <StatShowcase key={`stat-${index}`} value={item.value} suffix={item.suffix} label={item.label} />
           ) : (

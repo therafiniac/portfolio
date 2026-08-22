@@ -1,6 +1,10 @@
+import type { Localized } from "@/types";
+import { useLanguage } from "@/lib/useLanguage";
+import { t } from "@/lib/i18n";
+
 type SectionHeadingProps = {
-  eyebrow: string;
-  title: string;
+  eyebrow: Localized;
+  title: Localized;
 };
 
 // The eyebrow pill + title pairing every section opens with. Section.tsx
@@ -9,12 +13,14 @@ type SectionHeadingProps = {
 // beside the content rather than stacked above it — kept as one source
 // so the two never drift out of sync with each other.
 export function SectionHeading({ eyebrow, title }: SectionHeadingProps) {
+  const language = useLanguage();
+
   return (
     <>
-      <span className="inline-block rounded-full border border-line/40 bg-surface/60 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.2em] text-accent-secondary backdrop-blur">
-        {eyebrow}
+      <span className="inline-block rounded-full border border-line/40 bg-surface/60 px-3 py-1 font-mono text-[length:var(--text-1xs)] uppercase tracking-[0.2em] text-accent-secondary backdrop-blur">
+        {t(eyebrow, language)}
       </span>
-      <h2 className="mt-4 font-mono text-3xl font-medium text-text-primary md:text-4xl">{title}</h2>
+      <h2 className="mt-4 font-mono text-3xl font-medium text-text-primary md:text-4xl">{t(title, language)}</h2>
     </>
   );
 }

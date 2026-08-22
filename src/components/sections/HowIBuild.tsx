@@ -1,3 +1,5 @@
+"use client";
+
 import type { ReactElement, ReactNode } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { Section } from "@/components/layout/Section";
@@ -6,6 +8,9 @@ import { TileGlow } from "@/components/ui/TileGlow";
 import { GithubIcon } from "@/components/icons/BrandIcons";
 import { approachPoints, type ApproachPoint } from "@/lib/data/approach";
 import type { GithubStats } from "@/lib/github";
+import { useLanguage } from "@/lib/useLanguage";
+import { t } from "@/lib/i18n";
+import { strings } from "@/lib/i18n-strings";
 
 // Five small diagrams, one per point below — circles + thin connecting
 // lines, one node pulsing, a different topology per concept, so each card
@@ -227,6 +232,7 @@ function PointCard({
 }) {
   const isTall = height === "tall";
   const Icon = point.icon;
+  const language = useLanguage();
 
   return (
     <TileShell span={span} height={height}>
@@ -237,16 +243,18 @@ function PointCard({
         <Graphic className={isTall ? "h-32 w-full max-w-[320px]" : "h-10 w-full max-w-[160px]"} />
       </div>
       <div className="shrink-0">
-        <h3 className={`text-text-primary ${isTall ? "text-xl" : "text-base"}`}>{point.heading}</h3>
+        <h3 className={`text-text-primary ${isTall ? "text-xl" : "text-base"}`}>{t(point.heading, language)}</h3>
         <p className={`mt-2 text-text-muted ${isTall ? "text-sm" : "text-xs line-clamp-3"}`}>
-          {point.description}
+          {t(point.description, language)}
         </p>
       </div>
     </TileShell>
   );
 }
 
-function StatTile({ value, label }: { value: number; label: string }) {
+function StatTile({ value }: { value: number }) {
+  const language = useLanguage();
+
   return (
     <TileShell span={1} height="short" accent>
       <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-bg/50 text-accent backdrop-blur">
@@ -259,8 +267,8 @@ function StatTile({ value, label }: { value: number; label: string }) {
         >
           <CountUp value={value} />
         </span>
-        <span className="mt-1 block font-mono text-[10px] uppercase tracking-[0.15em] text-text-muted">
-          {label}
+        <span className="mt-1 block font-mono text-[length:var(--text-2xs)] uppercase tracking-[0.15em] text-text-muted">
+          {t(strings.howIBuild.publicRepos, language)}
         </span>
       </div>
     </TileShell>
@@ -268,11 +276,13 @@ function StatTile({ value, label }: { value: number; label: string }) {
 }
 
 function CtaTile() {
+  const language = useLanguage();
+
   return (
     <TileShell span={1} height="short" href="#contact" accent>
-      <span className="font-mono text-sm text-text-primary">Open to new projects.</span>
+      <span className="font-mono text-sm text-text-primary">{t(strings.howIBuild.ctaHeading, language)}</span>
       <span className="flex items-center gap-1 font-mono text-xs uppercase tracking-[0.15em] text-accent transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-0.5">
-        Get in touch
+        {t(strings.howIBuild.cta, language)}
         <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
       </span>
     </TileShell>
@@ -285,12 +295,11 @@ type HowIBuildProps = {
 
 export function HowIBuild({ githubStats }: HowIBuildProps) {
   const [fullStack, performance, typeSafe, devDesign, prodGrade] = approachPoints;
+  const language = useLanguage();
 
   return (
-    <Section id="approach" index="05" eyebrow="Philosophy" title="How I Build">
-      <p className="-mt-6 mb-10 max-w-2xl text-text-muted">
-        A few things that stay true across every project, regardless of stack.
-      </p>
+    <Section id="approach" index="05" eyebrow={strings.howIBuild.eyebrow} title={strings.howIBuild.title}>
+      <p className="-mt-6 mb-10 max-w-2xl text-text-muted">{t(strings.howIBuild.intro, language)}</p>
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <PointCard point={fullStack} span={2} height="tall" graphic={LayersGraphic} />
         <PointCard point={typeSafe} span={1} height="tall" graphic={SchemaGraphic} />
@@ -298,7 +307,7 @@ export function HowIBuild({ githubStats }: HowIBuildProps) {
         <PointCard point={devDesign} span={1} height="tall" graphic={DualRoleGraphic} />
         <PointCard point={prodGrade} span={1} height="short" graphic={PipelineGraphic} />
         <CtaTile />
-        {githubStats && <StatTile value={githubStats.publicRepos} label="Public Repos (Live)" />}
+        {githubStats && <StatTile value={githubStats.publicRepos} />}
       </div>
     </Section>
   );

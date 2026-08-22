@@ -5,6 +5,9 @@ import { CheckCircle2, Send } from "lucide-react";
 import { submitContactForm, type ContactFormState } from "@/lib/actions/contact";
 import { contactSchema, type ContactFieldErrors } from "@/lib/validation/contact";
 import { Magnetic } from "@/components/layout/Magnetic";
+import { useLanguage } from "@/lib/useLanguage";
+import { t } from "@/lib/i18n";
+import { strings } from "@/lib/i18n-strings";
 
 const initialState: ContactFormState = { status: "idle" };
 
@@ -25,17 +28,16 @@ export function ContactForm() {
   );
   const [clientErrors, setClientErrors] = useState<ContactFieldErrors>({});
   const [touched, setTouched] = useState<Partial<Record<FieldName, boolean>>>({});
+  const language = useLanguage();
 
   if (state.status === "success") {
     return (
       <div className="glass-panel p-6 text-text-primary md:p-8" role="status">
         <p className="flex items-center gap-2 font-mono text-sm text-accent">
           <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
-          Message sent.
+          {t(strings.contactForm.sentTitle, language)}
         </p>
-        <p className="mt-2 text-sm text-text-muted">
-          Thanks for reaching out — I&apos;ll get back to you soon.
-        </p>
+        <p className="mt-2 text-sm text-text-muted">{t(strings.contactForm.sentBody, language)}</p>
       </div>
     );
   }
@@ -106,7 +108,7 @@ export function ContactForm() {
           htmlFor="name"
           className="block font-mono text-xs uppercase tracking-[0.15em] text-text-muted"
         >
-          Name
+          {t(strings.contactForm.name, language)}
         </label>
         <input
           id="name"
@@ -129,7 +131,7 @@ export function ContactForm() {
           htmlFor="email"
           className="block font-mono text-xs uppercase tracking-[0.15em] text-text-muted"
         >
-          Email
+          {t(strings.contactForm.email, language)}
         </label>
         <input
           id="email"
@@ -152,7 +154,7 @@ export function ContactForm() {
           htmlFor="message"
           className="block font-mono text-xs uppercase tracking-[0.15em] text-text-muted"
         >
-          Message
+          {t(strings.contactForm.message, language)}
         </label>
         <textarea
           id="message"
@@ -188,7 +190,7 @@ export function ContactForm() {
           style={{ backgroundImage: "var(--gradient-signature)" }}
         >
           <Send className="h-4 w-4" aria-hidden="true" />
-          {pending ? "Sending…" : "Send Message"}
+          {pending ? t(strings.contactForm.sending, language) : t(strings.contactForm.send, language)}
         </button>
       </Magnetic>
     </form>

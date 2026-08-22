@@ -3,12 +3,15 @@
 import { motion } from "framer-motion";
 import type { ReactNode } from "react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import type { Localized } from "@/types";
+import { useLanguage } from "@/lib/useLanguage";
+import { localizeNumber } from "@/lib/i18n";
 
 type SectionProps = {
   id?: string;
   index?: string;
-  eyebrow: string;
-  title: string;
+  eyebrow: Localized;
+  title: Localized;
   tint?: boolean;
   // False lets the caller compose its own eyebrow/heading inside
   // children instead of the default stacked-above-children layout — e.g.
@@ -22,6 +25,8 @@ type SectionProps = {
 };
 
 export function Section({ id, index, eyebrow, title, tint, renderHeader = true, children }: SectionProps) {
+  const language = useLanguage();
+
   return (
     <motion.section
       id={id}
@@ -38,7 +43,7 @@ export function Section({ id, index, eyebrow, title, tint, renderHeader = true, 
           aria-hidden="true"
           className="pointer-events-none absolute -top-4 right-4 select-none font-mono text-[clamp(6rem,18vw,14rem)] font-bold leading-none text-text-primary/[0.035] md:right-8"
         >
-          {index}
+          {localizeNumber(index, language)}
         </span>
       )}
       <div className="relative mx-auto max-w-6xl">

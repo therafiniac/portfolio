@@ -10,14 +10,14 @@ type TechChipProps = {
 export function TechChip({ children, size = "md" }: TechChipProps) {
   if (size === "sm") {
     return (
-      <span className="rounded border border-line/40 px-1.5 py-0.5 font-mono text-[9px] text-text-muted">
+      <span className="rounded border border-line/40 px-1.5 py-0.5 font-mono text-[length:var(--text-3xs)] text-text-muted">
         {children}
       </span>
     );
   }
 
   return (
-    <span className="rounded-full border border-line/60 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.1em] text-text-muted">
+    <span className="rounded-full border border-line/60 px-3 py-1 font-mono text-[length:var(--text-1xs)] uppercase tracking-[0.1em] text-text-muted">
       {children}
     </span>
   );
