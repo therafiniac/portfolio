@@ -47,7 +47,7 @@ export function Projects() {
   const language = useLanguage();
 
   return (
-    <Section id="built" index="02" eyebrow={strings.projects.eyebrow} title={strings.projects.title}>
+    <Section id="built" tag="BUILT" eyebrow={strings.projects.eyebrow} title={strings.projects.title}>
       <p className="-mt-6 mb-10 max-w-2xl text-text-muted">{t(strings.projects.intro, language)}</p>
 
       <div className="flex flex-wrap gap-1 border-b border-line/40">

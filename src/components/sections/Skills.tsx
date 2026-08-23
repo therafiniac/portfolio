@@ -49,7 +49,7 @@ export function Skills() {
   const language = useLanguage();
 
   return (
-    <Section id="stack" index="04" eyebrow={EYEBROW} title={TITLE} renderHeader={false}>
+    <Section id="stack" tag="STACK" eyebrow={EYEBROW} title={TITLE} renderHeader={false}>
       {/* Same left-copy/right-artifact composition as Hero's own grid —
           the one other place on the page that pairs a text column with a
           single focal object — instead of stacking a left-aligned

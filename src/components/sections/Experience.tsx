@@ -90,7 +90,7 @@ export function Experience() {
   const language = useLanguage();
 
   return (
-    <Section id="experience" index="05" tint eyebrow={strings.experience.eyebrow} title={strings.experience.title}>
+    <Section id="experience" tag="EXP" tint eyebrow={strings.experience.eyebrow} title={strings.experience.title}>
       <div className="relative space-y-12">
         {/* Green at the top (the current-role segment) fading into the
             regular accent/muted fade below — a color echo of the pulsing

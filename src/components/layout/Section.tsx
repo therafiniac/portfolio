@@ -4,29 +4,30 @@ import { motion } from "framer-motion";
 import type { ReactNode } from "react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import type { Localized } from "@/types";
-import { useLanguage } from "@/lib/useLanguage";
-import { localizeNumber } from "@/lib/i18n";
 
 type SectionProps = {
   id?: string;
-  index?: string;
+  // Short, plain-English mono tag (e.g. "WORK", "STACK") rendered as a
+  // giant faint "// TAG" watermark, top-right — a code-comment stamp
+  // rather than a page-number-style index. Deliberately not translated:
+  // like tech/notation elsewhere on the site, this is a fixed label, not
+  // prose (see Localized in types/index.ts for that distinction).
+  tag?: string;
   eyebrow: Localized;
   title: Localized;
   tint?: boolean;
   // False lets the caller compose its own eyebrow/heading inside
   // children instead of the default stacked-above-children layout — e.g.
   // Stack's two-column header, sitting beside its content instead of on
-  // top of it. Section still owns the outer chrome (border, padding,
-  // index watermark, entrance animation) either way; eyebrow/title stay
+  // top of it. Section still owns the outer chrome (border, padding, tag
+  // watermark, entrance animation) either way; eyebrow/title stay
   // required even when unrendered since they're still this section's
   // identity for anything reading the props.
   renderHeader?: boolean;
   children: ReactNode;
 };
 
-export function Section({ id, index, eyebrow, title, tint, renderHeader = true, children }: SectionProps) {
-  const language = useLanguage();
-
+export function Section({ id, tag, eyebrow, title, tint, renderHeader = true, children }: SectionProps) {
   return (
     <motion.section
       id={id}
@@ -38,12 +39,13 @@ export function Section({ id, index, eyebrow, title, tint, renderHeader = true, 
         tint ? "bg-surface/40" : ""
       }`}
     >
-      {index && (
+      {tag && (
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute -top-4 right-4 select-none font-mono text-[clamp(6rem,18vw,14rem)] font-bold leading-none text-text-primary/[0.035] md:right-8"
+          className="pointer-events-none absolute top-6 right-4 select-none whitespace-nowrap font-mono text-[clamp(1.5rem,5vw,4rem)] font-bold leading-none tracking-tight text-text-primary/[0.05] md:right-8"
         >
-          {localizeNumber(index, language)}
+          {"// "}
+          {tag}
         </span>
       )}
       <div className="relative mx-auto max-w-6xl">

@@ -52,7 +52,7 @@ export function SideProjects() {
   const language = useLanguage();
 
   return (
-    <Section id="side-projects" index="03" eyebrow={strings.sideProjects.eyebrow} title={strings.sideProjects.title}>
+    <Section id="side-projects" tag="BUILDS" eyebrow={strings.sideProjects.eyebrow} title={strings.sideProjects.title}>
       <p className="-mt-6 mb-10 max-w-2xl text-text-muted">{t(strings.sideProjects.intro, language)}</p>
       {/* sm: 2-up, lg: 3-up — reflows on its own as entries are added, no
           layout logic to touch when the list grows. */}
