@@ -2,6 +2,7 @@ import { Hero } from "@/components/sections/Hero";
 import { ClientWork } from "@/components/sections/ClientWork";
 import { Services } from "@/components/sections/Services";
 import { Projects } from "@/components/sections/Projects";
+import { SideProjects } from "@/components/sections/SideProjects";
 import { Experience } from "@/components/sections/Experience";
 import { Skills } from "@/components/sections/Skills";
 import { HowIBuild } from "@/components/sections/HowIBuild";
@@ -18,6 +19,7 @@ export default async function Home() {
         <Hero />
         <ClientWork />
         <Projects />
+        <SideProjects />
         <Skills />
         <Experience />
         <HowIBuild githubStats={githubStats} />

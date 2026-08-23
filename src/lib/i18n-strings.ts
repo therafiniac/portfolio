@@ -44,6 +44,15 @@ export const strings = {
     mechanism: { en: "Mechanism", bn: "মেকানিজম" } satisfies Localized,
     stack: { en: "Stack", bn: "স্ট্যাক" } satisfies Localized,
   },
+  sideProjects: {
+    eyebrow: { en: "Small Builds", bn: "ছোট প্রজেক্ট" } satisfies Localized,
+    title: { en: "Fun Tools", bn: "মজার টুল" } satisfies Localized,
+    intro: {
+      en: "Small utilities built for fun — no case study, just things that work.",
+      bn: "মজার জন্য তৈরি ছোট ছোট টুল — কোনো কেস স্টাডি নয়, শুধু কাজের জিনিস।",
+    } satisfies Localized,
+    tryIt: { en: "Try It", bn: "ব্যবহার করুন" } satisfies Localized,
+  },
   skills: {
     eyebrow: { en: "Capabilities", bn: "দক্ষতা" } satisfies Localized,
     title: { en: "Stack", bn: "স্ট্যাক" } satisfies Localized,
