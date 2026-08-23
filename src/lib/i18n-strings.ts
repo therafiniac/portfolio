@@ -87,7 +87,6 @@ export const strings = {
     } satisfies Localized,
     ctaHeading: { en: "Open to new projects.", bn: "নতুন প্রজেক্টের জন্য উন্মুক্ত।" } satisfies Localized,
     cta: { en: "Get in touch", bn: "যোগাযোগ করুন" } satisfies Localized,
-    publicRepos: { en: "Public Repos (Live)", bn: "পাবলিক রেপো (লাইভ)" } satisfies Localized,
   },
   contact: {
     eyebrow: { en: "Get in Touch", bn: "যোগাযোগ করুন" } satisfies Localized,
@@ -138,5 +137,11 @@ export const strings = {
     switchToDark: { en: "Switch to dark mode", bn: "ডার্ক মোডে যান" } satisfies Localized,
     switchToLight: { en: "Switch to light mode", bn: "লাইট মোডে যান" } satisfies Localized,
     switchToBengali: { en: "Switch to Bengali", bn: "ইংরেজিতে যান" } satisfies Localized,
+  },
+  commandPalette: {
+    openLabel: { en: "Open command palette", bn: "কমান্ড প্যালেট খুলুন" } satisfies Localized,
+    placeholder: { en: "Jump to a section…", bn: "একটি সেকশনে যান…" } satisfies Localized,
+    noResults: { en: "No matches", bn: "কোনো ফলাফল নেই" } satisfies Localized,
+    hint: { en: "navigate · select · close", bn: "নেভিগেট · নির্বাচন · বন্ধ" } satisfies Localized,
   },
 };

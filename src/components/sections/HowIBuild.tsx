@@ -1,13 +1,10 @@
 "use client";
 
 import type { ReactElement, ReactNode } from "react";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Send } from "lucide-react";
 import { Section } from "@/components/layout/Section";
-import { CountUp } from "@/components/layout/CountUp";
 import { TileGlow } from "@/components/ui/TileGlow";
-import { GithubIcon } from "@/components/icons/BrandIcons";
 import { approachPoints, type ApproachPoint } from "@/lib/data/approach";
-import type { GithubStats } from "@/lib/github";
 import { useLanguage } from "@/lib/useLanguage";
 import { t } from "@/lib/i18n";
 import { strings } from "@/lib/i18n-strings";
@@ -177,43 +174,22 @@ type TileHeight = "tall" | "short";
 function TileShell({
   span,
   height,
-  href,
-  // Filler tiles (stat/CTA) default to an accent-tinted ring instead of
-  // the neutral one, so they read as a deliberate brand moment at rest,
-  // not just on hover like a content card.
-  accent = false,
   children,
 }: {
   span: 1 | 2;
   height: TileHeight;
-  href?: string;
-  accent?: boolean;
   children: ReactNode;
 }) {
   const heightClass = height === "tall" ? "h-80" : "h-48";
   const spanClass = span === 2 ? "sm:col-span-2" : "";
-  const borderClass = accent
-    ? "border-accent/55 group-hover:border-accent/85"
-    : "border-line/60 group-hover:border-accent/60";
-  const inner = (
-    <div
-      className={`hover-glow-panel tile-signature flex h-full flex-col justify-between overflow-hidden rounded-2xl border p-6 transition-colors duration-300 ${borderClass}`}
-    >
-      <TileGlow intensity={20} spread={60} originX={25} originY={20} />
-      {children}
-    </div>
-  );
-
-  if (href) {
-    return (
-      <a href={href} className={`group relative block ${heightClass} ${spanClass}`}>
-        {inner}
-      </a>
-    );
-  }
 
   return (
-    <div className={`group relative ${heightClass} ${spanClass}`}>{inner}</div>
+    <div className={`group relative ${heightClass} ${spanClass}`}>
+      <div className="hover-glow-panel tile-signature flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-line/60 p-6 transition-colors duration-300 group-hover:border-accent/60">
+        <TileGlow intensity={20} spread={60} originX={25} originY={20} />
+        {children}
+      </div>
+    </div>
   );
 }
 
@@ -252,48 +228,40 @@ function PointCard({
   );
 }
 
-function StatTile({ value }: { value: number }) {
-  const language = useLanguage();
-
-  return (
-    <TileShell span={1} height="short" accent>
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-bg/50 text-accent backdrop-blur">
-        <GithubIcon className="h-4 w-4" aria-hidden="true" />
-      </span>
-      <div className="text-center">
-        <span
-          className="block bg-clip-text font-mono text-4xl font-semibold text-transparent"
-          style={{ backgroundImage: "var(--gradient-signature)" }}
-        >
-          <CountUp value={value} />
-        </span>
-        <span className="mt-1 block font-mono text-[length:var(--text-2xs)] uppercase tracking-[0.15em] text-text-muted">
-          {t(strings.howIBuild.publicRepos, language)}
-        </span>
-      </div>
-    </TileShell>
-  );
-}
-
+// The site's one other full-gradient CTA (see WorkFillerTile.tsx in
+// ClientWork) — same recipe: full --gradient-signature fill, bg-toned
+// content, one big icon bleeding off the corner. Anchored bottom-left and
+// spanning 2 columns so it reads as the section's one loud brand moment,
+// not another neutral card in the grid.
 function CtaTile() {
   const language = useLanguage();
 
   return (
-    <TileShell span={1} height="short" href="#contact" accent>
-      <span className="font-mono text-sm text-text-primary">{t(strings.howIBuild.ctaHeading, language)}</span>
-      <span className="flex items-center gap-1 font-mono text-xs uppercase tracking-[0.15em] text-accent transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-0.5">
-        {t(strings.howIBuild.cta, language)}
-        <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
-      </span>
-    </TileShell>
+    <a
+      href="#contact"
+      className="group relative flex h-48 flex-col items-center justify-center gap-2 overflow-hidden rounded-2xl p-6 text-center shadow-lg shadow-black/10 transition-[filter] duration-300 hover:brightness-110 sm:col-span-2"
+      style={{ backgroundImage: "var(--gradient-signature)" }}
+    >
+      <Send
+        className="pointer-events-none absolute -bottom-8 -right-8 h-36 w-36 text-bg/15"
+        strokeWidth={1.25}
+        aria-hidden="true"
+      />
+      <div className="relative flex flex-col items-center gap-2">
+        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-bg/20 text-bg backdrop-blur">
+          <Send className="h-5 w-5" aria-hidden="true" />
+        </span>
+        <span className="font-mono text-lg text-bg">{t(strings.howIBuild.ctaHeading, language)}</span>
+        <span className="flex items-center gap-1 font-mono text-xs uppercase tracking-[0.2em] text-bg/80 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1">
+          {t(strings.howIBuild.cta, language)}
+          <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+        </span>
+      </div>
+    </a>
   );
 }
 
-type HowIBuildProps = {
-  githubStats: GithubStats | null;
-};
-
-export function HowIBuild({ githubStats }: HowIBuildProps) {
+export function HowIBuild() {
   const [fullStack, performance, typeSafe, devDesign, prodGrade] = approachPoints;
   const language = useLanguage();
 
@@ -305,9 +273,8 @@ export function HowIBuild({ githubStats }: HowIBuildProps) {
         <PointCard point={typeSafe} span={1} height="tall" graphic={SchemaGraphic} />
         <PointCard point={performance} span={2} height="tall" graphic={ConvergeGraphic} />
         <PointCard point={devDesign} span={1} height="tall" graphic={DualRoleGraphic} />
-        <PointCard point={prodGrade} span={1} height="short" graphic={PipelineGraphic} />
         <CtaTile />
-        {githubStats && <StatTile value={githubStats.publicRepos} />}
+        <PointCard point={prodGrade} span={1} height="short" graphic={PipelineGraphic} />
       </div>
     </Section>
   );

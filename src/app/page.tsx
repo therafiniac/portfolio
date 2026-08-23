@@ -8,11 +8,8 @@ import { Skills } from "@/components/sections/Skills";
 import { HowIBuild } from "@/components/sections/HowIBuild";
 import { Contact } from "@/components/sections/Contact";
 import { Footer } from "@/components/layout/Footer";
-import { getGithubStats } from "@/lib/github";
 
-export default async function Home() {
-  const githubStats = await getGithubStats();
-
+export default function Home() {
   return (
     <>
       <main className="flex flex-1 flex-col">
@@ -22,7 +19,7 @@ export default async function Home() {
         <SideProjects />
         <Skills />
         <Experience />
-        <HowIBuild githubStats={githubStats} />
+        <HowIBuild />
         <Services />
         <Contact />
       </main>
