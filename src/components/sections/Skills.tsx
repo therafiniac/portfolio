@@ -45,6 +45,16 @@ function StackRow({ group, delay }: { group: SkillGroup; delay: number }) {
   );
 }
 
+// The row after the last real one — same delay formula StackRow's own
+// call sites use, one index further, plus that row's own 0.4s fade
+// duration and a small buffer. This is what makes the trailing prompt
+// (the "$" + blinking caret right below the rows) show up only once the
+// last row has actually finished animating in, instead of sitting there
+// already blinking before any output has appeared — a real terminal's
+// next prompt doesn't show up until the previous command's output has
+// finished printing.
+const CARET_DELAY = 0.15 + skillGroups.length * 0.1 + 0.4;
+
 export function Skills() {
   const language = useLanguage();
 
@@ -82,14 +92,19 @@ export function Skills() {
               real elevation via the shadow, so this reads as a floating
               panel rather than a flat bordered rectangle. */}
           <div
-            className="relative rounded-2xl p-px shadow-[0_25px_60px_-20px_color-mix(in_srgb,var(--shadow-color)_50%,transparent)]"
+            className="group relative rounded-2xl p-px shadow-[0_25px_60px_-20px_color-mix(in_srgb,var(--shadow-color)_50%,transparent)]"
             style={{ backgroundImage: "var(--gradient-signature)" }}
           >
             <div className="overflow-hidden rounded-2xl bg-surface/95 backdrop-blur">
+              {/* Same traffic-light-dots-light-up-on-hover treatment as
+                  ClientWork's BrowserChrome — one shared "this terminal
+                  chrome is alive" motif instead of two hand-rolled ones,
+                  triggered off the whole card's hover (`group` above),
+                  not just this title bar. */}
               <div className="flex items-center gap-1.5 border-b border-line/30 px-4 py-2.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-line" />
-                <span className="h-1.5 w-1.5 rounded-full bg-line" />
-                <span className="h-1.5 w-1.5 rounded-full bg-line" />
+                <span className="h-1.5 w-1.5 rounded-full bg-line transition-colors duration-300 group-hover:bg-accent" />
+                <span className="h-1.5 w-1.5 rounded-full bg-line transition-colors delay-75 duration-300 group-hover:bg-[color-mix(in_srgb,var(--accent),var(--accent-secondary))]" />
+                <span className="h-1.5 w-1.5 rounded-full bg-line transition-colors delay-150 duration-300 group-hover:bg-accent-secondary" />
                 <span className="ml-2 font-mono text-[length:var(--text-2xs)] uppercase tracking-[0.1em] text-text-muted">
                   {t(strings.skills.terminalTitle, language)}
                 </span>
@@ -106,10 +121,16 @@ export function Skills() {
                   ))}
                 </div>
 
-                <p className="mt-5 font-mono text-sm text-text-primary sm:text-base">
+                <motion.p
+                  className="mt-5 font-mono text-sm text-text-primary sm:text-base"
+                  initial={{ opacity: 0, y: 8 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.4, ease: "easeOut", delay: CARET_DELAY }}
+                >
                   <span className="text-accent-secondary">$</span>{" "}
                   <span className="terminal-caret" aria-hidden="true" />
-                </p>
+                </motion.p>
               </div>
             </div>
           </div>
