@@ -82,14 +82,19 @@ export function Skills() {
               real elevation via the shadow, so this reads as a floating
               panel rather than a flat bordered rectangle. */}
           <div
-            className="relative rounded-2xl p-px shadow-[0_25px_60px_-20px_color-mix(in_srgb,var(--shadow-color)_50%,transparent)]"
+            className="group relative rounded-2xl p-px shadow-[0_25px_60px_-20px_color-mix(in_srgb,var(--shadow-color)_50%,transparent)]"
             style={{ backgroundImage: "var(--gradient-signature)" }}
           >
             <div className="overflow-hidden rounded-2xl bg-surface/95 backdrop-blur">
+              {/* Same traffic-light-dots-light-up-on-hover treatment as
+                  ClientWork's BrowserChrome — one shared "this terminal
+                  chrome is alive" motif instead of two hand-rolled ones,
+                  triggered off the whole card's hover (`group` above),
+                  not just this title bar. */}
               <div className="flex items-center gap-1.5 border-b border-line/30 px-4 py-2.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-line" />
-                <span className="h-1.5 w-1.5 rounded-full bg-line" />
-                <span className="h-1.5 w-1.5 rounded-full bg-line" />
+                <span className="h-1.5 w-1.5 rounded-full bg-line transition-colors duration-300 group-hover:bg-accent" />
+                <span className="h-1.5 w-1.5 rounded-full bg-line transition-colors delay-75 duration-300 group-hover:bg-[color-mix(in_srgb,var(--accent),var(--accent-secondary))]" />
+                <span className="h-1.5 w-1.5 rounded-full bg-line transition-colors delay-150 duration-300 group-hover:bg-accent-secondary" />
                 <span className="ml-2 font-mono text-[length:var(--text-2xs)] uppercase tracking-[0.1em] text-text-muted">
                   {t(strings.skills.terminalTitle, language)}
                 </span>
