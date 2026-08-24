@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { Inter, JetBrains_Mono, Noto_Serif_Bengali } from "next/font/google";
 import { MotionConfig } from "framer-motion";
 import { CursorGlow } from "@/components/layout/CursorGlow";
+import { CursorTrail } from "@/components/layout/CursorTrail";
 import { Navbar } from "@/components/layout/Navbar";
 import { SmoothScroll } from "@/components/layout/SmoothScroll";
 import { ScrollProgress } from "@/components/layout/ScrollProgress";
@@ -174,6 +175,7 @@ export default async function RootLayout({
           <ScrollProgress />
           <div className="grain-overlay" aria-hidden="true" />
           <CursorGlow />
+          <CursorTrail />
           <Navbar />
           <CommandPalette />
           <TabAttention />
