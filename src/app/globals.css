@@ -213,19 +213,6 @@ html::-webkit-scrollbar {
   display: none;
 }
 
-/* Same "hide the native indicator, keep real scrolling" treatment as
-   html above, but reusable on any individually-scrollable element (e.g.
-   Projects.tsx's mobile tab row) — those aren't the page's own scrollbar,
-   so they need their own rule rather than piggybacking on the html one. */
-.scrollbar-hide {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
 ::selection {
   background: var(--accent-dim);
   color: var(--accent);
