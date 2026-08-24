@@ -50,6 +50,16 @@ export type Project = {
   private?: boolean;
 };
 
+// Small, self-contained tools built for fun rather than as a technical
+// case study — no stack/architecture story attached (see SideProjects.tsx),
+// unlike Project above, which is reserved for deep-dive builds.
+export type SideProject = {
+  name: Localized;
+  description: Localized;
+  href: string;
+  icon: IconComponent;
+};
+
 export type ClientProject = {
   name: Localized;
   category: Localized;

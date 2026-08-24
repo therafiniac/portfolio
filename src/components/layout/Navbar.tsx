@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, Search, X } from "lucide-react";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { LanguageToggle } from "@/components/layout/LanguageToggle";
 import { BrandMark } from "@/components/layout/BrandMark";
+import { openCommandPalette } from "@/components/layout/CommandPalette";
 import { navLinks } from "@/lib/data/nav";
 import { wordmark } from "@/lib/data/hero";
 import { useLanguage } from "@/lib/useLanguage";
@@ -122,6 +123,17 @@ export function Navbar() {
           </nav>
 
           <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={openCommandPalette}
+              aria-label={t(strings.commandPalette.openLabel, language)}
+              className="flex h-9 items-center gap-1.5 rounded-full px-2.5 text-text-muted transition-colors hover:text-accent"
+            >
+              <Search className="h-4 w-4" aria-hidden="true" />
+              <kbd className="hidden rounded border border-line/60 px-1.5 py-0.5 font-mono text-[length:var(--text-3xs)] sm:inline-block">
+                ⌘K
+              </kbd>
+            </button>
             <LanguageToggle />
             <ThemeToggle />
             <button
@@ -148,7 +160,15 @@ export function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2 }}
-            className="nav-glass mt-2 flex flex-col gap-1 rounded-2xl p-3 sm:hidden"
+            // nav-mobile-menu (globals.css) carries the actual `position:
+            // absolute` — this used to sit in normal document flow after
+            // the header's own row, so opening it pushed every section
+            // below down the page (a real layout shift, not just visual).
+            // A Tailwind `absolute` utility here doesn't work: nav-glass
+            // sets its own plain-CSS `position: relative` which silently
+            // wins over a layered Tailwind utility regardless of class
+            // order (see nav-mobile-menu's comment in globals.css).
+            className="nav-glass nav-mobile-menu z-10 mt-2 flex flex-col gap-1 rounded-2xl p-3 sm:hidden"
           >
             {navLinks.map((link) => (
               <a

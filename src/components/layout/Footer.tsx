@@ -27,6 +27,12 @@ export function Footer() {
           <span className="font-mono text-xs text-text-muted">
             © {localizeNumber(year, language)} {t(fullName, language)}
           </span>
+          {/* Same "// TAG" code-comment motif as every section's corner
+              watermark (see Section.tsx) — recurs here as a quiet sign-off
+              instead of living in only one place on the page. */}
+          <span aria-hidden="true" className="hidden font-mono text-xs text-text-muted/50 sm:inline">
+            {"// EOF"}
+          </span>
         </div>
 
         <p className="flex items-center gap-2 font-mono text-[length:var(--text-1xs)] uppercase tracking-[0.15em] text-text-muted">

@@ -73,7 +73,13 @@ function WorkCard({ project }: { project: ClientProject }) {
       <TileGlow />
       <BrowserChrome label={project.tech[0]} />
       <div className={`relative w-full overflow-hidden ${SHOT_ASPECT}`}>
-        <div className="tile-signature absolute inset-0 flex items-center justify-center transition-opacity duration-300 group-hover:opacity-0">
+        {/* Reveal-on-hover only from md up — below that there's no
+            persistent hover state to trigger it (a touch tap doesn't hold
+            :hover), so the real screenshot would never show at all on
+            mobile. Below md the default flips: the screenshot shows
+            plainly and the icon placeholder stays hidden, since that's
+            strictly more informative than a state mobile can never reach. */}
+        <div className="tile-signature absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 md:opacity-100 md:group-hover:opacity-0">
           <project.icon
             className="h-14 w-14 text-accent-secondary"
             strokeWidth={1.25}
@@ -85,7 +91,7 @@ function WorkCard({ project }: { project: ClientProject }) {
           alt={`${t(project.name, language)} ${t(strings.clientWork.preview, language)}`}
           fill
           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-          className="object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          className="object-cover opacity-100 transition-opacity duration-300 md:opacity-0 md:group-hover:opacity-100"
         />
       </div>
       <div className="flex h-36 flex-col p-6">
@@ -181,7 +187,7 @@ export function ClientWork() {
   const language = useLanguage();
 
   return (
-    <Section id="work" index="01" tint eyebrow={strings.clientWork.eyebrow} title={strings.clientWork.title}>
+    <Section id="work" tag="WORK" tint eyebrow={strings.clientWork.eyebrow} title={strings.clientWork.title}>
       <p className="-mt-6 mb-10 max-w-2xl text-text-muted">{t(strings.clientWork.intro, language)}</p>
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item, index) =>
