@@ -563,6 +563,47 @@ html::-webkit-scrollbar {
   }
 }
 
+/* How I Build's per-tile graphics (HowIBuild.tsx) — the topology-neutral
+   nodes in each diagram pulse in sequence on hover, the delay set inline
+   per node since it depends on that node's position within its own
+   graphic's shape (a layer row, distance from a hub, position along a
+   chain), not a fixed value shared by all five. transform-box: fill-box
+   makes `scale` pivot on the circle's own center instead of the SVG
+   viewport's origin, which is the default and wrong pivot for a shape
+   this far from (0,0). The always-on single pulsing node each graphic
+   already had (nodeProps(true) in HowIBuild.tsx) is untouched — this is
+   additive, only reaching the previously-static nodes. */
+.hib-node {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* Each node's animation-delay is set inline (style prop, HowIBuild.tsx)
+   rather than here — an inline longhand always wins over this shorthand's
+   implicit delay:0s regardless of selector specificity, so per-node
+   staggering just works without a CSS custom property indirection. */
+.group:hover .hib-node {
+  animation: hib-node-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes hib-node-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.7);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .group:hover .hib-node {
+    animation: none;
+  }
+}
+
 /* Blinking prompt cursor for the Stack section's terminal panel — same
    "continuous CSS animation, guarded for reduced motion" pattern as
    trail-light/flow-light above. steps(1, end) instead of an eased

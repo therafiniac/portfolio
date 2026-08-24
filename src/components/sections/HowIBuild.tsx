@@ -46,9 +46,20 @@ function LayersGraphic({ className }: { className?: string }) {
           <line key={`${x}-${y}`} x1={x} y1={y} x2={x} y2={rows[i + 1]} {...edgeProps()} />
         )),
       )}
-      {rows.flatMap((y) => cols.map((x) => [x, y] as const)).map(([cx, cy]) => (
-        <circle key={`${cx}-${cy}`} cx={cx} cy={cy} {...nodeProps(false)} />
-      ))}
+      {/* Ripples top row to bottom row on hover — the same order data
+          would actually flow down a layered stack. */}
+      {rows.map((y, rowIndex) =>
+        cols.map((x) => (
+          <circle
+            key={`${x}-${y}`}
+            cx={x}
+            cy={y}
+            {...nodeProps(false)}
+            className="hib-node"
+            style={{ animationDelay: `${rowIndex * 0.15}s` }}
+          />
+        )),
+      )}
       {spineCols.map((x) => (
         <circle key={`pulse-${x}`} cx={x} cy={60} {...nodeProps(true)} />
       ))}
@@ -71,8 +82,28 @@ function ConvergeGraphic({ className }: { className?: string }) {
       {leaves.map(([x, y], i) => (
         <line key={`l${i}`} x1={root[0]} y1={root[1]} x2={x} y2={y} {...edgeProps()} />
       ))}
-      {[...chain, ...leaves].map(([cx, cy]) => (
-        <circle key={`${cx}-${cy}`} cx={cx} cy={cy} {...nodeProps(false)} />
+      {/* Chain sweeps toward the root first (converging), then the
+          leaves light up fanning back out — acting out "converge" rather
+          than just labeling it. */}
+      {chain.map(([cx, cy], i) => (
+        <circle
+          key={`${cx}-${cy}`}
+          cx={cx}
+          cy={cy}
+          {...nodeProps(false)}
+          className="hib-node"
+          style={{ animationDelay: `${i * 0.1}s` }}
+        />
+      ))}
+      {leaves.map(([cx, cy], i) => (
+        <circle
+          key={`${cx}-${cy}`}
+          cx={cx}
+          cy={cy}
+          {...nodeProps(false)}
+          className="hib-node"
+          style={{ animationDelay: `${0.5 + i * 0.1}s` }}
+        />
       ))}
       <circle cx={root[0]} cy={root[1]} {...nodeProps(true)} />
     </svg>
@@ -108,8 +139,29 @@ function SchemaGraphic({ className }: { className?: string }) {
       <line x1={left[0]} y1={left[1]} x2={outer[3][0]} y2={outer[3][1]} {...edgeProps()} />
       <line x1={right[0]} y1={right[1]} x2={outer[1][0]} y2={outer[1][1]} {...edgeProps()} />
       <line x1={right[0]} y1={right[1]} x2={outer[2][0]} y2={outer[2][1]} {...edgeProps()} />
-      {[client, server, left, right, top, bottom, ...outer].map(([cx, cy]) => (
-        <circle key={`${cx}-${cy}`} cx={cx} cy={cy} {...nodeProps(false)} />
+      {/* Lights up outward from the hub in two rings — one hop away
+          (left/right/top/bottom) first, then two hops away (client/
+          server/the four outer corners) — the same "one source of truth
+          propagating out" the point itself is about. */}
+      {[left, right, top, bottom].map(([cx, cy]) => (
+        <circle
+          key={`${cx}-${cy}`}
+          cx={cx}
+          cy={cy}
+          {...nodeProps(false)}
+          className="hib-node"
+          style={{ animationDelay: "0.1s" }}
+        />
+      ))}
+      {[client, server, ...outer].map(([cx, cy]) => (
+        <circle
+          key={`${cx}-${cy}`}
+          cx={cx}
+          cy={cy}
+          {...nodeProps(false)}
+          className="hib-node"
+          style={{ animationDelay: "0.3s" }}
+        />
       ))}
       <circle cx={center[0]} cy={center[1]} {...nodeProps(true)} />
     </svg>
@@ -132,9 +184,24 @@ function DualRoleGraphic({ className }: { className?: string }) {
       <line x1={left[2][0]} y1={left[2][1]} x2={center[0]} y2={center[1]} {...edgeProps()} />
       <line x1={right[1][0]} y1={right[1][1]} x2={center[0]} y2={center[1]} {...edgeProps()} />
       <line x1={right[2][0]} y1={right[2][1]} x2={center[0]} y2={center[1]} {...edgeProps()} />
-      {[...left, ...right].map(([cx, cy]) => (
-        <circle key={`${cx}-${cy}`} cx={cx} cy={cy} {...nodeProps(false)} />
-      ))}
+      {/* Both sides pulse from their tips inward, in sync, arriving at
+          the center together — two roles meeting in the middle, not
+          two unrelated chains that happen to share a page. */}
+      {[left, right].map((side) =>
+        side.map(([cx, cy], i) => {
+          const distanceFromCenter = Math.min(i, side.length - 1 - i);
+          return (
+            <circle
+              key={`${cx}-${cy}`}
+              cx={cx}
+              cy={cy}
+              {...nodeProps(false)}
+              className="hib-node"
+              style={{ animationDelay: `${distanceFromCenter * 0.15}s` }}
+            />
+          );
+        }),
+      )}
       <circle cx={center[0]} cy={center[1]} {...nodeProps(true)} />
     </svg>
   );
@@ -156,31 +223,41 @@ function PipelineGraphic({ className }: { className?: string }) {
         strokeWidth={1.25}
         opacity={0.4}
       />
-      {nodes.slice(0, -1).map(([cx, cy]) => (
-        <circle key={`${cx}-${cy}`} cx={cx} cy={cy} {...nodeProps(false)} />
+      {nodes.slice(0, -1).map(([cx, cy], i) => (
+        <circle
+          key={`${cx}-${cy}`}
+          cx={cx}
+          cy={cy}
+          {...nodeProps(false)}
+          className="hib-node"
+          style={{ animationDelay: `${i * 0.1}s` }}
+        />
       ))}
       <circle cx={nodes[3][0]} cy={nodes[3][1]} {...nodeProps(true)} />
     </svg>
   );
 }
 
-type TileHeight = "tall" | "short";
-
 // Same rounded/bordered card ClientWork's cards use (see globals.css's
 // .hover-glow-panel) — this used to need a two-layer border trick for a
 // clip-path chamfer cut corner (a plain `border` can't follow one), but
 // every tile here is a plain rounded rectangle now, so a single element
 // with a normal border does the job directly.
+//
+// h-80 by default; the closing row (CtaTile + Production-Grade) uses
+// h-56 instead — smaller than the other four (they're the grid's
+// closing beat, not another full-weight tile) but not shrunk down to
+// the old "short" variant's cramped, smaller-font version either.
 function TileShell({
   span,
-  height,
+  compact,
   children,
 }: {
   span: 1 | 2;
-  height: TileHeight;
+  compact?: boolean;
   children: ReactNode;
 }) {
-  const heightClass = height === "tall" ? "h-80" : "h-48";
+  const heightClass = compact ? "h-56" : "h-80";
   const spanClass = span === 2 ? "sm:col-span-2" : "";
 
   return (
@@ -198,31 +275,28 @@ type PointGraphic = (props: { className?: string }) => ReactElement;
 function PointCard({
   point,
   span,
-  height,
+  compact,
   graphic: Graphic,
 }: {
   point: ApproachPoint;
   span: 1 | 2;
-  height: TileHeight;
+  compact?: boolean;
   graphic: PointGraphic;
 }) {
-  const isTall = height === "tall";
   const Icon = point.icon;
   const language = useLanguage();
 
   return (
-    <TileShell span={span} height={height}>
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-bg/50 text-accent backdrop-blur">
+    <TileShell span={span} compact={compact}>
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-bg/50 text-accent backdrop-blur transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
         <Icon className="h-5 w-5" aria-hidden="true" />
       </span>
       <div className="flex min-h-0 flex-1 items-center justify-center">
-        <Graphic className={isTall ? "h-32 w-full max-w-[320px]" : "h-10 w-full max-w-[160px]"} />
+        <Graphic className={compact ? "h-24 w-full max-w-[320px]" : "h-32 w-full max-w-[320px]"} />
       </div>
       <div className="shrink-0">
-        <h3 className={`text-text-primary ${isTall ? "text-xl" : "text-base"}`}>{t(point.heading, language)}</h3>
-        <p className={`mt-2 text-text-muted ${isTall ? "text-sm" : "text-xs line-clamp-3"}`}>
-          {t(point.description, language)}
-        </p>
+        <h3 className="text-xl text-text-primary">{t(point.heading, language)}</h3>
+        <p className="mt-2 text-sm text-text-muted">{t(point.description, language)}</p>
       </div>
     </TileShell>
   );
@@ -245,7 +319,7 @@ function CtaTile() {
       // interruption rather than a closing tile. sm:order-none restores
       // plain source order once the grid is 2+ columns, where its bottom-
       // left anchoring already works as intended.
-      className="group relative order-last flex h-48 flex-col items-center justify-center gap-2 overflow-hidden rounded-2xl p-6 text-center shadow-lg shadow-black/10 transition-[filter] duration-300 hover:brightness-110 sm:order-none sm:col-span-2"
+      className="group relative order-last flex h-56 flex-col items-center justify-center gap-2 overflow-hidden rounded-2xl p-6 text-center shadow-lg shadow-black/10 transition-[filter] duration-300 hover:brightness-110 sm:order-none sm:col-span-2"
       style={{ backgroundImage: "var(--gradient-signature)" }}
     >
       <Send
@@ -275,12 +349,12 @@ export function HowIBuild() {
     <Section id="approach" tag="APPROACH" eyebrow={strings.howIBuild.eyebrow} title={strings.howIBuild.title}>
       <p className="-mt-6 mb-10 max-w-2xl text-text-muted">{t(strings.howIBuild.intro, language)}</p>
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        <PointCard point={fullStack} span={2} height="tall" graphic={LayersGraphic} />
-        <PointCard point={typeSafe} span={1} height="tall" graphic={SchemaGraphic} />
-        <PointCard point={performance} span={2} height="tall" graphic={ConvergeGraphic} />
-        <PointCard point={devDesign} span={1} height="tall" graphic={DualRoleGraphic} />
+        <PointCard point={fullStack} span={2} graphic={LayersGraphic} />
+        <PointCard point={typeSafe} span={1} graphic={SchemaGraphic} />
+        <PointCard point={performance} span={2} graphic={ConvergeGraphic} />
+        <PointCard point={devDesign} span={1} graphic={DualRoleGraphic} />
         <CtaTile />
-        <PointCard point={prodGrade} span={1} height="short" graphic={PipelineGraphic} />
+        <PointCard point={prodGrade} span={1} compact graphic={PipelineGraphic} />
       </div>
     </Section>
   );
