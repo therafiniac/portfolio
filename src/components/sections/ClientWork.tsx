@@ -94,7 +94,7 @@ function WorkCard({ project }: { project: ClientProject }) {
           className="object-cover opacity-100 transition-opacity duration-300 md:opacity-0 md:group-hover:opacity-100"
         />
       </div>
-      <div className="flex h-36 flex-col p-6">
+      <div className="flex min-h-36 flex-col p-6">
         <FieldLabel>{t(project.category, language)}</FieldLabel>
         <h3 className="mt-1 flex items-center gap-1 text-base text-text-primary">
           {t(project.name, language)}

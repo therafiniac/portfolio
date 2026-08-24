@@ -96,6 +96,8 @@ export const strings = {
       bn: "চলুন এমন কিছু তৈরি করি যা স্কেল করে।",
     } satisfies Localized,
     profiles: { en: "Profiles", bn: "প্রোফাইল" } satisfies Localized,
+    copyEmail: { en: "Copy email address", bn: "ইমেইল ঠিকানা কপি করুন" } satisfies Localized,
+    copied: { en: "Copied", bn: "কপি হয়েছে" } satisfies Localized,
   },
   contactForm: {
     name: { en: "Name", bn: "নাম" } satisfies Localized,
@@ -143,5 +145,8 @@ export const strings = {
     placeholder: { en: "Jump to a section…", bn: "একটি সেকশনে যান…" } satisfies Localized,
     noResults: { en: "No matches", bn: "কোনো ফলাফল নেই" } satisfies Localized,
     hint: { en: "navigate · select · close", bn: "নেভিগেট · নির্বাচন · বন্ধ" } satisfies Localized,
+  },
+  tabAttention: {
+    comeBack: { en: "Come back! 👋", bn: "ফিরে আসুন! 👋" } satisfies Localized,
   },
 };

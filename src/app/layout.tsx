@@ -7,6 +7,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { SmoothScroll } from "@/components/layout/SmoothScroll";
 import { ScrollProgress } from "@/components/layout/ScrollProgress";
 import { CommandPalette } from "@/components/layout/CommandPalette";
+import { TabAttention } from "@/components/layout/TabAttention";
 import "./globals.css";
 
 const inter = Inter({
@@ -104,14 +105,21 @@ const THEME_INIT_SCRIPT = `
 })();
 `;
 
-// Same reasoning/shape as THEME_INIT_SCRIPT — runs before paint so a
-// stored Bengali preference applies with no flash of English first.
-// Also sets the real lang attribute (not just data-lang) since that's
-// what matters for screen readers/SEO, not just CSS/JS.
+// Same reasoning/shape as THEME_INIT_SCRIPT — runs before paint so the
+// resolved language applies with no flash of English first. Also sets
+// the real lang attribute (not just data-lang) since that's what matters
+// for screen readers/SEO, not just CSS/JS.
+//
+// Priority: an explicit LanguageToggle click (localStorage "language")
+// always wins; absent that, middleware.ts's geo-detected "geo-language"
+// cookie (Bengali for Bangladesh/West Bengal visitors) is the default;
+// absent both, English.
 const LANG_INIT_SCRIPT = `
 (function () {
   try {
-    var lang = localStorage.getItem("language") === "bn" ? "bn" : "en";
+    var stored = localStorage.getItem("language");
+    var geoMatch = document.cookie.match(/(?:^|; )geo-language=(bn|en)/);
+    var lang = stored === "bn" || stored === "en" ? stored : geoMatch ? geoMatch[1] : "en";
     document.documentElement.setAttribute("data-lang", lang);
     document.documentElement.setAttribute("lang", lang);
   } catch (e) {}
@@ -166,6 +174,7 @@ export default async function RootLayout({
           <CursorGlow />
           <Navbar />
           <CommandPalette />
+          <TabAttention />
           {children}
         </MotionConfig>
       </body>
