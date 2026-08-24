@@ -96,7 +96,7 @@ export const strings = {
     // baked into the translated string.
     headline: {
       en: "Let's build something that scales",
-      bn: "চলুন এমন কিছু তৈরি করি যা স্কেল করে",
+      bn: "এমন কিছু বানানো যাক যা স্কেল করে",
     } satisfies Localized,
     profiles: { en: "Profiles", bn: "প্রোফাইল" } satisfies Localized,
     copyEmail: { en: "Copy email address", bn: "ইমেইল ঠিকানা কপি করুন" } satisfies Localized,

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import { Inter, JetBrains_Mono, Noto_Serif_Bengali } from "next/font/google";
+import { Inter, JetBrains_Mono, Anek_Bangla, Noto_Sans_Bengali } from "next/font/google";
 import { MotionConfig } from "framer-motion";
 import { CursorGlow } from "@/components/layout/CursorGlow";
 import { CursorTrail } from "@/components/layout/CursorTrail";
@@ -21,18 +21,28 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
-// JetBrains Mono/Inter have zero Bengali glyph coverage, and there's no
-// real monospace Bengali typeface to reach for — Noto Serif Bengali
-// stands in for BOTH --font-mono and --font-sans when data-lang="bn"
-// (see globals.css), so the mono-everywhere aesthetic intentionally
-// doesn't carry over to Bengali mode, it becomes one considered Bengali
-// typeface instead. A serif rather than the previous Hind Siliguri
-// (grotesque-sans) is a deliberate register shift for Bengali readers —
-// still swappable in one file, since nothing outside this file ever
-// references the font by name, only via the --font-bengali variable
-// it's bound to.
-const notoSerifBengali = Noto_Serif_Bengali({
-  variable: "--font-bengali",
+// JetBrains Mono/Inter have zero Bengali glyph coverage, so Bengali mode
+// gets its own paired stand-ins instead of one font covering both roles
+// — chosen to match each Latin font's actual character, not just "a
+// Bengali font that exists": Anek Bangla is a neutral UI/display
+// grotesque built across a full weight range, the closest match to
+// JetBrains Mono's structured, technical feel (a rounded/playful face
+// like Baloo Da 2 was considered and rejected — it'd undercut the
+// "engineered, not templated" tone the mono headings carry). Noto Sans
+// Bengali is part of the same Noto superfamily Inter's own neutral-
+// grotesque character is closest to (Hind Siliguri, used previously,
+// leans warmer/more humanist than Inter does). Both stay swappable in
+// this one file — nothing outside it references either font by name,
+// only via the --font-bengali-heading/--font-bengali-body variables
+// they're bound to.
+const anekBangla = Anek_Bangla({
+  variable: "--font-bengali-heading",
+  subsets: ["bengali"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const notoSansBengali = Noto_Sans_Bengali({
+  variable: "--font-bengali-body",
   subsets: ["bengali"],
   weight: ["400", "500", "600", "700"],
 });
@@ -143,7 +153,7 @@ export default async function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${inter.variable} ${jetbrainsMono.variable} ${notoSerifBengali.variable} h-full antialiased`}
+      className={`${inter.variable} ${jetbrainsMono.variable} ${anekBangla.variable} ${notoSansBengali.variable} h-full antialiased`}
     >
       <head>
         <script nonce={nonce} dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
