@@ -583,6 +583,50 @@ html::-webkit-scrollbar {
   }
 }
 
+/* The three dots that replace Contact's headline's trailing full stop —
+   the same three-stop gradient as the heading itself (see Contact.tsx's
+   from-text-primary/via-text-primary/to-accent classes, replicated here
+   literally since a solid shape can't inherit a bg-clip-text gradient
+   the way text characters can) rather than a flat accent fill, which
+   read as a noticeably different, more-saturated blue than the heading's
+   actual mostly text-primary-toned color. currentColor isn't an option
+   either: the heading sits inside text-transparent, so currentColor here
+   would inherit that transparency and vanish. Typewriter, not a bounce:
+   each dot pops in on its own turn (a hard opacity step, no easing/
+   motion, like a character being typed) and holds until the whole "..."
+   clears together and the cycle restarts — three dots sharing one
+   keyframe, offset only by animation-delay. */
+@keyframes typewriter-dot {
+  0%,
+  8% {
+    opacity: 0;
+  }
+  12%,
+  88% {
+    opacity: 1;
+  }
+  92%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.typing-dot {
+  display: inline-block;
+  width: 0.14em;
+  height: 0.14em;
+  border-radius: 9999px;
+  background-image: linear-gradient(to bottom right, var(--text-primary), var(--text-primary), var(--accent));
+  animation: typewriter-dot 2.4s steps(1, end) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .typing-dot {
+    animation: none;
+    opacity: 1;
+  }
+}
+
 /* Static film-grain texture — cheap perceived depth/premium feel. Not
    animated: an animated grain would repaint every frame for very little
    extra effect, this is the same visual win at zero ongoing cost. */

@@ -73,6 +73,15 @@ export function Contact() {
         <div>
           <p className="gradient-heading text-glow bg-gradient-to-br from-text-primary via-text-primary to-accent bg-clip-text text-[length:var(--text-display-contact)] font-mono font-medium leading-[1.05] tracking-tight text-transparent">
             {t(strings.contact.headline, language)}
+            {/* Three animated dots standing in for the trailing full stop
+                — decorative only (the sentence itself is already the full
+                accessible name without them), so hidden from screen
+                readers rather than announced as "dot dot dot". */}
+            <span className="ml-1.5 inline-flex items-baseline gap-1" aria-hidden="true">
+              <span className="typing-dot" style={{ animationDelay: "0s" }} />
+              <span className="typing-dot" style={{ animationDelay: "0.15s" }} />
+              <span className="typing-dot" style={{ animationDelay: "0.3s" }} />
+            </span>
           </p>
 
           {/* No card — same rule Hero states outright ("only the CTA is

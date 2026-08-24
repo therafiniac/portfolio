@@ -91,9 +91,12 @@ export const strings = {
   contact: {
     eyebrow: { en: "Get in Touch", bn: "যোগাযোগ করুন" } satisfies Localized,
     title: { en: "Contact", bn: "যোগাযোগ" } satisfies Localized,
+    // No trailing "."/"।" — Contact.tsx appends three animated dots after
+    // this instead of a static full stop, so the punctuation itself isn't
+    // baked into the translated string.
     headline: {
-      en: "Let's build something that scales.",
-      bn: "চলুন এমন কিছু তৈরি করি যা স্কেল করে।",
+      en: "Let's build something that scales",
+      bn: "চলুন এমন কিছু তৈরি করি যা স্কেল করে",
     } satisfies Localized,
     profiles: { en: "Profiles", bn: "প্রোফাইল" } satisfies Localized,
     copyEmail: { en: "Copy email address", bn: "ইমেইল ঠিকানা কপি করুন" } satisfies Localized,
@@ -120,18 +123,42 @@ export const strings = {
   footer: {
     backToTop: { en: "Back to top", bn: "উপরে ফিরে যান" } satisfies Localized,
   },
-  // Phonetic transliteration, not translation — the browser-chrome tech
-  // label on each Client Work card (BrowserChrome in ClientWork.tsx)
-  // spells the same brand name in Bengali script by sound, the way
-  // Bengali tech writing normally handles a foreign product name,
-  // rather than keeping it in Latin or inventing a Bengali equivalent
-  // meaning. Only covers the values that actually appear as tech[0] in
-  // clientWork.ts today; unlisted names fall back to their own spelling
-  // (see t() usage in ClientWork.tsx) so a new project's data never
-  // silently renders blank.
+  // Phonetic transliteration, not translation — spells the same brand/
+  // tech name in Bengali script by sound (the way Bengali tech writing
+  // normally handles a foreign product name) rather than keeping it in
+  // Latin or inventing a Bengali equivalent meaning. Consumed by
+  // BrowserChrome (ClientWork.tsx) and TechChip.tsx, so this covers
+  // every value that appears in any tech[] array across projects.ts,
+  // clientWork.ts, and experience.ts — same spelling already used for
+  // the matching entries in skills.ts, kept in sync with those rather
+  // than invented separately. Unlisted names fall back to their own
+  // spelling (see the `?? label`/`?? tech` call sites) so a new
+  // project's data never silently renders blank.
   techSounds: {
     "Next.js": "নেক্সট.জেএস",
     WordPress: "ওয়ার্ডপ্রেস",
+    TypeScript: "টাইপস্ক্রিপ্ট",
+    JavaScript: "জাভাস্ক্রিপ্ট",
+    Prisma: "প্রিজমা",
+    PostgreSQL: "পোস্টগ্রেএসকিউএল",
+    MongoDB: "মঙ্গোডিবি",
+    Tailwind: "টেইলউইন্ড",
+    "Tailwind CSS": "টেইলউইন্ড সিএসএস",
+    "Neon Auth": "নিয়ন অথ",
+    React: "রিয়েক্ট",
+    "React.js": "রিয়েক্ট.জেএস",
+    Firebase: "ফায়ারবেস",
+    TipTap: "টিপট্যাপ",
+    Shopify: "শপিফাই",
+    Stripe: "স্ট্রাইপ",
+    "Framer Motion": "ফ্রেমার মোশন",
+    ACF: "এসিএফ",
+    MySQL: "মাইএসকিউএল",
+    Vercel: "ভার্সেল",
+    "Sanity CMS": "স্যানিটি সিএমএস",
+    Mapbox: "ম্যাপবক্স",
+    HTML: "এইচটিএমএল",
+    CSS: "সিএসএস",
   } as Record<string, string>,
   nav: {
     openMenu: { en: "Open menu", bn: "মেনু খুলুন" } satisfies Localized,

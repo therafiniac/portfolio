@@ -1,3 +1,6 @@
+import { useLanguage } from "@/lib/useLanguage";
+import { strings } from "@/lib/i18n-strings";
+
 type TechChipProps = {
   children: string;
   size?: "sm" | "md";
@@ -8,17 +11,25 @@ type TechChipProps = {
 // estate, `md` for looser rows) instead of three hand-rolled className
 // strings that happened to converge on the same look.
 export function TechChip({ children, size = "md" }: TechChipProps) {
+  const language = useLanguage();
+  // Same phonetic-transliteration lookup BrowserChrome (ClientWork.tsx)
+  // already uses for its tech label — reused here instead of duplicated
+  // so every tech-name pill across the site (not just the browser-chrome
+  // one) reads in Bengali script when the site is. Falls back to the raw
+  // name for anything not yet in strings.techSounds.
+  const label = language === "bn" ? (strings.techSounds[children] ?? children) : children;
+
   if (size === "sm") {
     return (
       <span className="rounded border border-line/40 px-1.5 py-0.5 font-mono text-[length:var(--text-3xs)] text-text-muted transition-[transform,color,border-color] duration-200 hover:-translate-y-0.5 hover:border-accent/60 hover:text-text-primary">
-        {children}
+        {label}
       </span>
     );
   }
 
   return (
     <span className="rounded-full border border-line/60 px-3 py-1 font-mono text-[length:var(--text-1xs)] uppercase tracking-[0.1em] text-text-muted transition-[transform,color,border-color] duration-200 hover:-translate-y-0.5 hover:border-accent/60 hover:text-text-primary">
-      {children}
+      {label}
     </span>
   );
 }
