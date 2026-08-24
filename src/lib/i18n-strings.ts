@@ -66,7 +66,10 @@ export const strings = {
     } satisfies Localized,
     boldWord: { en: "Bold", bn: "বোল্ড" } satisfies Localized,
     terminalTitle: { en: "rafi@portfolio — zsh", bn: "রাফি@পোর্টফোলিও — zsh" } satisfies Localized,
-    prompt: { en: "rafi --stack", bn: "rafi --stack" } satisfies Localized,
+    // "rafi" stays Latin (a proper noun/brand name, same as tech names
+    // elsewhere) — only the flag transliterates, matching the group
+    // flags right below it and the section's own title ("স্ট্যাক").
+    prompt: { en: "rafi --stack", bn: "rafi --স্ট্যাক" } satisfies Localized,
   },
   experience: {
     eyebrow: { en: "Track Record", bn: "ট্র্যাক রেকর্ড" } satisfies Localized,

@@ -45,6 +45,16 @@ function StackRow({ group, delay }: { group: SkillGroup; delay: number }) {
   );
 }
 
+// The row after the last real one — same delay formula StackRow's own
+// call sites use, one index further, plus that row's own 0.4s fade
+// duration and a small buffer. This is what makes the trailing prompt
+// (the "$" + blinking caret right below the rows) show up only once the
+// last row has actually finished animating in, instead of sitting there
+// already blinking before any output has appeared — a real terminal's
+// next prompt doesn't show up until the previous command's output has
+// finished printing.
+const CARET_DELAY = 0.15 + skillGroups.length * 0.1 + 0.4;
+
 export function Skills() {
   const language = useLanguage();
 
@@ -111,10 +121,16 @@ export function Skills() {
                   ))}
                 </div>
 
-                <p className="mt-5 font-mono text-sm text-text-primary sm:text-base">
+                <motion.p
+                  className="mt-5 font-mono text-sm text-text-primary sm:text-base"
+                  initial={{ opacity: 0, y: 8 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.4, ease: "easeOut", delay: CARET_DELAY }}
+                >
                   <span className="text-accent-secondary">$</span>{" "}
                   <span className="terminal-caret" aria-hidden="true" />
-                </p>
+                </motion.p>
               </div>
             </div>
           </div>
