@@ -25,7 +25,7 @@ export function Contact() {
   const language = useLanguage();
 
   return (
-    <Section id="contact" index="07" tint eyebrow={strings.contact.eyebrow} title={strings.contact.title}>
+    <Section id="contact" tag="CONTACT" tint eyebrow={strings.contact.eyebrow} title={strings.contact.title}>
       <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-[1fr_440px] lg:gap-16">
         <div>
           <p className="gradient-heading text-glow bg-gradient-to-br from-text-primary via-text-primary to-accent bg-clip-text text-[length:var(--text-display-contact)] font-mono font-medium leading-[1.05] tracking-tight text-transparent">

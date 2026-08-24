@@ -44,7 +44,7 @@ export function Hero() {
       // none of the section's ambient light and everything below it
       // does, which reads as a visible cut. pt-16 keeps the actual
       // content position unchanged; only the decorative box moves.
-      className="relative -mt-16 flex min-h-screen scroll-mt-24 flex-col justify-center overflow-hidden px-6 pt-16 md:px-12"
+      className="relative -mt-16 flex min-h-screen scroll-mt-24 flex-col justify-center overflow-hidden px-6 pb-6 pt-24 md:px-12 md:pb-0"
     >
       {/* Pulled in from the margins to sit directly behind the copy they
           light — the headline and the stats row — instead of drifting in
@@ -56,7 +56,7 @@ export function Hero() {
         <HeroCanvasLoader />
       </div>
 
-      <div className="relative z-10 mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-12 lg:grid-cols-[1fr_520px] lg:gap-16">
+      <div className="relative z-10 mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-6 lg:grid-cols-[1fr_520px] lg:gap-16">
         {/* Only the CTA button is a bordered/filled element here —
             everything else (kicker, role, stats) is differentiated by
             typography alone, so the eye has one clear place to land
@@ -78,7 +78,7 @@ export function Hero() {
 
           <motion.h1
             variants={item}
-            className="gradient-heading text-glow mt-4 bg-gradient-to-br from-text-primary via-text-primary to-accent bg-clip-text font-mono text-[length:var(--text-display-hero)] font-medium leading-[0.95] tracking-tight text-transparent"
+            className="gradient-heading text-glow mt-8 bg-gradient-to-br from-text-primary via-text-primary to-accent bg-clip-text font-mono text-[length:var(--text-display-hero)] font-medium leading-[1.05] tracking-tight text-transparent md:leading-[0.95]"
           >
             {t(heroNameLine1, language)}
             <br />
@@ -87,7 +87,7 @@ export function Hero() {
 
           <motion.p
             variants={item}
-            className="mt-4 font-mono text-sm uppercase tracking-[0.2em]"
+            className="mt-8 font-mono text-sm uppercase tracking-[0.2em]"
           >
             {heroRoles.map((role, i) => (
               <span key={role.en}>
@@ -97,7 +97,7 @@ export function Hero() {
             ))}
           </motion.p>
 
-          <motion.div variants={item} className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+          <motion.div variants={item} className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3">
             <Magnetic>
               {/* --gradient-signature, not flat bg-accent — AGENTS.md
                   calls for the gradient on the primary CTA specifically,
@@ -121,7 +121,7 @@ export function Hero() {
             </a>
           </motion.div>
 
-          <motion.div variants={item} className="relative mt-12 pl-6">
+          <motion.div variants={item} className="relative mt-10 pl-6 lg:mt-12">
             {/* Same trail-light mechanism as Experience's timeline, just
                 shorter — a quiet answer to the orbit's traveling spark on
                 this otherwise-static side of the layout, not a new motif. */}
@@ -210,12 +210,20 @@ export function Hero() {
         </motion.div>
       </div>
 
+      {/* Static in flow on mobile, absolute-pinned on md+ — on small
+          screens the stacked text+mark content is routinely taller than
+          one viewport, so min-h-screen's height ends up dictated by
+          content rather than the viewport; an absolute bottom-8 then lands
+          at the bottom of the *content* (right on the mark) instead of
+          the bottom of the screen. Letting it sit in normal flow below
+          the mark avoids the overlap outright instead of chasing the
+          exact height math. */}
       <motion.a
         href="#work"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.8, duration: 0.6 }}
-        className="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2 text-text-muted transition-colors hover:text-accent"
+        className="relative z-10 mx-auto mt-4 flex w-fit flex-col items-center gap-2 text-text-muted transition-colors hover:text-accent md:absolute md:bottom-8 md:left-1/2 md:mt-0 md:-translate-x-1/2"
         aria-label={t(strings.hero.scrollToWork, language)}
       >
         <span className="font-mono text-[length:var(--text-2xs)] uppercase tracking-[0.2em]">

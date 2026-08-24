@@ -6,6 +6,7 @@ import { CursorGlow } from "@/components/layout/CursorGlow";
 import { Navbar } from "@/components/layout/Navbar";
 import { SmoothScroll } from "@/components/layout/SmoothScroll";
 import { ScrollProgress } from "@/components/layout/ScrollProgress";
+import { CommandPalette } from "@/components/layout/CommandPalette";
 import "./globals.css";
 
 const inter = Inter({
@@ -164,6 +165,7 @@ export default async function RootLayout({
           <div className="grain-overlay" aria-hidden="true" />
           <CursorGlow />
           <Navbar />
+          <CommandPalette />
           {children}
         </MotionConfig>
       </body>
