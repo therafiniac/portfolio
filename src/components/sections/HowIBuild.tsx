@@ -239,7 +239,13 @@ function CtaTile() {
   return (
     <a
       href="#contact"
-      className="group relative flex h-48 flex-col items-center justify-center gap-2 overflow-hidden rounded-2xl p-6 text-center shadow-lg shadow-black/10 transition-[filter] duration-300 hover:brightness-110 sm:col-span-2"
+      // order-last only below sm — below that breakpoint the grid is a
+      // single column, so DOM order is visual order, and the CTA sitting
+      // second-to-last (ahead of the last PointCard) reads as an odd
+      // interruption rather than a closing tile. sm:order-none restores
+      // plain source order once the grid is 2+ columns, where its bottom-
+      // left anchoring already works as intended.
+      className="group relative order-last flex h-48 flex-col items-center justify-center gap-2 overflow-hidden rounded-2xl p-6 text-center shadow-lg shadow-black/10 transition-[filter] duration-300 hover:brightness-110 sm:order-none sm:col-span-2"
       style={{ backgroundImage: "var(--gradient-signature)" }}
     >
       <Send
