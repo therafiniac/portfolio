@@ -50,7 +50,14 @@ export function Projects() {
     <Section id="built" tag="BUILT" eyebrow={strings.projects.eyebrow} title={strings.projects.title}>
       <p className="-mt-6 mb-10 max-w-2xl text-text-muted">{t(strings.projects.intro, language)}</p>
 
-      <div className="flex flex-wrap gap-1 border-b border-line/40">
+      {/* Horizontal scroll below md, not flex-wrap — a wrapped second tab
+          reads as a disconnected row of text under the real tab bar rather
+          than another tab, especially once a project name is long enough
+          to need it. Scrolling sideways is the standard mobile-tab
+          pattern instead; scrollbar hidden the same way html's own is in
+          globals.css, since Lenis/anchors already handle real scroll
+          affordance elsewhere. */}
+      <div className="scrollbar-hide flex gap-1 overflow-x-auto border-b border-line/40 md:flex-wrap">
         {projects.map((p, i) => (
           <button
             key={p.name.en}

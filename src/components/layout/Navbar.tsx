@@ -160,7 +160,15 @@ export function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2 }}
-            className="nav-glass mt-2 flex flex-col gap-1 rounded-2xl p-3 sm:hidden"
+            // nav-mobile-menu (globals.css) carries the actual `position:
+            // absolute` — this used to sit in normal document flow after
+            // the header's own row, so opening it pushed every section
+            // below down the page (a real layout shift, not just visual).
+            // A Tailwind `absolute` utility here doesn't work: nav-glass
+            // sets its own plain-CSS `position: relative` which silently
+            // wins over a layered Tailwind utility regardless of class
+            // order (see nav-mobile-menu's comment in globals.css).
+            className="nav-glass nav-mobile-menu z-10 mt-2 flex flex-col gap-1 rounded-2xl p-3 sm:hidden"
           >
             {navLinks.map((link) => (
               <a

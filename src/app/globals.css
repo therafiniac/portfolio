@@ -99,7 +99,7 @@
   /* The two large display headlines (Hero's name, Contact's headline) —
      already clamp()-based, so exposed as tokens for the same reason as
      the micro sizes above: something size-only for Bengali to override. */
-  --text-display-hero: clamp(2.5rem, 7vw, 5.5rem);
+  --text-display-hero: clamp(3.25rem, 7.5vw, 6rem);
   --text-display-contact: clamp(2rem, 6vw, 4rem);
 }
 
@@ -140,7 +140,7 @@
   --text-3xs: 10px;
   --text-2xs: 11.2px;
   --text-1xs: 12.3px;
-  --text-display-hero: clamp(2.7rem, 7.5vw, 5.9rem);
+  --text-display-hero: clamp(3.5rem, 8vw, 6.4rem);
   --text-display-contact: clamp(2.2rem, 6.5vw, 4.3rem);
 
   --text-xs: 0.84rem;
@@ -210,6 +210,19 @@ html {
 }
 
 html::-webkit-scrollbar {
+  display: none;
+}
+
+/* Same "hide the native indicator, keep real scrolling" treatment as
+   html above, but reusable on any individually-scrollable element (e.g.
+   Projects.tsx's mobile tab row) — those aren't the page's own scrollbar,
+   so they need their own rule rather than piggybacking on the html one. */
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
 
@@ -283,6 +296,18 @@ html::-webkit-scrollbar {
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, var(--text-primary) 10%, transparent),
     0 12px 32px -12px var(--shadow-elevated);
+}
+
+/* The mobile nav dropdown (Navbar.tsx) also carries .nav-glass for its
+   look, but needs `position: absolute` to float over the page instead of
+   pushing content down when it opens — same cascade-layer trap as
+   nav-glass-backdrop below: nav-glass's own plain-CSS `position: relative`
+   is unlayered and silently beats a layered Tailwind `absolute` utility
+   regardless of class order, so this override has to be plain CSS too. */
+.nav-mobile-menu {
+  position: absolute;
+  inset-inline: 0;
+  top: 100%;
 }
 
 /* Same look as nav-glass, but a standalone absolutely-positioned layer
