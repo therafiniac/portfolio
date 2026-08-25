@@ -285,4 +285,11 @@ export const strings = {
     } satisfies Localized,
     cta: { en: 'Back to Home', bn: 'হোমে ফিরে যান' } satisfies Localized,
   },
+  underConstruction: {
+    heading: { en: 'Under Construction', bn: 'নির্মাণাধীন' } satisfies Localized,
+    body: {
+      en: "This isn't live yet — check back soon, or head back to what's already shipped.",
+      bn: 'এটি এখনও লাইভ নয় — শীঘ্রই আবার দেখুন, অথবা যা ইতিমধ্যে ডেলিভার হয়েছে সেখানে ফিরে যান।',
+    } satisfies Localized,
+  },
 };

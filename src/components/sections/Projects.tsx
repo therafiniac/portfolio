@@ -9,6 +9,7 @@ import { FieldLabel } from "@/components/ui/FieldLabel";
 import { GithubIcon } from "@/components/icons/BrandIcons";
 import { FlowSteps } from "@/components/sections/FlowSteps";
 import { projects } from "@/lib/data/projects";
+import { resolvePlaceholderHref } from "@/lib/placeholderLink";
 import type { IconComponent, Project } from "@/types";
 import { useLanguage } from "@/lib/useLanguage";
 import { t } from "@/lib/i18n";
@@ -25,7 +26,7 @@ function LinkBadge({
 }) {
   return (
     <a
-      href={href}
+      href={resolvePlaceholderHref(href)}
       target={href.startsWith("http") ? "_blank" : undefined}
       rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
       className="inline-flex items-center gap-1.5 rounded-full border border-line/60 px-3 py-1 font-mono text-[length:var(--text-2xs)] uppercase tracking-[0.15em] text-accent transition-colors duration-200 hover:border-accent/60 hover:bg-accent/10"

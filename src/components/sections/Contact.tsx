@@ -5,6 +5,7 @@ import { Check, Copy } from "lucide-react";
 import { Section } from "@/components/layout/Section";
 import { ContactForm } from "@/components/sections/ContactForm";
 import { contactInfo, profileLinks } from "@/lib/data/contact";
+import { resolvePlaceholderHref } from "@/lib/placeholderLink";
 import { useLanguage, type Language } from "@/lib/useLanguage";
 import { t } from "@/lib/i18n";
 import { strings } from "@/lib/i18n-strings";
@@ -141,8 +142,10 @@ export function Contact() {
               point of a profile link, there's nothing to read the way
               there is with an email or a city. title gives mouse users
               a native tooltip without adding permanent visible text;
-              aria-label covers screen readers. href is "#" for the ones
-              not yet real — see AGENTS.md's placeholder-link rule. */}
+              aria-label covers screen readers. href is "#" in the data
+              for the ones not yet real (AGENTS.md's placeholder-link
+              rule) — resolvePlaceholderHref sends a click there to
+              /under-construction instead of a dead "#". */}
           <p className="mt-9 font-mono text-[length:var(--text-1xs)] uppercase tracking-[0.15em] text-text-muted">
             {t(strings.contact.profiles, language)}
           </p>
@@ -150,7 +153,7 @@ export function Contact() {
             {profileLinks.map((link) => (
               <a
                 key={link.label}
-                href={link.href}
+                href={resolvePlaceholderHref(link.href)}
                 target={link.href.startsWith("http") ? "_blank" : undefined}
                 rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
                 title={link.label}

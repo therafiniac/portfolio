@@ -3,6 +3,7 @@
 import { ArrowUpRight } from "lucide-react";
 import { Section } from "@/components/layout/Section";
 import { sideProjects } from "@/lib/data/sideProjects";
+import { resolvePlaceholderHref } from "@/lib/placeholderLink";
 import type { SideProject } from "@/types";
 import { useLanguage } from "@/lib/useLanguage";
 import { t } from "@/lib/i18n";
@@ -23,11 +24,13 @@ function SideProjectRow({ project }: { project: SideProject }) {
   // "#" is the honest placeholder for a not-yet-real link (see
   // sideProjects.ts) — the live-status dot only lights up once a real URL
   // replaces it, same signal Projects.tsx's tabs use for `liveUrl`.
+  // resolvePlaceholderHref sends a click there to /under-construction
+  // instead of a dead "#".
   const isLive = project.href.startsWith("http");
 
   return (
     <a
-      href={project.href}
+      href={resolvePlaceholderHref(project.href)}
       target={isLive ? "_blank" : undefined}
       rel={isLive ? "noopener noreferrer" : undefined}
       className="group flex flex-col gap-3 py-8 sm:flex-row sm:items-center sm:justify-between sm:gap-6"
