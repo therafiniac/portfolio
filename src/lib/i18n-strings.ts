@@ -249,11 +249,31 @@ export const strings = {
       bn: 'একটি সেকশনে যান…',
     } satisfies Localized,
     noResults: { en: 'No matches', bn: 'কোনো ফলাফল নেই' } satisfies Localized,
+    // Typing this exact string is the one query that isn't really a
+    // search — a dev-humor easter egg for the same audience segment the
+    // console log rewards, just found through the palette instead of
+    // devtools. Checked case-insensitively against the raw query in
+    // CommandPalette.tsx, not treated as a real command with a real id.
+    sudoQuery: 'sudo',
+    sudoJoke: {
+      en: 'Permission denied. This incident will be reported to nobody.',
+      bn: 'অনুমতি নেই। এই ঘটনার রিপোর্ট কাউকে করা হবে না।',
+    } satisfies Localized,
     hint: {
-      en: 'navigate · select · close',
-      bn: 'নেভিগেট · নির্বাচন · বন্ধ',
+      en: 'navigate · select · close · ? for shortcuts',
+      bn: 'নেভিগেট · নির্বাচন · বন্ধ · শর্টকাটের জন্য ?',
     } satisfies Localized,
   },
+  shortcuts: {
+    title: { en: 'Keyboard Shortcuts', bn: 'কীবোর্ড শর্টকাট' } satisfies Localized,
+    home: { en: 'Home', bn: 'হোম' } satisfies Localized,
+    openPalette: {
+      en: 'Open command palette',
+      bn: 'কমান্ড প্যালেট খুলুন',
+    } satisfies Localized,
+    openThis: { en: 'Show this menu', bn: 'এই মেনু দেখান' } satisfies Localized,
+  },
+  skipToContent: { en: 'Skip to content', bn: 'কনটেন্টে যান' } satisfies Localized,
   tabAttention: {
     comeBack: { en: 'Come back! 👋', bn: 'ফিরে আসুন! 👋' } satisfies Localized,
   },

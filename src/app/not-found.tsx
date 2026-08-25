@@ -18,7 +18,7 @@ export default function NotFound() {
 
   return (
     <>
-      <main className="flex flex-1 flex-col items-center justify-center px-6 py-32 text-center">
+      <main id="main-content" className="flex flex-1 flex-col items-center justify-center px-6 py-32 text-center">
         <span
           className="bg-clip-text font-mono text-8xl font-semibold leading-none text-transparent md:text-9xl"
           style={{ backgroundImage: "var(--gradient-signature)" }}

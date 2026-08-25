@@ -12,6 +12,8 @@ import { CommandPalette } from "@/components/layout/CommandPalette";
 import { TabAttention } from "@/components/layout/TabAttention";
 import { ConsoleEasterEgg } from "@/components/layout/ConsoleEasterEgg";
 import { BackToTopButton, WhatsAppButton } from "@/components/layout/FloatingActions";
+import { SkipToContent } from "@/components/layout/SkipToContent";
+import { KeyboardShortcuts } from "@/components/layout/KeyboardShortcuts";
 import "./globals.css";
 
 const inter = Inter({
@@ -184,6 +186,7 @@ export default async function RootLayout({
         suppressHydrationWarning
       >
         <MotionConfig reducedMotion="user">
+          <SkipToContent />
           <SmoothScroll />
           <RouteScrollReset />
           <ScrollProgress />
@@ -192,6 +195,7 @@ export default async function RootLayout({
           <CursorTrail />
           <Navbar />
           <CommandPalette />
+          <KeyboardShortcuts />
           <TabAttention />
           <ConsoleEasterEgg />
           <WhatsAppButton />

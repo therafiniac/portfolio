@@ -207,7 +207,16 @@ body {
   color: var(--text-primary);
   transition:
     background-color 0.3s ease,
-    color 0.3s ease;
+    color 0.3s ease,
+    opacity 0.15s ease;
+}
+
+/* LanguageToggle.tsx sets this attribute for the brief window between
+   fading out and actually swapping data-lang — every Localized string on
+   the page re-renders when that happens, so this hides that reflow
+   instead of letting it flash mid-transition. */
+html[data-lang-transitioning="true"] body {
+  opacity: 0;
 }
 
 /* The native scrollbar is replaced by ScrollProgress.tsx's comet-trail
