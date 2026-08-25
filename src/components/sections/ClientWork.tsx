@@ -126,16 +126,22 @@ function WorkCard({ project }: { project: ClientProject }) {
 // real cards: same chrome bar, TileGlow, border, and icon/hover-reveal
 // choreography as WorkCard — an Hourglass stands in for the icon slot,
 // and the reveal is the section's own signature-gradient lettering
-// instead of a screenshot Image, since there's no real one yet. Same
-// mobile-flip logic as WorkCard's Image (shows plainly below md, since
-// touch has no persistent hover to trigger a reveal). Not a Link — it
-// has nowhere real to go yet — but everything else matches.
+// instead of a screenshot Image, since there's no real one yet. Not a
+// Link — it has nowhere real to go yet — but everything else matches.
+//
+// Hidden below sm (single-column mobile) entirely, not just re-flowed:
+// on a touch device there's no hover to trigger the reveal, so the tile
+// would sit there either showing the icon and never the "Coming Soon"
+// label, or the label with no card content behind it — worse than just
+// not spending a slot on a placeholder in an already-short mobile
+// stack. Reappears from sm up, where every card's own hover choreography
+// already applies normally.
 function ComingSoonTile() {
   const language = useLanguage();
   const label = t(strings.clientWork.comingSoon, language);
 
   return (
-    <div className="hover-glow-panel group relative flex flex-col overflow-hidden rounded-xl border border-line/60 transition-colors duration-300 hover:border-accent/60">
+    <div className="hover-glow-panel group relative hidden flex-col overflow-hidden rounded-xl border border-line/60 transition-colors duration-300 hover:border-accent/60 sm:flex">
       <TileGlow />
       <BrowserChrome label="Coming Soon" />
       <div className={`relative w-full overflow-hidden ${SHOT_ASPECT}`}>
