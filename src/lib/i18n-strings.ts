@@ -112,15 +112,18 @@ export const strings = {
     // elsewhere) — only the flag transliterates, matching the group
     // flags right below it and the section's own title ("স্ট্যাক").
     prompt: { en: 'rafi --stack', bn: 'rafi --স্ট্যাক' } satisfies Localized,
-    // Command names themselves stay in English in both languages — real
-    // terminal commands aren't prose, same reasoning as tech names and
-    // the "rafi" in the prompt above never translating either. Only the
-    // output text (what a command prints) is bilingual.
+    // Command *names* (what you actually type) are scoped to the active
+    // language — see COMMAND_NAMES in Skills.tsx — unlike the "rafi" in
+    // the prompt above, which never translates at all. The difference:
+    // that prompt is fixed decoration nobody types, this is real user
+    // input, and a Bengali-mode visitor should only ever see and type
+    // the Bengali command names, an English-mode one only the English
+    // ones — never both mixed in the same output.
     terminalInputLabel: { en: 'Terminal input', bn: 'টার্মিনাল ইনপুট' } satisfies Localized,
-    terminalHelp: {
-      en: 'available: whoami · contact · clear · help',
-      bn: 'উপলব্ধ: whoami · contact · clear · help',
-    } satisfies Localized,
+    // Just the lead-in word — Skills.tsx's buildHelpList appends the
+    // actual (language-scoped) command list after it, so the two can
+    // never drift out of sync with what's really accepted.
+    terminalHelp: { en: 'available:', bn: 'উপলব্ধ:' } satisfies Localized,
     terminalWhoami: {
       en: 'Full Stack Developer (4+ yrs) — Next.js, TypeScript, production systems. Open to new work — see Contact below.',
       bn: 'ফুল স্ট্যাক ডেভেলপার (৪+ বছর) — Next.js, TypeScript, প্রোডাকশন সিস্টেম। নতুন কাজের জন্য উন্মুক্ত — নিচের Contact দেখুন।',
@@ -129,6 +132,14 @@ export const strings = {
       en: 'command not found',
       bn: 'কমান্ড পাওয়া যায়নি',
     } satisfies Localized,
+    // {count} is replaced with a real, live count (clientProjects.length)
+    // in Skills.tsx, never hardcoded here — it can't drift out of sync
+    // with the actual Work section as entries are added.
+    terminalWorkCount: {
+      en: '{count} real client projects — see Work above.',
+      bn: '{count}টি বাস্তব ক্লায়েন্ট প্রজেক্ট — উপরে Work দেখুন।',
+    } satisfies Localized,
+    terminalPrivate: { en: 'private', bn: 'প্রাইভেট' } satisfies Localized,
   },
   experience: {
     eyebrow: { en: 'Track Record', bn: 'ট্র্যাক রেকর্ড' } satisfies Localized,

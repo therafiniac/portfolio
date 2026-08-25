@@ -29,7 +29,16 @@ function LocalTimeBadge() {
         minute: "2-digit",
         timeZone: "Asia/Kolkata",
       }).format(new Date());
-      setTime(localizeNumber(formatted, language));
+      // localizeNumber only touches digits (see i18n.ts) — the AM/PM
+      // marker is a separate string Intl leaves in English regardless of
+      // locale (confirmed directly: Intl.DateTimeFormat("bn-BD", ...)
+      // still prints "AM"/"PM", not a Bengali dayPeriod, at least with
+      // this project's ICU data), so it needs its own explicit swap.
+      const withLocalizedPeriod =
+        language === "bn"
+          ? formatted.replace("AM", "পূর্বাহ্ণ").replace("PM", "অপরাহ্ণ")
+          : formatted;
+      setTime(localizeNumber(withLocalizedPeriod, language));
     }
     update();
     const interval = setInterval(update, 30_000);
