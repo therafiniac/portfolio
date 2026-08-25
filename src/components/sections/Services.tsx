@@ -62,7 +62,7 @@ export function Services() {
   const language = useLanguage();
 
   return (
-    <Section id="services" tag="SERVICES" eyebrow={strings.services.eyebrow} title={strings.services.title}>
+    <Section id="services" tag={strings.sectionTags.services} eyebrow={strings.services.eyebrow} title={strings.services.title}>
       <p className="-mt-6 mb-10 max-w-2xl text-text-muted">{t(strings.services.intro, language)}</p>
       <div className="relative">
         {/* Same recipe as Stack's panel glow (see Skills.tsx) — the
