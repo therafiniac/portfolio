@@ -16,6 +16,16 @@ const nextConfig: NextConfig = {
         hostname: "images.unsplash.com",
       },
     ],
+    // Every next/image usage already gets on-demand format conversion +
+    // per-device resizing for free (confirmed: a 548KB source PNG served
+    // as a 17-56KB WebP depending on viewport) — Next's own default only
+    // tries WebP, though. AVIF first, WebP as the fallback for the few
+    // browsers that support the latter but not the former: same content
+    // negotiation Next already does automatically (Vary: Accept), just
+    // trying the smaller format first. No source files need touching —
+    // this applies to every image already in public/work/ and any
+    // future one dropped in the same way.
+    formats: ["image/avif", "image/webp"],
   },
   // Stops the framework/version fingerprint (`X-Powered-By: Next.js`)
   // from going out on every response — no functional benefit to leaking
