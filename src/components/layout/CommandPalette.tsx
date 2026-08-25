@@ -145,7 +145,11 @@ export function CommandPalette() {
             </div>
 
             <div className="max-h-72 overflow-y-auto p-2">
-              {results.length === 0 ? (
+              {normalizedQuery === strings.commandPalette.sudoQuery ? (
+                <p className="px-3 py-6 text-center font-mono text-xs text-text-muted">
+                  {t(strings.commandPalette.sudoJoke, language)}
+                </p>
+              ) : results.length === 0 ? (
                 <p className="px-3 py-6 text-center font-mono text-xs text-text-muted">
                   {t(strings.commandPalette.noResults, language)}
                 </p>

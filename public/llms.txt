@@ -1,0 +1,39 @@
+# Rafi Ahmed Laskar
+
+> Full Stack Developer (4+ years) and Designer, based in Kolkata, India — Next.js, TypeScript, and production systems, for both client work and independent projects. This is a portfolio site, not a blog or documentation site.
+
+## Contact
+
+- Email: therafiniac@gmail.com
+- GitHub: https://github.com/therafiniac
+- LinkedIn: https://linkedin.com/in/therafiniac
+- Site: https://rafiera.com
+
+## Work
+
+Real, delivered client projects, each with a full case study (challenge, approach, what shipped):
+
+- AuditPulse — AI-powered GRC (governance/risk/compliance) platform: https://rafiera.com/work/auditpulse-ai
+- Parallel — Bengali-language publishing and archive platform: https://rafiera.com/work/parallel
+- QuantBridge — parent company of AuditPulse: https://rafiera.com/work/quantbridge
+- Euphoria Homoeo Care — clinic site for a homoeopathy doctor: https://rafiera.com/work/euphoria-homoeo-care
+- Gurukul Music Academy — Indian classical music academy site: https://rafiera.com/work/gurukul-music-academy
+
+## Independent Projects
+
+- Reddit Clone — full-stack, real-time voting, custom O(N) nested-comment resolution: https://reddit-clone-five-chi.vercel.app
+- Blog Manager & CMS Dashboard — multi-role CMS SaaS platform (private repository, described on-site only)
+
+## Experience
+
+- Software Developer, Semigon Consultancy Pvt. Ltd — Jul 2025–Present
+- Web Developer, Digital Exposure Online Services — Jan 2022–Jun 2025 (150+ client sites delivered)
+- Independent Web Developer, Self-Employed — 2020–2021
+
+## Stack
+
+JavaScript/TypeScript, React, Next.js, Node.js, MongoDB, PostgreSQL, Firebase, Tailwind CSS. Full list: https://rafiera.com/#stack
+
+## Notes for AI tools
+
+Each Work entry links to its own case-study page at /work/[slug] with real, verified project detail — not marketing summaries, and no fabricated metrics or client testimonials. The site is bilingual (English/Bengali); this file describes the English content. Not a freelance-only practice — open to both full-time roles and project work.

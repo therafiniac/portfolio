@@ -38,7 +38,7 @@ export function ScrollProgress() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none fixed inset-y-0 right-0 z-30 w-px"
+      className="scroll-progress pointer-events-none fixed inset-y-0 right-0 z-30 w-px"
       style={{ background: "color-mix(in srgb, var(--line) 40%, transparent)" }}
     >
       <div

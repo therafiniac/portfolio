@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { HeroCanvasLoader } from "@/components/three/HeroCanvasLoader";
 import { HeroMark3DLoader } from "@/components/three/HeroMark3DLoader";
@@ -7,8 +8,56 @@ import { CountUp } from "@/components/layout/CountUp";
 import { Magnetic } from "@/components/layout/Magnetic";
 import { heroRoles, heroStatusLine, heroStats, heroNameLine1, heroNameLine2 } from "@/lib/data/hero";
 import { useLanguage } from "@/lib/useLanguage";
-import { t } from "@/lib/i18n";
+import { t, localizeNumber } from "@/lib/i18n";
 import { strings } from "@/lib/i18n-strings";
+
+// Answers a real, unspoken question for anyone outside IST — a client
+// or recruiter deciding whether a message sent now will be seen soon.
+// null on first render (server has no "current time" that could ever
+// match the client's, so this can't render anything during SSR without
+// risking a hydration mismatch) — the real value fills in a moment after
+// mount instead, same reasoning as this file's own CountUp components
+// animating in from 0 rather than trying to SSR a final number.
+function LocalTimeBadge() {
+  const language = useLanguage();
+  const [time, setTime] = useState<string | null>(null);
+
+  useEffect(() => {
+    function update() {
+      const formatted = new Intl.DateTimeFormat("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        timeZone: "Asia/Kolkata",
+      }).format(new Date());
+      // localizeNumber only touches digits (see i18n.ts) — the AM/PM
+      // marker is a separate string Intl leaves in English regardless of
+      // locale (confirmed directly: Intl.DateTimeFormat("bn-BD", ...)
+      // still prints "AM"/"PM", not a Bengali dayPeriod, at least with
+      // this project's ICU data), so it needs its own explicit swap.
+      const withLocalizedPeriod =
+        language === "bn"
+          ? formatted.replace("AM", "পূর্বাহ্ণ").replace("PM", "অপরাহ্ণ")
+          : formatted;
+      setTime(localizeNumber(withLocalizedPeriod, language));
+    }
+    update();
+    const interval = setInterval(update, 30_000);
+    return () => clearInterval(interval);
+  }, [language]);
+
+  if (!time) return null;
+
+  return (
+    <>
+      <span className="text-text-muted/50" aria-hidden="true">
+        ·
+      </span>
+      <span>
+        {time}, {t(strings.hero.kolkata, language)}
+      </span>
+    </>
+  );
+}
 
 const container = {
   hidden: {},
@@ -50,7 +99,13 @@ export function Hero() {
           light — the headline and the stats row — instead of drifting in
           empty space at the section's edges, where they read as ambient
           background decoration rather than an actual light source. */}
-      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+      {/* print:hidden — CSS can reset a DOM element's background/color for
+          print (see globals.css's @media print), but a WebGL canvas
+          paints its own pixels outside the CSS cascade entirely, so
+          HeroCanvasLoader's drift field has to be hidden at the
+          container level or it prints as an uncontrolled splash of
+          color regardless of any stylesheet override. */}
+      <div className="pointer-events-none absolute inset-0 print:hidden" aria-hidden="true">
         <div className="aurora-blob absolute left-32 top-[22%] h-96 w-96 rounded-full bg-accent/20 blur-[120px]" />
         <div className="aurora-blob absolute bottom-[8%] left-[18%] h-96 w-96 rounded-full bg-accent-secondary/14 blur-[120px] [animation-delay:-9s]" />
         <HeroCanvasLoader />
@@ -74,6 +129,7 @@ export function Hero() {
               aria-hidden="true"
             />
             {t(heroStatusLine, language)}
+            <LocalTimeBadge />
           </motion.p>
 
           <motion.h1
@@ -182,7 +238,7 @@ export function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
-          className="relative flex justify-center lg:justify-start"
+          className="relative flex justify-center print:hidden lg:justify-start"
         >
           {/* The mark IS the light source — a bright signature-gradient
               glow bleeding out from directly behind it, sized to the mark's

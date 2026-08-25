@@ -120,17 +120,17 @@ export const clientProjects: ClientProject[] = [
     // developed project, not a shipped-and-done engagement with a
     // measurable result to report yet.
     challenge: {
-      en: "A large, content-heavy platform split across three distinctly branded sections — সমান্তর (magazine), Parallel Press (books), and অন্যপাতা (blogzine) — needed one architecture that could hold all three without fragmenting into separate builds. Built solo, which also meant turning feedback from non-technical editorial contributors into concrete technical and design decisions without a product team to triage it first.",
-      bn: "সমান্তর (ম্যাগাজিন), প্যারালাল প্রেস (বই) এবং অন্যপাতা (ব্লগজিন) — তিনটি স্বতন্ত্র ব্র্যান্ডেড শাখা নিয়ে গঠিত একটি বড়, কনটেন্ট-ঘন প্ল্যাটফর্মের জন্য এমন একটি আর্কিটেকচার দরকার ছিল যা তিনটিকে আলাদা বিল্ডে ভাগ না করেই ধরে রাখতে পারে। একা তৈরি করার কারণে অ-প্রযুক্তিগত সম্পাদকীয় সদস্যদের ফিডব্যাককে — কোনো প্রোডাক্ট টিম ছাড়াই — সরাসরি নির্দিষ্ট টেকনিক্যাল ও ডিজাইন সিদ্ধান্তে রূপান্তর করাও একটি চ্যালেঞ্জ ছিল।",
+      en: "Parallel is really three things in one — সমান্তর (magazine), Parallel Press (books), and অন্যপাতা (blogzine) — and all three needed to feel connected without turning into three separate websites to maintain. Built solo, which also meant turning feedback from non-technical editorial contributors into real design decisions, with no product team to sort through it first.",
+      bn: "প্যারালাল আসলে একসাথে তিনটি জিনিস — সমান্তর (ম্যাগাজিন), প্যারালাল প্রেস (বই) এবং অন্যপাতা (ব্লগজিন) — এবং তিনটিকেই একে অপরের সাথে যুক্ত মনে হতে হতো, অথচ রক্ষণাবেক্ষণের জন্য তিনটি আলাদা ওয়েবসাইট হয়ে যাওয়া চলবে না। একা তৈরি করার কারণে অ-প্রযুক্তিগত সম্পাদকীয় সদস্যদের ফিডব্যাককে — কোনো প্রোডাক্ট টিম ছাড়াই — সরাসরি বাস্তব ডিজাইন সিদ্ধান্তে রূপান্তর করাও একটি চ্যালেঞ্জ ছিল।",
     },
     approach: {
-      en: "Structured the three entities — সমান্তর, Parallel Press, অন্যপাতা — as themed sections on one shared Next.js codebase, each with its own scoped accent color and navigation rather than a separate repo per brand, so the multi-entity structure stays maintainable by a single developer as content keeps growing.",
-      bn: "সমান্তর, প্যারালাল প্রেস এবং অন্যপাতা — এই তিনটি শাখাকে একটি ভাগ করা Next.js কোডবেসের উপর থিমড সেকশন হিসেবে গঠন করা হয়েছে, প্রতিটির নিজস্ব scoped অ্যাকসেন্ট রঙ ও নেভিগেশন সহ, প্রতিটি ব্র্যান্ডের জন্য আলাদা রিপোজিটরির বদলে — যাতে কনটেন্ট বাড়তে থাকলেও এই মাল্টি-এনটিটি স্ট্রাকচার একজন ডেভেলপারের পক্ষে রক্ষণাবেক্ষণযোগ্য থাকে।",
+      en: "Built সমান্তর, Parallel Press, and অন্যপাতা as three sections of one site instead of three separate sites — each with its own color and navigation, but sharing the same underlying build — so one person can keep maintaining all three as content keeps growing.",
+      bn: "সমান্তর, প্যারালাল প্রেস এবং অন্যপাতা — তিনটি আলাদা সাইট না বানিয়ে একটি সাইটের তিনটি সেকশন হিসেবে তৈরি করা হয়েছে — প্রতিটির নিজস্ব রঙ ও নেভিগেশন থাকলেও একই মূল বিল্ড শেয়ার করে — যাতে কনটেন্ট বাড়তে থাকলেও একজন মানুষ তিনটিই রক্ষণাবেক্ষণ করতে পারে।",
     },
     highlights: [
       {
-        en: "Three branded entities — সমান্তর (magazine), Parallel Press (books), অন্যপাতা (blogzine) — each with its own accent color and navigation on one shared codebase.",
-        bn: "সমান্তর (ম্যাগাজিন), প্যারালাল প্রেস (বই), অন্যপাতা (ব্লগজিন) — তিনটি ব্র্যান্ডেড শাখা, প্রতিটির নিজস্ব অ্যাকসেন্ট রঙ ও নেভিগেশন সহ, একটি ভাগ করা কোডবেসে।",
+        en: "Three branded sections — সমান্তর (magazine), Parallel Press (books), অন্যপাতা (blogzine) — each with its own color and navigation, built as one connected site.",
+        bn: "সমান্তর (ম্যাগাজিন), প্যারালাল প্রেস (বই), অন্যপাতা (ব্লগজিন) — তিনটি ব্র্যান্ডেড সেকশন, প্রতিটির নিজস্ব রঙ ও নেভিগেশন সহ, একটি সংযুক্ত সাইট হিসেবে তৈরি।",
       },
       {
         en: "পুরাতনী (Archive) — a searchable, filterable collection preserving the publication's older writing by type and era.",
@@ -269,17 +269,17 @@ export const clientProjects: ClientProject[] = [
     // Outcome left unset — the booking-system and code-migration plans
     // below are roadmap items, not shipped results yet.
     challenge: {
-      en: "The clinic's brand palette leaned on two closely related tones — different enough to be intentional, similar enough to blur together — so a bento-style grid of practice-area and approach cards risked reading as visually cluttered or repetitive on top of them, rather than clean.",
-      bn: "ক্লিনিকের ব্র্যান্ড প্যালেটে দুটি কাছাকাছি টোনের রঙ ছিল — যথেষ্ট আলাদা যে ইচ্ছাকৃত মনে হয়, কিন্তু যথেষ্ট কাছাকাছি যে একসাথে মিলিয়ে যায় — ফলে তার উপর প্র্যাকটিস-এরিয়া ও অ্যাপ্রোচ কার্ডের একটি বেন্টো-স্টাইল গ্রিড বসালে তা পরিষ্কার না দেখিয়ে ভিজ্যুয়ালি ক্লাটারড বা পুনরাবৃত্তিমূলক দেখানোর ঝুঁকি ছিল।",
+      en: "The clinic's brand colors were two very similar shades — close enough to blur together on screen — so laying out a grid of practice-area and approach cards on top of them risked looking cluttered or repetitive instead of clean.",
+      bn: "ক্লিনিকের ব্র্যান্ড রঙ ছিল দুটি খুব কাছাকাছি শেড — স্ক্রিনে একসাথে প্রায় মিলিয়ে যায় — ফলে তার উপর প্র্যাকটিস-এরিয়া ও অ্যাপ্রোচ কার্ডের একটি গ্রিড বসালে তা পরিষ্কার না দেখিয়ে এলোমেলো বা পুনরাবৃত্তিমূলক দেখানোর ঝুঁকি ছিল।",
     },
     approach: {
-      en: "Gave each brand tone its own section instead of mixing them within one card row, and kept every bento card to a single icon, heading, and short line of copy — so the grid stayed legible on a palette that didn't offer much contrast to lean on.",
-      bn: "প্রতিটি ব্র্যান্ড টোনকে একই কার্ড রো-তে না মিশিয়ে তার নিজস্ব সেকশনে রাখা হয়েছে, এবং প্রতিটি বেন্টো কার্ডকে একটি আইকন, একটি হেডিং ও ছোট এক লাইনের কপিতে সীমিত রাখা হয়েছে — যাতে যে প্যালেটে খুব বেশি কনট্রাস্ট নেই, তাতেও গ্রিডটি স্পষ্ট থাকে।",
+      en: "Gave each color its own section instead of mixing them in one row of cards, and kept every card down to one icon, one heading, and a short line of text — so the grid stayed easy to read even on a palette with little contrast to work with.",
+      bn: "প্রতিটি রঙকে একই সারির কার্ডে না মিশিয়ে তার নিজস্ব সেকশনে রাখা হয়েছে, এবং প্রতিটি কার্ডকে একটি আইকন, একটি হেডিং ও ছোট এক লাইনের লেখায় সীমিত রাখা হয়েছে — যাতে কম কনট্রাস্টের প্যালেটেও গ্রিডটি সহজে পড়া যায়।",
     },
     highlights: [
       {
-        en: "Bento-style practice-area and approach cards laid out across the brand's two close-toned colors without the page reading as cluttered.",
-        bn: "ব্র্যান্ডের দুটি কাছাকাছি টোনের রঙ জুড়ে বেন্টো-স্টাইল প্র্যাকটিস-এরিয়া ও অ্যাপ্রোচ কার্ড সাজানো হয়েছে, পেজটি ক্লাটারড না দেখিয়েই।",
+        en: "A grid of practice-area and approach cards laid out across the brand's two similar colors without the page looking cluttered.",
+        bn: "ব্র্যান্ডের দুটি কাছাকাছি রঙ জুড়ে প্র্যাকটিস-এরিয়া ও অ্যাপ্রোচ কার্ডের একটি গ্রিড সাজানো হয়েছে, পেজটি এলোমেলো না দেখিয়েই।",
       },
       {
         en: "A periodically updated blog for real case studies, written and published directly by the doctor.",
@@ -298,15 +298,15 @@ export const clientProjects: ClientProject[] = [
       {
         src: "/work/euphoria-03.png",
         caption: {
-          en: "The homepage's bento layout, working within the brand's two close-toned colors",
-          bn: "হোমপেজের বেন্টো লেআউট, ব্র্যান্ডের দুটি কাছাকাছি টোনের রঙের মধ্যে কাজ করে",
+          en: "The homepage's card layout, working within the brand's two similar colors",
+          bn: "হোমপেজের কার্ড লেআউট, ব্র্যান্ডের দুটি কাছাকাছি রঙের মধ্যে কাজ করে",
         },
       },
       {
         src: "/work/euphoria-02.png",
         caption: {
-          en: "Practice Areas — a bento grid of the clinic's treatment focuses",
-          bn: "প্র্যাকটিস এরিয়া — ক্লিনিকের চিকিৎসা ফোকাসগুলোর একটি বেন্টো গ্রিড",
+          en: "Practice Areas — a grid of the clinic's treatment focuses",
+          bn: "প্র্যাকটিস এরিয়া — ক্লিনিকের চিকিৎসা ফোকাসগুলোর একটি গ্রিড",
         },
       },
       {

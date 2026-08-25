@@ -45,6 +45,15 @@ export function SmoothScroll() {
         duration: 1.2,
         easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         anchors: true,
+        // Lenis has no built-in idea that a Next.js route just changed —
+        // without this, clicking a real link (e.g. a WorkCard) to a
+        // different pathname left Lenis mid-animation from the old page,
+        // still fighting for control of the new one. This resets that
+        // in-flight state the moment a same-tab click's target pathname
+        // differs from the current one. It only covers clicks, though —
+        // see RouteScrollReset.tsx for the browser back/forward case,
+        // which never fires a click at all.
+        stopInertiaOnNavigate: true,
       }}
     />
   );

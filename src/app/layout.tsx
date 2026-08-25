@@ -6,9 +6,15 @@ import { CursorGlow } from "@/components/layout/CursorGlow";
 import { CursorTrail } from "@/components/layout/CursorTrail";
 import { Navbar } from "@/components/layout/Navbar";
 import { SmoothScroll } from "@/components/layout/SmoothScroll";
+import { RouteScrollReset } from "@/components/layout/RouteScrollReset";
 import { ScrollProgress } from "@/components/layout/ScrollProgress";
 import { CommandPalette } from "@/components/layout/CommandPalette";
 import { TabAttention } from "@/components/layout/TabAttention";
+import { ConsoleEasterEgg } from "@/components/layout/ConsoleEasterEgg";
+import { KonamiEasterEgg } from "@/components/layout/KonamiEasterEgg";
+import { BackToTopButton, WhatsAppButton } from "@/components/layout/FloatingActions";
+import { SkipToContent } from "@/components/layout/SkipToContent";
+import { KeyboardShortcuts } from "@/components/layout/KeyboardShortcuts";
 import "./globals.css";
 
 const inter = Inter({
@@ -181,14 +187,21 @@ export default async function RootLayout({
         suppressHydrationWarning
       >
         <MotionConfig reducedMotion="user">
+          <SkipToContent />
           <SmoothScroll />
+          <RouteScrollReset />
           <ScrollProgress />
           <div className="grain-overlay" aria-hidden="true" />
           <CursorGlow />
           <CursorTrail />
           <Navbar />
           <CommandPalette />
+          <KeyboardShortcuts />
           <TabAttention />
+          <ConsoleEasterEgg />
+          <KonamiEasterEgg />
+          <WhatsAppButton />
+          <BackToTopButton />
           {children}
         </MotionConfig>
       </body>

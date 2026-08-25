@@ -12,7 +12,7 @@ import { Footer } from '@/components/layout/Footer';
 export default function Home() {
   return (
     <>
-      <main className="flex flex-1 flex-col">
+      <main id="main-content" className="flex flex-1 flex-col">
         <Hero />
         <ClientWork />
         <Projects />
