@@ -32,8 +32,8 @@ export const approachPoints: ApproachPoint[] = [
     icon: ShieldCheck,
     heading: { en: "Type-Safe by Default", bn: "ডিফল্টভাবে টাইপ-সেফ" },
     description: {
-      en: "TypeScript end to end, with the same Zod schema validating both the client form and the server action — one source of truth, not two definitions that can drift apart.",
-      bn: "শুরু থেকে শেষ পর্যন্ত TypeScript, একই Zod স্কিমা ক্লায়েন্ট ফর্ম এবং সার্ভার অ্যাকশন দুটোই যাচাই করে — একটিই সত্যের উৎস, আলাদা হয়ে যেতে পারে এমন দুটি সংজ্ঞা নয়।",
+      en: "TypeScript end to end, with one Zod schema validating both the client form and the server action — a single source of truth.",
+      bn: "শুরু থেকে শেষ পর্যন্ত TypeScript, একই Zod স্কিমা ক্লায়েন্ট ফর্ম এবং সার্ভার অ্যাকশন দুটোই যাচাই করে — একটিই সত্যের উৎস।",
     },
   },
   {
@@ -48,8 +48,8 @@ export const approachPoints: ApproachPoint[] = [
     icon: ServerCog,
     heading: { en: "Production-Grade from Day One", bn: "শুরু থেকেই প্রোডাকশন-গ্রেড" },
     description: {
-      en: "Server actions, rate-limited endpoints, environment-gated secrets — the baseline every project ships with, not an afterthought.",
-      bn: "সার্ভার অ্যাকশন, রেট-লিমিটেড এন্ডপয়েন্ট, এনভায়রনমেন্ট-গেটেড সিক্রেট — প্রতিটি প্রজেক্টের সাথেই থাকা বেসলাইন, পরে যোগ করা কিছু নয়।",
+      en: "Server actions, rate limits, gated secrets — the baseline, not an afterthought.",
+      bn: "সার্ভার অ্যাকশন, রেট লিমিট, গেটেড সিক্রেট — বেসলাইন, পরে যোগ করা কিছু নয়।",
     },
   },
 ];

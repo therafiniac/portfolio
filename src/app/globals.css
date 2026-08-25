@@ -103,11 +103,11 @@
   --text-display-contact: clamp(2rem, 6vw, 4rem);
 }
 
-/* Neither JetBrains Mono nor Inter cover Bengali glyphs, and there's no
-   real monospace Bengali typeface to swap to specifically — the chosen
-   Bengali typeface (--font-bengali, loaded in layout.tsx — currently
-   Hind Siliguri, swappable there without touching this file) stands in
-   for both roles in Bengali mode. This can't be done by overriding the
+/* Neither JetBrains Mono nor Inter cover Bengali glyphs, so Bengali mode
+   gets its own paired stand-ins (--font-bengali-heading/-body, loaded in
+   layout.tsx — swappable there without touching this file) instead of
+   one typeface covering both roles, mirroring the English heading/body
+   split rather than flattening it. This can't be done by overriding the
    --font-mono/--font-sans *variables* (tried first, didn't work):
    Tailwind's `@theme inline` resolves each utility's font stack at
    build time and bakes the resolved reference directly into the rule —
@@ -119,9 +119,12 @@
    regardless of selector order — reaches every font-mono/font-sans
    utility site-wide with no per-component changes needed, same as the
    original variable-override attempt intended. */
-:root[data-lang="bn"] .font-mono,
+:root[data-lang="bn"] .font-mono {
+  font-family: var(--font-bengali-heading);
+}
+
 :root[data-lang="bn"] .font-sans {
-  font-family: var(--font-bengali);
+  font-family: var(--font-bengali-body);
 }
 
 /* The --text-* overrides below correct a real but separate problem: the
@@ -166,15 +169,22 @@
    line-height didn't change it either) — it's this specific clip
    mechanism corrupting complex-script glyph compositing, apparently
    independent of the gradient itself. No CSS fix keeps the gradient
-   working here, so Bengali mode falls back to solid --accent instead:
+   working here, so Bengali mode falls back to a flat color instead:
    loses the signature two-color gradient on these two headings only,
    keeps the glyphs intact everywhere else the gradient is still used
-   (CTA buttons, stat numbers — plain Latin/numeral glyphs, unaffected). */
+   (CTA buttons, stat numbers — plain Latin/numeral glyphs, unaffected).
+   The flat color is a text-primary/accent blend, not plain --accent —
+   the English gradient's stops (from-text-primary via-text-primary
+   to-accent) only reach pure accent right at the tail, so most of the
+   heading actually reads as text-primary; a flat pure-accent fallback
+   read as a noticeably different, more saturated blue than what the
+   gradient itself looks like. This blend approximates the gradient's
+   real dominant tone instead of its most extreme stop. */
 :root[data-lang="bn"] .gradient-heading {
   background-image: none;
   -webkit-background-clip: initial;
   background-clip: initial;
-  color: var(--accent);
+  color: color-mix(in srgb, var(--text-primary) 75%, var(--accent) 25%);
 }
 
 @theme inline {
@@ -553,6 +563,47 @@ html::-webkit-scrollbar {
   }
 }
 
+/* How I Build's per-tile graphics (HowIBuild.tsx) — the topology-neutral
+   nodes in each diagram pulse in sequence on hover, the delay set inline
+   per node since it depends on that node's position within its own
+   graphic's shape (a layer row, distance from a hub, position along a
+   chain), not a fixed value shared by all five. transform-box: fill-box
+   makes `scale` pivot on the circle's own center instead of the SVG
+   viewport's origin, which is the default and wrong pivot for a shape
+   this far from (0,0). The always-on single pulsing node each graphic
+   already had (nodeProps(true) in HowIBuild.tsx) is untouched — this is
+   additive, only reaching the previously-static nodes. */
+.hib-node {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* Each node's animation-delay is set inline (style prop, HowIBuild.tsx)
+   rather than here — an inline longhand always wins over this shorthand's
+   implicit delay:0s regardless of selector specificity, so per-node
+   staggering just works without a CSS custom property indirection. */
+.group:hover .hib-node {
+  animation: hib-node-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes hib-node-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.7);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .group:hover .hib-node {
+    animation: none;
+  }
+}
+
 /* Blinking prompt cursor for the Stack section's terminal panel — same
    "continuous CSS animation, guarded for reduced motion" pattern as
    trail-light/flow-light above. steps(1, end) instead of an eased
@@ -580,6 +631,50 @@ html::-webkit-scrollbar {
 @media (prefers-reduced-motion: reduce) {
   .terminal-caret {
     animation: none;
+  }
+}
+
+/* The three dots that replace Contact's headline's trailing full stop —
+   the same three-stop gradient as the heading itself (see Contact.tsx's
+   from-text-primary/via-text-primary/to-accent classes, replicated here
+   literally since a solid shape can't inherit a bg-clip-text gradient
+   the way text characters can) rather than a flat accent fill, which
+   read as a noticeably different, more-saturated blue than the heading's
+   actual mostly text-primary-toned color. currentColor isn't an option
+   either: the heading sits inside text-transparent, so currentColor here
+   would inherit that transparency and vanish. Typewriter, not a bounce:
+   each dot pops in on its own turn (a hard opacity step, no easing/
+   motion, like a character being typed) and holds until the whole "..."
+   clears together and the cycle restarts — three dots sharing one
+   keyframe, offset only by animation-delay. */
+@keyframes typewriter-dot {
+  0%,
+  8% {
+    opacity: 0;
+  }
+  12%,
+  88% {
+    opacity: 1;
+  }
+  92%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.typing-dot {
+  display: inline-block;
+  width: 0.14em;
+  height: 0.14em;
+  border-radius: 9999px;
+  background-image: linear-gradient(to bottom right, var(--text-primary), var(--text-primary), var(--accent));
+  animation: typewriter-dot 2.4s steps(1, end) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .typing-dot {
+    animation: none;
+    opacity: 1;
   }
 }
 

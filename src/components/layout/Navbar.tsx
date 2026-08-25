@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
 import { Menu, Search, X } from "lucide-react";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
@@ -68,6 +69,16 @@ export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const activeId = useActiveSection();
   const language = useLanguage();
+  // These hrefs are bare "#work"-style fragments so Lenis's anchors:true
+  // (SmoothScroll.tsx) can intercept them for an eased same-page scroll —
+  // that only resolves on the homepage itself, though. From a case-study
+  // page (/work/[slug]) there's no #work element to scroll to, so the
+  // same bare hash would silently do nothing; prefixing with "/" there
+  // sends it through a real navigation to the homepage followed by the
+  // browser's own hash jump instead.
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+  const resolveHref = (href: string) => (isHome ? href : `/${href}`);
 
   const { scrollY } = useScroll();
   const paddingY = useTransform(scrollY, [0, 120], [14, 8]);
@@ -90,7 +101,7 @@ export function Navbar() {
           className="relative z-10 flex items-center justify-between gap-4 rounded-full px-5"
         >
           <a
-            href="#top"
+            href={resolveHref("#top")}
             className="group flex items-center gap-2.5 font-mono text-sm text-text-primary transition-colors hover:text-accent"
           >
             <BrandMark size={30} className="text-xs group-hover:bg-accent/15" />
@@ -101,7 +112,7 @@ export function Navbar() {
             {navLinks.map((link) => (
               <a
                 key={link.href}
-                href={link.href}
+                href={resolveHref(link.href)}
                 className={`relative rounded-full px-3 py-1.5 transition-colors ${
                   activeId === link.id
                     ? "nav-active-text-glow font-medium text-accent"
@@ -173,7 +184,7 @@ export function Navbar() {
             {navLinks.map((link) => (
               <a
                 key={link.href}
-                href={link.href}
+                href={resolveHref(link.href)}
                 onClick={() => setMenuOpen(false)}
                 aria-current={activeId === link.id ? "true" : undefined}
                 className={`relative rounded-lg px-3 py-2 font-mono text-xs uppercase tracking-[0.15em] transition-colors hover:text-accent ${

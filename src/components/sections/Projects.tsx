@@ -230,7 +230,7 @@ export function Projects() {
 
             <p className="mt-3 max-w-2xl text-text-muted">{t(project.tagline, language)}</p>
 
-            <div className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-[auto_1fr]">
+            <div className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-[auto_1fr] md:items-center">
               <div className="shrink-0 md:pr-8 md:border-r md:border-line/40">
                 <span
                   className="block bg-clip-text font-mono text-6xl font-semibold leading-none text-transparent"

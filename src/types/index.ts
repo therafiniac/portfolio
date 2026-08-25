@@ -61,6 +61,10 @@ export type SideProject = {
 };
 
 export type ClientProject = {
+  // URL segment for this project's case-study page (/work/[slug]) — a
+  // plain slug, not translated (same reasoning as ProfileLink.label: it's
+  // an identifier, not prose).
+  slug: string;
   name: Localized;
   category: Localized;
   description: Localized;
@@ -68,6 +72,33 @@ export type ClientProject = {
   href: string;
   icon: IconComponent;
   tech: string[];
+  // Everything below is optional, shown only on the case-study page
+  // (never the card), and rendered conditionally there — CaseStudy.tsx
+  // skips a section outright when its field is absent rather than
+  // showing it empty. Left unset for every placeholder entry today
+  // rather than filled with invented specifics: AGENTS.md's placeholder-
+  // honesty rule applies here the same as name/description/tech do.
+  // Fill these in once real client details exist for a project.
+  challenge?: Localized;
+  approach?: Localized;
+  // Concrete, concise — "what shipped," not marketing copy.
+  highlights?: Localized[];
+  // Only ever a real, specific, checkable result — omit rather than
+  // write a vague "great success" placeholder.
+  outcome?: Localized;
+  gallery?: GalleryImage[];
+};
+
+// caption says what the shot actually shows (rendered as a small label
+// under the image, see CaseStudy.tsx) — a gallery of unlabeled
+// screenshots asks the visitor to guess what they're looking at.
+// orientation defaults to landscape (most screenshots); mark "portrait"
+// for a mobile-viewport capture so it gets its own narrower frame
+// instead of being force-cropped into a 16:10 landscape box.
+export type GalleryImage = {
+  src: string;
+  caption: Localized;
+  orientation?: "portrait";
 };
 
 export type SkillItem = {

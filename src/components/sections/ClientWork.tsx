@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { ArrowUpRight } from "lucide-react";
+import Link from "next/link";
+import { ArrowUpRight, Hourglass } from "lucide-react";
 import { Section } from "@/components/layout/Section";
 import { CountUp } from "@/components/layout/CountUp";
 import { TileGlow } from "@/components/ui/TileGlow";
@@ -62,12 +63,17 @@ function TechChips({ tech }: { tech: string[] }) {
 // industries, not any one hero project. A fixed-height text block below
 // a fixed-aspect image slot is what keeps every row even regardless of
 // description length.
+//
+// Links to this project's own case-study page (/work/[slug]), not
+// straight to the live site — see AGENTS.md's "Case Study Pages". The
+// live-site link itself now lives on that page, conditional on a real
+// href existing there.
 function WorkCard({ project }: { project: ClientProject }) {
   const language = useLanguage();
 
   return (
-    <a
-      href={project.href}
+    <Link
+      href={`/work/${project.slug}`}
       className="hover-glow-panel group relative block overflow-hidden rounded-xl border border-line/60 transition-colors duration-300 hover:border-accent/60"
     >
       <TileGlow />
@@ -94,7 +100,7 @@ function WorkCard({ project }: { project: ClientProject }) {
           className="object-cover opacity-100 transition-opacity duration-300 md:opacity-0 md:group-hover:opacity-100"
         />
       </div>
-      <div className="flex h-36 flex-col p-6">
+      <div className="flex min-h-36 flex-col p-6">
         <FieldLabel>{t(project.category, language)}</FieldLabel>
         <h3 className="mt-1 flex items-center gap-1 text-base text-text-primary">
           {t(project.name, language)}
@@ -108,7 +114,52 @@ function WorkCard({ project }: { project: ClientProject }) {
           <TechChips tech={project.tech.slice(0, 2)} />
         </div>
       </div>
-    </a>
+    </Link>
+  );
+}
+
+// Not a stock-photo placeholder pretending to be a finished case study —
+// two more real projects exist but aren't written up yet, and a card
+// with a generic name/screenshot sitting next to five verified real
+// entries would read as a fabricated one (AGENTS.md's placeholder-
+// honesty rule). But it also shouldn't look broken or disabled next to
+// real cards: same chrome bar, TileGlow, border, and icon/hover-reveal
+// choreography as WorkCard — an Hourglass stands in for the icon slot,
+// and the reveal is the section's own signature-gradient lettering
+// instead of a screenshot Image, since there's no real one yet. Not a
+// Link — it has nowhere real to go yet — but everything else matches.
+//
+// Hidden below sm (single-column mobile) entirely, not just re-flowed:
+// on a touch device there's no hover to trigger the reveal, so the tile
+// would sit there either showing the icon and never the "Coming Soon"
+// label, or the label with no card content behind it — worse than just
+// not spending a slot on a placeholder in an already-short mobile
+// stack. Reappears from sm up, where every card's own hover choreography
+// already applies normally.
+function ComingSoonTile() {
+  const language = useLanguage();
+  const label = t(strings.clientWork.comingSoon, language);
+
+  return (
+    <div className="hover-glow-panel group relative hidden flex-col overflow-hidden rounded-xl border border-line/60 transition-colors duration-300 hover:border-accent/60 sm:flex">
+      <TileGlow />
+      <BrowserChrome label="Coming Soon" />
+      <div className={`relative w-full overflow-hidden ${SHOT_ASPECT}`}>
+        <div className="tile-signature absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 md:opacity-100 md:group-hover:opacity-0">
+          <Hourglass className="h-14 w-14 text-accent-secondary" strokeWidth={1.25} aria-hidden="true" />
+        </div>
+        <div
+          className="absolute inset-0 flex items-center justify-center opacity-100 transition-opacity duration-300 md:opacity-0 md:group-hover:opacity-100"
+          style={{ backgroundImage: "var(--gradient-signature)" }}
+        >
+          <span className="font-mono text-sm uppercase tracking-[0.25em] text-bg">{label}</span>
+        </div>
+      </div>
+      <div className="flex min-h-36 flex-col p-6">
+        <FieldLabel>{label}</FieldLabel>
+        <p className="mt-1 text-xs text-text-muted">{t(strings.clientWork.comingSoonBody, language)}</p>
+      </div>
+    </div>
   );
 }
 
@@ -152,15 +203,22 @@ function StatShowcase({ value, suffix, label }: { value: number; suffix?: string
 type GridItem =
   | { kind: "project"; project: ClientProject }
   | { kind: "stat"; value: number; suffix?: string; label: Localized }
+  | { kind: "comingSoon" }
   | { kind: "filler" };
 
-// Deliberately curated, not algorithmic: with today's 7 projects, the stat
-// tile sits at slot 5 (dead center of the 3x3 grid) and the CTA closes the
-// grid at slot 9 (bottom-right) — both meant to be found, not just filler
-// between screenshots. If the project count changes, re-pick these
-// positions by hand rather than falling back to a generic interval; a
-// formula that "just happens" to land on 5 and 9 isn't worth the
-// complexity for a curated placeholder set this small.
+// Two more real projects exist but aren't written up in clientWork.ts
+// yet (see that file's own note) — shown as ComingSoonTile instead of
+// stock-photo placeholder entries. Drop to 0 and delete once both real
+// entries land.
+const COMING_SOON_COUNT = 2;
+
+// Deliberately curated, not algorithmic: with today's 5 real projects +
+// 2 coming-soon tiles, the stat tile sits at slot 5 (dead center of the
+// 3x3 grid) and the CTA closes the grid at slot 9 (bottom-right) — both
+// meant to be found, not just filler between screenshots. If either count
+// changes, re-pick these positions by hand rather than falling back to a
+// generic interval; a formula that "just happens" to land on 5 and 9
+// isn't worth the complexity for a curated placeholder set this small.
 function buildGridItems(projects: ClientProject[]): GridItem[] {
   const sitesShipped = heroStats.find((s) => s.label.en === "Sites Shipped");
   const items: GridItem[] = [];
@@ -176,6 +234,10 @@ function buildGridItems(projects: ClientProject[]): GridItem[] {
     }
     items.push({ kind: "project", project });
   });
+
+  for (let i = 0; i < COMING_SOON_COUNT; i++) {
+    items.push({ kind: "comingSoon" });
+  }
 
   items.push({ kind: "filler" });
 
@@ -195,6 +257,8 @@ export function ClientWork() {
             <WorkCard key={item.project.name.en} project={item.project} />
           ) : item.kind === "stat" ? (
             <StatShowcase key={`stat-${index}`} value={item.value} suffix={item.suffix} label={item.label} />
+          ) : item.kind === "comingSoon" ? (
+            <ComingSoonTile key={`coming-soon-${index}`} />
           ) : (
             <WorkFillerTile key={`filler-${index}`} />
           ),

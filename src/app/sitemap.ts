@@ -1,11 +1,12 @@
 import type { MetadataRoute } from "next";
+import { clientProjects } from "@/lib/data/clientWork";
 
 const SITE_URL = "https://rafiera.com";
 
-// One real route (the root page) — a single-page site has nothing else
-// to list. Still required by the audit checklist (§1: sitemap exists,
-// referenced from robots.txt) and costs nothing to keep current since
-// there's no per-content generation to go stale.
+// The root page, plus one entry per case-study route (/work/[slug] — see
+// AGENTS.md's "Case Study Pages") — the actual SEO payoff of giving each
+// project its own real URL instead of same-page modal content that a
+// crawler would never see as a separate, indexable page.
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
@@ -14,5 +15,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 1,
     },
+    ...clientProjects.map((project) => ({
+      url: `${SITE_URL}/work/${project.slug}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
   ];
 }

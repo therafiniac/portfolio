@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import { Inter, JetBrains_Mono, Hind_Siliguri } from "next/font/google";
+import { Inter, JetBrains_Mono, Anek_Bangla, Noto_Sans_Bengali } from "next/font/google";
 import { MotionConfig } from "framer-motion";
 import { CursorGlow } from "@/components/layout/CursorGlow";
+import { CursorTrail } from "@/components/layout/CursorTrail";
 import { Navbar } from "@/components/layout/Navbar";
 import { SmoothScroll } from "@/components/layout/SmoothScroll";
 import { ScrollProgress } from "@/components/layout/ScrollProgress";
 import { CommandPalette } from "@/components/layout/CommandPalette";
+import { TabAttention } from "@/components/layout/TabAttention";
 import "./globals.css";
 
 const inter = Inter({
@@ -19,16 +21,28 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
-// JetBrains Mono/Inter have zero Bengali glyph coverage, and there's no
-// real monospace Bengali typeface to reach for — Hind Siliguri stands in
-// for BOTH --font-mono and --font-sans when data-lang="bn" (see
-// globals.css), so the mono-everywhere aesthetic intentionally doesn't
-// carry over to Bengali mode, it becomes one considered Bengali typeface
-// instead. Swapping this for a different Bengali font later is a
-// one-file change — nothing outside this file ever references the font
-// by name, only via the --font-bengali variable it's bound to.
-const hindSiliguri = Hind_Siliguri({
-  variable: "--font-bengali",
+// JetBrains Mono/Inter have zero Bengali glyph coverage, so Bengali mode
+// gets its own paired stand-ins instead of one font covering both roles
+// — chosen to match each Latin font's actual character, not just "a
+// Bengali font that exists": Anek Bangla is a neutral UI/display
+// grotesque built across a full weight range, the closest match to
+// JetBrains Mono's structured, technical feel (a rounded/playful face
+// like Baloo Da 2 was considered and rejected — it'd undercut the
+// "engineered, not templated" tone the mono headings carry). Noto Sans
+// Bengali is part of the same Noto superfamily Inter's own neutral-
+// grotesque character is closest to (Hind Siliguri, used previously,
+// leans warmer/more humanist than Inter does). Both stay swappable in
+// this one file — nothing outside it references either font by name,
+// only via the --font-bengali-heading/--font-bengali-body variables
+// they're bound to.
+const anekBangla = Anek_Bangla({
+  variable: "--font-bengali-heading",
+  subsets: ["bengali"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const notoSansBengali = Noto_Sans_Bengali({
+  variable: "--font-bengali-body",
   subsets: ["bengali"],
   weight: ["400", "500", "600", "700"],
 });
@@ -104,14 +118,21 @@ const THEME_INIT_SCRIPT = `
 })();
 `;
 
-// Same reasoning/shape as THEME_INIT_SCRIPT — runs before paint so a
-// stored Bengali preference applies with no flash of English first.
-// Also sets the real lang attribute (not just data-lang) since that's
-// what matters for screen readers/SEO, not just CSS/JS.
+// Same reasoning/shape as THEME_INIT_SCRIPT — runs before paint so the
+// resolved language applies with no flash of English first. Also sets
+// the real lang attribute (not just data-lang) since that's what matters
+// for screen readers/SEO, not just CSS/JS.
+//
+// Priority: an explicit LanguageToggle click (localStorage "language")
+// always wins; absent that, middleware.ts's geo-detected "geo-language"
+// cookie (Bengali for Bangladesh/West Bengal visitors) is the default;
+// absent both, English.
 const LANG_INIT_SCRIPT = `
 (function () {
   try {
-    var lang = localStorage.getItem("language") === "bn" ? "bn" : "en";
+    var stored = localStorage.getItem("language");
+    var geoMatch = document.cookie.match(/(?:^|; )geo-language=(bn|en)/);
+    var lang = stored === "bn" || stored === "en" ? stored : geoMatch ? geoMatch[1] : "en";
     document.documentElement.setAttribute("data-lang", lang);
     document.documentElement.setAttribute("lang", lang);
   } catch (e) {}
@@ -132,7 +153,7 @@ export default async function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${inter.variable} ${jetbrainsMono.variable} ${hindSiliguri.variable} h-full antialiased`}
+      className={`${inter.variable} ${jetbrainsMono.variable} ${anekBangla.variable} ${notoSansBengali.variable} h-full antialiased`}
     >
       <head>
         <script nonce={nonce} dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
@@ -164,8 +185,10 @@ export default async function RootLayout({
           <ScrollProgress />
           <div className="grain-overlay" aria-hidden="true" />
           <CursorGlow />
+          <CursorTrail />
           <Navbar />
           <CommandPalette />
+          <TabAttention />
           {children}
         </MotionConfig>
       </body>

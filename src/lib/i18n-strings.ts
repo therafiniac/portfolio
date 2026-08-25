@@ -16,6 +16,17 @@ export const strings = {
       bn: "বিভিন্ন ইন্ডাস্ট্রি জুড়ে ডেলিভার করা 150+ ক্লায়েন্ট সাইট থেকে একটি নমুনা — প্রকৃত, শিপড, পেইড কাজ।",
     } satisfies Localized,
     preview: { en: "preview", bn: "প্রিভিউ" } satisfies Localized,
+    backToWork: { en: "Back to Work", bn: "কাজে ফিরে যান" } satisfies Localized,
+    visitSite: { en: "Visit Site", bn: "সাইট দেখুন" } satisfies Localized,
+    challenge: { en: "The Challenge", bn: "চ্যালেঞ্জ" } satisfies Localized,
+    whatShipped: { en: "What Shipped", bn: "যা ডেলিভার হয়েছে" } satisfies Localized,
+    outcome: { en: "Outcome", bn: "ফলাফল" } satisfies Localized,
+    gallery: { en: "Gallery", bn: "গ্যালারি" } satisfies Localized,
+    comingSoon: { en: "Coming Soon", bn: "শীঘ্রই আসছে" } satisfies Localized,
+    comingSoonBody: {
+      en: "Two more real projects are being written up.",
+      bn: "আরও দুটি বাস্তব প্রজেক্ট লেখা হচ্ছে।",
+    } satisfies Localized,
   },
   workFiller: {
     heading: { en: "Open to new projects.", bn: "নতুন প্রজেক্টের জন্য উন্মুক্ত।" } satisfies Localized,
@@ -66,7 +77,10 @@ export const strings = {
     } satisfies Localized,
     boldWord: { en: "Bold", bn: "বোল্ড" } satisfies Localized,
     terminalTitle: { en: "rafi@portfolio — zsh", bn: "রাফি@পোর্টফোলিও — zsh" } satisfies Localized,
-    prompt: { en: "rafi --stack", bn: "rafi --stack" } satisfies Localized,
+    // "rafi" stays Latin (a proper noun/brand name, same as tech names
+    // elsewhere) — only the flag transliterates, matching the group
+    // flags right below it and the section's own title ("স্ট্যাক").
+    prompt: { en: "rafi --stack", bn: "rafi --স্ট্যাক" } satisfies Localized,
   },
   experience: {
     eyebrow: { en: "Track Record", bn: "ট্র্যাক রেকর্ড" } satisfies Localized,
@@ -91,11 +105,16 @@ export const strings = {
   contact: {
     eyebrow: { en: "Get in Touch", bn: "যোগাযোগ করুন" } satisfies Localized,
     title: { en: "Contact", bn: "যোগাযোগ" } satisfies Localized,
+    // No trailing "."/"।" — Contact.tsx appends three animated dots after
+    // this instead of a static full stop, so the punctuation itself isn't
+    // baked into the translated string.
     headline: {
-      en: "Let's build something that scales.",
-      bn: "চলুন এমন কিছু তৈরি করি যা স্কেল করে।",
+      en: "Let's build something that scales",
+      bn: "এমন কিছু বানানো যাক যা স্কেল করে",
     } satisfies Localized,
     profiles: { en: "Profiles", bn: "প্রোফাইল" } satisfies Localized,
+    copyEmail: { en: "Copy email address", bn: "ইমেইল ঠিকানা কপি করুন" } satisfies Localized,
+    copied: { en: "Copied", bn: "কপি হয়েছে" } satisfies Localized,
   },
   contactForm: {
     name: { en: "Name", bn: "নাম" } satisfies Localized,
@@ -118,18 +137,45 @@ export const strings = {
   footer: {
     backToTop: { en: "Back to top", bn: "উপরে ফিরে যান" } satisfies Localized,
   },
-  // Phonetic transliteration, not translation — the browser-chrome tech
-  // label on each Client Work card (BrowserChrome in ClientWork.tsx)
-  // spells the same brand name in Bengali script by sound, the way
-  // Bengali tech writing normally handles a foreign product name,
-  // rather than keeping it in Latin or inventing a Bengali equivalent
-  // meaning. Only covers the values that actually appear as tech[0] in
-  // clientWork.ts today; unlisted names fall back to their own spelling
-  // (see t() usage in ClientWork.tsx) so a new project's data never
-  // silently renders blank.
+  // Phonetic transliteration, not translation — spells the same brand/
+  // tech name in Bengali script by sound (the way Bengali tech writing
+  // normally handles a foreign product name) rather than keeping it in
+  // Latin or inventing a Bengali equivalent meaning. Consumed by
+  // BrowserChrome (ClientWork.tsx) and TechChip.tsx, so this covers
+  // every value that appears in any tech[] array across projects.ts,
+  // clientWork.ts, and experience.ts — same spelling already used for
+  // the matching entries in skills.ts, kept in sync with those rather
+  // than invented separately. Unlisted names fall back to their own
+  // spelling (see the `?? label`/`?? tech` call sites) so a new
+  // project's data never silently renders blank.
   techSounds: {
     "Next.js": "নেক্সট.জেএস",
     WordPress: "ওয়ার্ডপ্রেস",
+    TypeScript: "টাইপস্ক্রিপ্ট",
+    JavaScript: "জাভাস্ক্রিপ্ট",
+    Prisma: "প্রিজমা",
+    PostgreSQL: "পোস্টগ্রেএসকিউএল",
+    MongoDB: "মঙ্গোডিবি",
+    Tailwind: "টেইলউইন্ড",
+    "Tailwind CSS": "টেইলউইন্ড সিএসএস",
+    "Neon Auth": "নিয়ন অথ",
+    React: "রিয়েক্ট",
+    "React.js": "রিয়েক্ট.জেএস",
+    Firebase: "ফায়ারবেস",
+    TipTap: "টিপট্যাপ",
+    Shopify: "শপিফাই",
+    Stripe: "স্ট্রাইপ",
+    "Framer Motion": "ফ্রেমার মোশন",
+    ACF: "এসিএফ",
+    MySQL: "মাইএসকিউএল",
+    Vercel: "ভার্সেল",
+    "Sanity CMS": "স্যানিটি সিএমএস",
+    Mapbox: "ম্যাপবক্স",
+    HTML: "এইচটিএমএল",
+    CSS: "সিএসএস",
+    Hostinger: "হোস্টিংগার",
+    PHP: "পিএইচপি",
+    "Coming Soon": "শীঘ্রই আসছে",
   } as Record<string, string>,
   nav: {
     openMenu: { en: "Open menu", bn: "মেনু খুলুন" } satisfies Localized,
@@ -143,5 +189,8 @@ export const strings = {
     placeholder: { en: "Jump to a section…", bn: "একটি সেকশনে যান…" } satisfies Localized,
     noResults: { en: "No matches", bn: "কোনো ফলাফল নেই" } satisfies Localized,
     hint: { en: "navigate · select · close", bn: "নেভিগেট · নির্বাচন · বন্ধ" } satisfies Localized,
+  },
+  tabAttention: {
+    comeBack: { en: "Come back! 👋", bn: "ফিরে আসুন! 👋" } satisfies Localized,
   },
 };

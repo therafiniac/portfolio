@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { geolocation } from "@vercel/functions";
 
 const isDev = process.env.NODE_ENV === "development";
 
@@ -41,6 +42,27 @@ export function middleware(request: NextRequest) {
     request: { headers: requestHeaders },
   });
   response.headers.set("Content-Security-Policy", csp);
+
+  // First-visit-only language default: Bengali for Bangladesh and West
+  // Bengal (India) visitors, English everywhere else. Kept in its own
+  // cookie rather than touching the "language" localStorage key that
+  // LanguageToggle/layout.tsx treat as an explicit user choice — the
+  // client-side init script (layout.tsx) only falls back to this cookie
+  // when no explicit choice exists, so a manual toggle always wins and
+  // never gets silently reset by geo-detection on a later visit.
+  // geolocation() reads Vercel's edge headers, so it resolves to nothing
+  // in local dev and on any host without that header — falls through to
+  // English there, same as any other undetected region in production.
+  if (!request.cookies.get("geo-language")) {
+    const { country, countryRegion } = geolocation(request);
+    const isBengaliRegion = country === "BD" || (country === "IN" && countryRegion === "WB");
+    response.cookies.set("geo-language", isBengaliRegion ? "bn" : "en", {
+      path: "/",
+      maxAge: 60 * 60 * 24 * 365,
+      sameSite: "lax",
+    });
+  }
+
   return response;
 }
 
