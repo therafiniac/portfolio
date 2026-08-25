@@ -1,12 +1,16 @@
 "use client";
 
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { motion } from "framer-motion";
 import { Section } from "@/components/layout/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { skillGroups } from "@/lib/data/skills";
+import { services } from "@/lib/data/services";
+import { projects } from "@/lib/data/projects";
+import { clientProjects } from "@/lib/data/clientWork";
 import type { SkillGroup } from "@/types";
-import { useLanguage } from "@/lib/useLanguage";
-import { t } from "@/lib/i18n";
+import { useLanguage, type Language } from "@/lib/useLanguage";
+import { t, localizeNumber } from "@/lib/i18n";
 import { strings } from "@/lib/i18n-strings";
 
 const EYEBROW = strings.skills.eyebrow;
@@ -65,6 +69,241 @@ function StackRow({ group, delay }: { group: SkillGroup; delay: number }) {
         ))}
       </span>
     </motion.div>
+  );
+}
+
+type HistoryLine = { command: string; output: string[] };
+type CommandKey = "whoami" | "help" | "contact" | "clear" | "sudo" | "services" | "tools" | "projects" | "work";
+
+// Scoped to the active site language, not "either language works
+// everywhere" — typing whoami while the site is in Bengali mode (or
+// পরিচয় while it's in English mode) is a genuine "command not found,"
+// same as help only ever printing the current language's command names,
+// never both at once. "sudo" is the one command present in both maps
+// with the same literal spelling — it isn't a translatable concept, it's
+// a fixed reference to a real English command, same reasoning as "rafi"
+// in the prompt above never translating either.
+const COMMAND_ORDER: CommandKey[] = ["whoami", "services", "tools", "projects", "work", "contact", "clear", "help"];
+
+const COMMAND_NAMES: Record<Language, Record<CommandKey, string>> = {
+  en: {
+    whoami: "whoami",
+    help: "help",
+    contact: "contact",
+    clear: "clear",
+    sudo: "sudo",
+    services: "services",
+    tools: "tools",
+    projects: "projects",
+    work: "work",
+  },
+  bn: {
+    whoami: "পরিচয়",
+    help: "সাহায্য",
+    contact: "যোগাযোগ",
+    clear: "মুছুন",
+    sudo: "sudo",
+    services: "সার্ভিস",
+    tools: "টুলস",
+    projects: "প্রজেক্ট",
+    work: "কাজ",
+  },
+};
+
+function resolveCommand(normalized: string, language: Language): CommandKey | null {
+  const names = COMMAND_NAMES[language];
+  const entry = (Object.entries(names) as [CommandKey, string][]).find(
+    ([, word]) => word.toLowerCase() === normalized,
+  );
+  return entry ? entry[0] : null;
+}
+
+function buildHelpList(language: Language): string {
+  const names = COMMAND_NAMES[language];
+  return COMMAND_ORDER.map((key) => names[key]).join(" · ");
+}
+
+// Every command's output is built from data already real elsewhere on
+// the page (services.ts, projects.ts, clientWork.ts, skillGroups) —
+// nothing typed here is a fact invented for the terminal specifically,
+// same AGENTS.md rule everything else on this site follows.
+function buildOutput(canonical: CommandKey, language: Language): string {
+  switch (canonical) {
+    case "sudo":
+      return t(strings.commandPalette.sudoJoke, language);
+    case "whoami":
+      return t(strings.skills.terminalWhoami, language);
+    case "help":
+      return `${t(strings.skills.terminalHelp, language)} ${buildHelpList(language)}`;
+    case "contact":
+      return "therafiniac@gmail.com · github.com/therafiniac · linkedin.com/in/therafiniac";
+    case "services":
+      return services.map((s) => t(s.name, language)).join(" · ");
+    case "tools":
+      return skillGroups
+        .flatMap((g) => g.items.filter((i) => i.core).map((i) => t(i.name, language)))
+        .join(", ");
+    case "projects":
+      return projects
+        .map((p) => {
+          const name = t(p.name, language);
+          return p.private ? `${name} (${t(strings.skills.terminalPrivate, language)})` : name;
+        })
+        .join(" · ");
+    case "work":
+      return t(strings.skills.terminalWorkCount, language).replace(
+        "{count}",
+        localizeNumber(clientProjects.length, language),
+      );
+    default:
+      return "";
+  }
+}
+
+function isTypingTarget(el: Element | null): boolean {
+  if (!el) return false;
+  const tag = el.tagName;
+  return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || (el as HTMLElement).isContentEditable;
+}
+
+// Turns the trailing "$" + blinking caret (previously pure decoration —
+// nothing happened if you clicked it) into a real, small terminal: type
+// a command, get real output. Only a handful of real commands, not a
+// full shell — see COMMAND_NAMES above for the full list, including
+// "sudo" reusing the exact same joke the command palette's own sudo
+// easter egg has, so the three hidden layers on this site (console log,
+// palette, this) share one voice instead of three unrelated ones.
+function InteractiveTerminal() {
+  const language = useLanguage();
+  const [input, setInput] = useState("");
+  const [history, setHistory] = useState<HistoryLine[]>([]);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const historyEndRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  // Guarded on history actually having something in it — this effect
+  // also fires on the component's first mount (history is still the
+  // initial empty array, but the effect still runs once), and an
+  // unconditional scrollIntoView there was yanking the whole page down
+  // to this ref's position inside the Stack section on every page
+  // load/reveal, before anyone had typed a single command. Only scroll
+  // once there's real output to bring into view.
+  useEffect(() => {
+    if (history.length === 0) return;
+    historyEndRef.current?.scrollIntoView({ block: "nearest" });
+  }, [history]);
+
+  // "When the section is in focus, just typing on the keyboard should
+  // work" — an IntersectionObserver on this component's own root rather
+  // than a scroll-position calculation, and a real DOM query for an open
+  // dialog rather than tracked state, since three separate modals
+  // (command palette, keyboard-shortcuts help, the case-study lightbox)
+  // would each need their own "is it open" flag threaded in here
+  // otherwise. Only claims a single printable keystroke with no
+  // modifier and nothing else already focused — Cmd/Ctrl shortcuts, the
+  // vim-style "g" leader sequence, and typing in any other field (the
+  // contact form, the command palette's own search box) all pass through
+  // untouched.
+  useEffect(() => {
+    const node = rootRef.current;
+    if (!node) return;
+
+    let inView = false;
+    const observer = new IntersectionObserver(([entry]) => {
+      inView = entry.isIntersecting;
+    });
+    observer.observe(node);
+
+    function handleGlobalKeydown(e: globalThis.KeyboardEvent) {
+      if (!inView) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key.length !== 1) return;
+      if (isTypingTarget(document.activeElement)) return;
+      if (document.querySelector('[role="dialog"]')) return;
+
+      // Without this, the character that triggers the focus could land
+      // twice — once from this handler's own setInput, once more from
+      // the input's native text-insertion for the same keystroke once
+      // it's freshly focused (confirmed empirically: typing "help" cold
+      // produced "hhelp" without this). preventDefault suppresses that
+      // native insertion regardless of exactly when the focus change
+      // takes effect relative to it.
+      e.preventDefault();
+      setInput((prev) => prev + e.key);
+      inputRef.current?.focus();
+    }
+
+    window.addEventListener("keydown", handleGlobalKeydown);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("keydown", handleGlobalKeydown);
+    };
+  }, []);
+
+  function runCommand(raw: string) {
+    const normalized = raw.trim().toLowerCase();
+    if (!normalized) return;
+
+    const canonical = resolveCommand(normalized, language);
+
+    if (canonical === "clear") {
+      setHistory([]);
+      return;
+    }
+
+    const output = canonical
+      ? buildOutput(canonical, language)
+      : `${t(strings.skills.terminalNotFound, language)}: ${raw} — try "${COMMAND_NAMES[language].help}"`;
+    setHistory((h) => [...h, { command: raw, output: [output] }]);
+  }
+
+  function handleKeyDown(e: KeyboardEvent<HTMLInputElement>) {
+    if (e.key !== "Enter") return;
+    runCommand(input);
+    setInput("");
+  }
+
+  return (
+    <div ref={rootRef} className="mt-5">
+      {history.map((line, i) => (
+        <div key={i} className="mt-2">
+          <p className="font-mono text-sm text-text-primary sm:text-base">
+            <span className="text-accent-secondary">$</span> {line.command}
+          </p>
+          {line.output.map((line_, j) => (
+            <p key={j} className="mt-1 font-mono text-sm text-text-muted sm:text-base">
+              {line_}
+            </p>
+          ))}
+        </div>
+      ))}
+      <p className="mt-2 flex items-center font-mono text-sm text-text-primary sm:text-base">
+        <span className="mr-2 text-accent-secondary" aria-hidden="true">
+          $
+        </span>
+        {/* Sized to its own content in monospace "ch" units (one
+            character = one ch, exactly, in a monospace font) rather than
+            w-full — a form-field-width input with a native focus ring
+            was the actual complaint: it read as "typing into a text
+            box," not "typing into a terminal line." Native caret hidden
+            (caret-transparent) in favor of the block cursor right after
+            it — a plain text I-beam blinking there looked like an
+            ordinary input, not a terminal prompt. */}
+        <input
+          ref={inputRef}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          spellCheck={false}
+          autoComplete="off"
+          aria-label={t(strings.skills.terminalInputLabel, language)}
+          style={{ width: `${Math.max(input.length, 1)}ch` }}
+          className="terminal-input min-w-[1ch] border-0 bg-transparent p-0 font-mono text-sm text-text-primary caret-transparent outline-none sm:text-base"
+        />
+        <span className="terminal-caret" aria-hidden="true" />
+      </p>
+      <div ref={historyEndRef} />
+    </div>
   );
 }
 
@@ -134,7 +373,21 @@ export function Skills() {
                 </span>
               </div>
 
-              <div className="px-6 py-6 sm:px-9 sm:py-8">
+              {/* Clicking anywhere in the panel — the static prompt/stack
+                  rows included, not just InteractiveTerminal's own
+                  history+input area — focuses the terminal input. A
+                  plain DOM query for the target rather than a lifted ref,
+                  matching how CommandPalette.tsx already reaches a
+                  specific rendered element by a stable selector instead
+                  of threading a ref through a parent/child boundary for
+                  a single one-off action. Real click/tap focus still
+                  matters even with the type-anywhere-while-in-view
+                  behavior below — it's what summons a mobile on-screen
+                  keyboard, which a raw keydown listener never sees. */}
+              <div
+                className="cursor-text px-6 py-6 sm:px-9 sm:py-8"
+                onClick={() => document.querySelector<HTMLInputElement>(".terminal-input")?.focus()}
+              >
                 <p className="font-mono text-sm text-text-primary sm:text-base">
                   <span className="text-accent-secondary">$</span> <TypedPrompt text={promptText} />
                 </p>
@@ -145,16 +398,14 @@ export function Skills() {
                   ))}
                 </div>
 
-                <motion.p
-                  className="mt-5 font-mono text-sm text-text-primary sm:text-base"
+                <motion.div
                   initial={{ opacity: 0, y: 8 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-40px" }}
                   transition={{ duration: 0.4, ease: "easeOut", delay: caretDelay }}
                 >
-                  <span className="text-accent-secondary">$</span>{" "}
-                  <span className="terminal-caret" aria-hidden="true" />
-                </motion.p>
+                  <InteractiveTerminal />
+                </motion.div>
               </div>
             </div>
           </div>

@@ -8,11 +8,11 @@ import { t, localizeNumber } from "@/lib/i18n";
 import { strings } from "@/lib/i18n-strings";
 
 // Deliberately thin — a sign-off, not a second navigation layer (the
-// sticky Navbar already covers that, and this is a one-page site with
-// nowhere else to link to). The brand mark doubles as the "back to top"
-// control, same #top target and hover treatment Navbar's own mark uses,
-// so the page reads as a loop rather than needing a separate "Back to
-// top" link. "Open to opportunities" is the same status Hero opens with.
+// sticky Navbar already covers the homepage's own sections). The brand
+// mark doubles as the "back to top" control, same #top target and hover
+// treatment Navbar's own mark uses, so the page reads as a loop rather
+// than needing a separate "Back to top" link. "Open to opportunities" is
+// the same status Hero opens with.
 export function Footer() {
   const year = new Date().getFullYear();
   const language = useLanguage();

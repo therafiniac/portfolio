@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type MouseEvent } from "react";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, Download } from "lucide-react";
 import { Section } from "@/components/layout/Section";
 import { ContactForm } from "@/components/sections/ContactForm";
 import { contactInfo, profileLinks } from "@/lib/data/contact";
@@ -56,6 +56,29 @@ function CopyEmailButton({ value }: { value: string }) {
         <Copy className="h-3.5 w-3.5" aria-hidden="true" />
       )}
     </button>
+  );
+}
+
+// Same hover-reveal treatment as CopyEmailButton right above, on the
+// same row — a permanently-visible "Save Contact" link (the first pass)
+// sat there competing for attention with the actual email even when
+// nobody wanted it; this only shows up once you're already looking at
+// that row. A real download link, not a JS action, so no click handler
+// needed — the file's own Content-Disposition header (see
+// src/app/rafi-ahmed-laskar.vcf/route.ts) is what triggers the save.
+function SaveContactButton() {
+  const language = useLanguage();
+
+  return (
+    <a
+      href="/rafi-ahmed-laskar.vcf"
+      download
+      aria-label={t(strings.contact.saveContact, language)}
+      title={t(strings.contact.saveContact, language)}
+      className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-text-muted opacity-0 transition-opacity duration-200 group-hover:opacity-100 hover:text-accent"
+    >
+      <Download className="h-3.5 w-3.5" aria-hidden="true" />
+    </a>
   );
 }
 
@@ -115,6 +138,7 @@ export function Contact() {
                       </span>
                     </a>
                     <CopyEmailButton value={value} />
+                    <SaveContactButton />
                   </div>
                 );
               }

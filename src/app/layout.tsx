@@ -11,6 +11,7 @@ import { ScrollProgress } from "@/components/layout/ScrollProgress";
 import { CommandPalette } from "@/components/layout/CommandPalette";
 import { TabAttention } from "@/components/layout/TabAttention";
 import { ConsoleEasterEgg } from "@/components/layout/ConsoleEasterEgg";
+import { KonamiEasterEgg } from "@/components/layout/KonamiEasterEgg";
 import { BackToTopButton, WhatsAppButton } from "@/components/layout/FloatingActions";
 import { SkipToContent } from "@/components/layout/SkipToContent";
 import { KeyboardShortcuts } from "@/components/layout/KeyboardShortcuts";
@@ -198,6 +199,7 @@ export default async function RootLayout({
           <KeyboardShortcuts />
           <TabAttention />
           <ConsoleEasterEgg />
+          <KonamiEasterEgg />
           <WhatsAppButton />
           <BackToTopButton />
           {children}
