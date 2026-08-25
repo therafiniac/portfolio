@@ -90,7 +90,11 @@ export const strings = {
   },
   skills: {
     eyebrow: { en: 'Capabilities', bn: 'দক্ষতা' } satisfies Localized,
-    title: { en: 'Stack', bn: 'স্ট্যাক' } satisfies Localized,
+    // Section h2, not the Navbar link (nav.ts keeps its own short "Stack"
+    // label — a 3-word nav item would look out of place next to WORK/
+    // EXPERIENCE/CONTACT). "Tech I Use" is plainer for a non-technical
+    // visitor without losing anything a technical one needs.
+    title: { en: 'Tech I Use', bn: 'যে টেক ব্যবহার করি' } satisfies Localized,
     intro: {
       en: 'Four+ years across three roles — from early WordPress builds to the production SaaS above.',
       bn: 'তিনটি ভূমিকায় চার+ বছর — শুরুর দিকের WordPress বিল্ড থেকে উপরের প্রোডাকশন SaaS পর্যন্ত।',
@@ -123,8 +127,8 @@ export const strings = {
     eyebrow: { en: 'Philosophy', bn: 'দর্শন' } satisfies Localized,
     title: { en: 'How I Build', bn: 'যেভাবে আমি তৈরি করি' } satisfies Localized,
     intro: {
-      en: 'A few things that stay true across every project, regardless of stack.',
-      bn: 'স্ট্যাক যাই হোক না কেন, প্রতিটি প্রজেক্ট জুড়ে যা সবসময় সত্য থাকে।',
+      en: 'A few things that stay true no matter what the project is.',
+      bn: 'প্রজেক্ট যাই হোক না কেন, কিছু জিনিস সবসময় সত্য থাকে।',
     } satisfies Localized,
     ctaHeading: {
       en: 'Open to new projects.',

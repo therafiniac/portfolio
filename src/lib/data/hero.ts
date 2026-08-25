@@ -16,9 +16,14 @@ export const heroRoles: Localized[] = [
   { en: "Designer", bn: "ডিজাইনার" },
 ];
 
+// Deliberately "work," not "opportunities" (reads job-search-coded) or
+// "projects" (reads freelance-coded) — this badge is read by both a
+// recruiter and a prospective client, and AGENTS.md rules out ever
+// labeling Rafi "a freelancer" outright, so the phrasing needs to hold
+// up under either reading rather than picking a side.
 export const heroStatusLine: Localized = {
-  en: "OPEN TO OPPORTUNITIES",
-  bn: "সুযোগের জন্য উন্মুক্ত",
+  en: "OPEN TO NEW WORK",
+  bn: "নতুন কাজের জন্য উন্মুক্ত",
 };
 
 export const heroStats: HeroStat[] = [

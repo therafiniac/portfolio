@@ -11,45 +11,64 @@ export type ApproachPoint = {
 // codebase or the CV (the Reddit Clone's algorithm, the contact form's
 // shared Zod schema, the dual Developer/Designer framing from AGENTS.md) —
 // no invented metrics or generic "passionate about code" filler.
+//
+// Headings and descriptions are both plain-language on purpose — this
+// section reads as "Philosophy" and gets visited by prospective freelance
+// clients as often as technical hiring managers. A heading like "Type-Safe
+// by Default" or a paragraph explaining hash-maps and Zod schemas only
+// actually lands for the latter; an everyday-words version of the same
+// true fact lands for both. The implementation-level detail still exists
+// for anyone who wants to dig — Projects and the CV carry it — this
+// section just isn't the place a non-technical reader should have to
+// translate it themselves.
+//
+// fullStack and performance are HowIBuild.tsx's two wide (span={2}) tiles
+// — genuinely more room than the three narrow ones, so their descriptions
+// run a little longer instead of matching the one-liners those get.
+// performance also stays generic on purpose (no named project): a claim
+// like this is true of the whole practice, not one build, and naming the
+// Reddit Clone here would make it read as the claim's only evidence
+// rather than a general habit — Projects is where that specific proof
+// lives.
 export const approachPoints: ApproachPoint[] = [
   {
     icon: Layers,
-    heading: { en: "Full-Stack Ownership", bn: "ফুল-স্ট্যাক ওনারশিপ" },
+    heading: { en: "Start to Finish", bn: "শুরু থেকে শেষ পর্যন্ত" },
     description: {
-      en: "Ships the frontend, the backend, and the deploy pipeline — not just the UI layer. Every client project went from empty repo to a URL a customer could use.",
-      bn: "ফ্রন্টএন্ড, ব্যাকএন্ড এবং ডিপ্লয় পাইপলাইন — শুধু UI লেয়ার নয়। প্রতিটি ক্লায়েন্ট প্রজেক্ট খালি রেপো থেকে গ্রাহকের ব্যবহারযোগ্য URL পর্যন্ত পৌঁছেছে।",
+      en: "Builds the whole site — what you see on screen and everything that runs behind it. No handoff between a frontend person and a backend person; the same person carries it from a blank page to a real, working site.",
+      bn: "পুরো সাইট তৈরি করা হয় — স্ক্রিনে যা দেখা যায় এবং তার পেছনে যা চলে, দুটোই। ফ্রন্টএন্ড ও ব্যাকএন্ডের জন্য আলাদা মানুষের মধ্যে হাত বদল হয় না; একই মানুষ শূন্য থেকে শুরু করে একটি বাস্তব, ব্যবহারযোগ্য সাইট পর্যন্ত নিয়ে যায়।",
     },
   },
   {
     icon: Gauge,
     heading: { en: "Performance-First", bn: "পারফরম্যান্স-ফার্স্ট" },
     description: {
-      en: "The Reddit Clone's comment tree resolves nested threads in one hash-map pass — a custom linear-to-tree algorithm instead of the recursive N+1 query most implementations reach for.",
-      bn: "রেডিট ক্লোনের কমেন্ট ট্রি এক হ্যাশ-ম্যাপ পাসে নেস্টেড থ্রেড রিজলভ করে — বেশিরভাগ ইমপ্লিমেন্টেশন যে রিকার্সিভ N+1 কোয়েরির দিকে যায়, তার বদলে একটি কাস্টম লিনিয়ার-টু-ট্রি অ্যালগরিদম।",
+      en: "Stays fast as a site grows — more pages, more visitors, more data — instead of slowing down the way many sites do once real traffic and content pile up. Speed is built in from the start, not patched in later.",
+      bn: "সাইট যত বড় হয় — বেশি পেজ, বেশি ভিজিটর, বেশি ডেটা — ততই দ্রুত থাকে, অনেক সাইটের মতো আসল ট্র্যাফিক ও কনটেন্ট জমলে ধীর হয়ে যায় না। গতি শুরু থেকেই বিল্ডের অংশ, পরে ঠিক করার কিছু নয়।",
     },
   },
   {
     icon: ShieldCheck,
-    heading: { en: "Type-Safe by Default", bn: "ডিফল্টভাবে টাইপ-সেফ" },
+    heading: { en: "Double-Checked by Default", bn: "ডিফল্টভাবে দুইবার যাচাই" },
     description: {
-      en: "TypeScript end to end, with one Zod schema validating both the client form and the server action — a single source of truth.",
-      bn: "শুরু থেকে শেষ পর্যন্ত TypeScript, একই Zod স্কিমা ক্লায়েন্ট ফর্ম এবং সার্ভার অ্যাকশন দুটোই যাচাই করে — একটিই সত্যের উৎস।",
+      en: "Every form is checked twice — once on screen, once behind the scenes — so bad entries never slip through.",
+      bn: "প্রতিটি ফর্ম দুইবার চেক হয় — একবার স্ক্রিনে, একবার পেছনে — ভুল এন্ট্রি কখনো ঢোকে না।",
     },
   },
   {
     icon: Palette,
     heading: { en: "Developer and Designer", bn: "ডেভেলপার ও ডিজাইনার" },
     description: {
-      en: "Ships the interface and the code behind it — no handoff gap between what's designed and what's shippable.",
-      bn: "ইন্টারফেস এবং তার পেছনের কোড, দুটোই ডেলিভার করা হয় — ডিজাইন করা জিনিস আর শিপ করার মতো জিনিসের মধ্যে কোনো ফাঁক থাকে না।",
+      en: "Designs it and builds it, so nothing gets lost in between.",
+      bn: "ডিজাইন করা হয় এবং সেটাই তৈরি করা হয় — মাঝে কিছু হারায় না।",
     },
   },
   {
     icon: ServerCog,
-    heading: { en: "Production-Grade from Day One", bn: "শুরু থেকেই প্রোডাকশন-গ্রেড" },
+    heading: { en: "Secure From Day One", bn: "শুরু থেকেই নিরাপদ" },
     description: {
-      en: "Server actions, rate limits, gated secrets — the baseline, not an afterthought.",
-      bn: "সার্ভার অ্যাকশন, রেট লিমিট, গেটেড সিক্রেট — বেসলাইন, পরে যোগ করা কিছু নয়।",
+      en: "Spam protection and safe password handling are built in from the start, not added later.",
+      bn: "স্প্যাম প্রোটেকশন এবং পাসওয়ার্ডের নিরাপদ ব্যবস্থা শুরু থেকেই থাকে, পরে যোগ করা হয় না।",
     },
   },
 ];
