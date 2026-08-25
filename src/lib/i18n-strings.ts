@@ -254,4 +254,12 @@ export const strings = {
   tabAttention: {
     comeBack: { en: 'Come back! 👋', bn: 'ফিরে আসুন! 👋' } satisfies Localized,
   },
+  notFound: {
+    heading: { en: 'Page not found', bn: 'পেজ পাওয়া যায়নি' } satisfies Localized,
+    body: {
+      en: "This page doesn't exist — might've been moved, or never existed in the first place.",
+      bn: 'এই পেজটি নেই — সরিয়ে ফেলা হয়েছে, অথবা কখনোই ছিল না।',
+    } satisfies Localized,
+    cta: { en: 'Back to Home', bn: 'হোমে ফিরে যান' } satisfies Localized,
+  },
 };

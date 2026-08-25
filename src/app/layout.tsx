@@ -9,6 +9,7 @@ import { SmoothScroll } from "@/components/layout/SmoothScroll";
 import { ScrollProgress } from "@/components/layout/ScrollProgress";
 import { CommandPalette } from "@/components/layout/CommandPalette";
 import { TabAttention } from "@/components/layout/TabAttention";
+import { ConsoleEasterEgg } from "@/components/layout/ConsoleEasterEgg";
 import "./globals.css";
 
 const inter = Inter({
@@ -189,6 +190,7 @@ export default async function RootLayout({
           <Navbar />
           <CommandPalette />
           <TabAttention />
+          <ConsoleEasterEgg />
           {children}
         </MotionConfig>
       </body>

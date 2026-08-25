@@ -233,6 +233,16 @@ html::-webkit-scrollbar {
   outline-offset: 2px;
 }
 
+/* ThemeToggle.tsx drives the actual circle (clip-path animated on
+   ::view-transition-new(root) from the click point) — this just turns
+   off the browser's default cross-fade on both pseudo-elements so that
+   circle is the only motion visible, not a fade fighting a wipe. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
 /* Crisp, mostly-opaque surface with a thin high-contrast border and a
    subtle inset top highlight — closer to Vercel/Linear's "engineered"
    card language than a soft blurred glass sheet. Named glass-panel for
