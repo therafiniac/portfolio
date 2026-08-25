@@ -160,7 +160,7 @@ export function Projects() {
   const language = useLanguage();
 
   return (
-    <Section id="built" tag="BUILT" eyebrow={strings.projects.eyebrow} title={strings.projects.title}>
+    <Section id="built" tag={strings.sectionTags.built} eyebrow={strings.projects.eyebrow} title={strings.projects.title}>
       <p className="-mt-6 mb-10 max-w-2xl text-text-muted">{t(strings.projects.intro, language)}</p>
 
       {/* Below md this tab+panel structure gives way entirely to the

@@ -15,7 +15,7 @@ export default function Home() {
       <main id="main-content" className="flex flex-1 flex-col">
         <Hero />
         <ClientWork />
-        <Projects />
+        {/* <Projects /> */}
         <SideProjects />
         <Skills />
         <Experience />

@@ -254,7 +254,7 @@ export function ClientWork() {
   const language = useLanguage();
 
   return (
-    <Section id="work" tag="WORK" tint eyebrow={strings.clientWork.eyebrow} title={strings.clientWork.title}>
+    <Section id="work" tag={strings.sectionTags.work} tint eyebrow={strings.clientWork.eyebrow} title={strings.clientWork.title}>
       <p className="-mt-6 mb-10 max-w-2xl text-text-muted">{t(strings.clientWork.intro, language)}</p>
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item, index) =>
