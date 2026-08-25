@@ -51,8 +51,11 @@ Blue/maroon/green/red each have exactly one job in the *UI* — don't repurpose 
 - Placeholder content (client project names/links/images not yet real) must stay honest: `href="#"` never a fake domain, generic names never invented brand names, verified-working stock images never guessed URLs.
 
 ## Explicitly Out of Scope
-- Blog/CMS integration, multi-page routing, analytics dashboard, persistent rate-limiting infra (would need Redis/KV).
+- Blog/CMS integration, analytics dashboard, persistent rate-limiting infra (would need Redis/KV).
 - About panel. (Footer shipped — see `src/components/layout/Footer.tsx`: brand mark doubling as back-to-top, plus Hero's "open to opportunities" status echoed, not a sitemap — this is a one-pager, the sticky Navbar already covers navigation.)
 - A custom cursor (replacing the OS pointer icon) — the cursor-reactive ambient glow is a background light layer, not a cursor replacement.
 - Any framing of Rafi as "a freelancer."
 - A standalone algorithm-visualization section — shipped, reviewed, cut. Don't re-add without being asked again.
+
+## Case Study Pages
+The one deliberate exception to this being a single-page site: each Client Work card (`src/components/sections/ClientWork.tsx`) links to its own case-study page at `/work/[slug]` instead of embedding depth on the card or linking straight to the live site — keeps the card scannable, gives each project a real, shareable, indexable URL. This is scoped narrowly to project depth, not a general pivot: the nav-driven page (Hero → Contact) stays single-page. Case-study content follows the same placeholder-honesty rule as everything else in Content Rules above — don't fabricate a problem statement or role narrative for entries that are still generic placeholders; show only what the real data actually supports.

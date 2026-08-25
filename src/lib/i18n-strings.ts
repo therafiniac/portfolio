@@ -16,6 +16,17 @@ export const strings = {
       bn: "বিভিন্ন ইন্ডাস্ট্রি জুড়ে ডেলিভার করা 150+ ক্লায়েন্ট সাইট থেকে একটি নমুনা — প্রকৃত, শিপড, পেইড কাজ।",
     } satisfies Localized,
     preview: { en: "preview", bn: "প্রিভিউ" } satisfies Localized,
+    backToWork: { en: "Back to Work", bn: "কাজে ফিরে যান" } satisfies Localized,
+    visitSite: { en: "Visit Site", bn: "সাইট দেখুন" } satisfies Localized,
+    challenge: { en: "The Challenge", bn: "চ্যালেঞ্জ" } satisfies Localized,
+    whatShipped: { en: "What Shipped", bn: "যা ডেলিভার হয়েছে" } satisfies Localized,
+    outcome: { en: "Outcome", bn: "ফলাফল" } satisfies Localized,
+    gallery: { en: "Gallery", bn: "গ্যালারি" } satisfies Localized,
+    comingSoon: { en: "Coming Soon", bn: "শীঘ্রই আসছে" } satisfies Localized,
+    comingSoonBody: {
+      en: "Two more real projects are being written up.",
+      bn: "আরও দুটি বাস্তব প্রজেক্ট লেখা হচ্ছে।",
+    } satisfies Localized,
   },
   workFiller: {
     heading: { en: "Open to new projects.", bn: "নতুন প্রজেক্টের জন্য উন্মুক্ত।" } satisfies Localized,
@@ -162,6 +173,9 @@ export const strings = {
     Mapbox: "ম্যাপবক্স",
     HTML: "এইচটিএমএল",
     CSS: "সিএসএস",
+    Hostinger: "হোস্টিংগার",
+    PHP: "পিএইচপি",
+    "Coming Soon": "শীঘ্রই আসছে",
   } as Record<string, string>,
   nav: {
     openMenu: { en: "Open menu", bn: "মেনু খুলুন" } satisfies Localized,

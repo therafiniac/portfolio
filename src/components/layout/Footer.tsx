@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { BrandMark } from "@/components/layout/BrandMark";
 import { heroStatusLine, fullName } from "@/lib/data/hero";
 import { useLanguage } from "@/lib/useLanguage";
@@ -16,12 +17,20 @@ export function Footer() {
   const year = new Date().getFullYear();
   const language = useLanguage();
   const openStatus = t(heroStatusLine, language);
+  // Same cross-page reasoning as Navbar.tsx's resolveHref — "#top" only
+  // resolves on the homepage itself; a case-study page needs a real
+  // navigation back to it first.
+  const isHome = usePathname() === "/";
 
   return (
     <footer className="border-t border-line/30 px-6 py-10 md:px-12">
       <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <a href="#top" aria-label={t(strings.footer.backToTop, language)} className="group">
+          <a
+            href={isHome ? "#top" : "/#top"}
+            aria-label={t(strings.footer.backToTop, language)}
+            className="group"
+          >
             <BrandMark size={28} className="text-xs transition-colors group-hover:bg-accent/15" />
           </a>
           <span className="font-mono text-xs text-text-muted">

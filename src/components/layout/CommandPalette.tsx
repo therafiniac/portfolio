@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Search } from "lucide-react";
 import { commandItems } from "@/lib/data/commandPalette";
@@ -24,6 +25,10 @@ export function CommandPalette() {
   const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const language = useLanguage();
+  // Same cross-page reasoning as Navbar.tsx's resolveHref — these items
+  // jump to a homepage section by id, which only resolves as a bare hash
+  // when the palette is opened from the homepage itself.
+  const isHome = usePathname() === "/";
 
   // Matches against `id` as well as the visible label — the label is each
   // section's short eyebrow ("Capabilities"), which doesn't always share a
@@ -148,7 +153,7 @@ export function CommandPalette() {
                 results.map((item, i) => (
                   <a
                     key={item.id}
-                    href={`#${item.id}`}
+                    href={isHome ? `#${item.id}` : `/#${item.id}`}
                     data-command-id={item.id}
                     onClick={closePalette}
                     onMouseEnter={() => setActiveIndex(i)}
