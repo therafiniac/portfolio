@@ -346,7 +346,7 @@ export function HowIBuild() {
   const language = useLanguage();
 
   return (
-    <Section id="approach" tag="APPROACH" eyebrow={strings.howIBuild.eyebrow} title={strings.howIBuild.title}>
+    <Section id="approach" tag={strings.sectionTags.approach} eyebrow={strings.howIBuild.eyebrow} title={strings.howIBuild.title}>
       <p className="-mt-6 mb-10 max-w-2xl text-text-muted">{t(strings.howIBuild.intro, language)}</p>
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <PointCard point={fullStack} span={2} graphic={LayersGraphic} />

@@ -73,7 +73,7 @@ export function SideProjects() {
   const language = useLanguage();
 
   return (
-    <Section id="side-projects" tag="BUILDS" eyebrow={strings.sideProjects.eyebrow} title={strings.sideProjects.title}>
+    <Section id="side-projects" tag={strings.sectionTags.builds} eyebrow={strings.sideProjects.eyebrow} title={strings.sideProjects.title}>
       <p className="-mt-6 mb-2 max-w-2xl text-text-muted">{t(strings.sideProjects.intro, language)}</p>
       {/* divide-y, not border-b per row — a divider between each row
           without also framing the whole list top and bottom. Those outer

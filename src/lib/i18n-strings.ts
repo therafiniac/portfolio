@@ -325,4 +325,25 @@ export const strings = {
       bn: 'এটি এখনও লাইভ নয় — শীঘ্রই আবার দেখুন, অথবা যা ইতিমধ্যে ডেলিভার হয়েছে সেখানে ফিরে যান।',
     } satisfies Localized,
   },
+  // The giant faint "// TAG" watermark each Section renders top-right
+  // (Section.tsx) — previously a plain string, deliberately left
+  // untranslated on the theory that it's a fixed code-comment stamp like
+  // a tech name. That reasoning didn't hold up: unlike an actual tech
+  // name, this is prose-adjacent section identity, not a proper noun,
+  // and a Bengali-mode visitor seeing English watermarks on an otherwise
+  // fully-Bengali page read as a real gap, not a deliberate accent.
+  // Reuses the same Bengali word other strings already settled on for
+  // the same concept where one exists (WORK/STACK/CONTACT match nav.ts's
+  // own translations; APPROACH matches projects.theApproach's "পদ্ধতি")
+  // rather than inventing a second translation for the same idea.
+  sectionTags: {
+    work: { en: 'WORK', bn: 'কাজ' } satisfies Localized,
+    stack: { en: 'STACK', bn: 'স্ট্যাক' } satisfies Localized,
+    exp: { en: 'EXP', bn: 'অভিজ্ঞতা' } satisfies Localized,
+    services: { en: 'SERVICES', bn: 'সার্ভিস' } satisfies Localized,
+    builds: { en: 'BUILDS', bn: 'টুলস' } satisfies Localized,
+    built: { en: 'BUILT', bn: 'তৈরি' } satisfies Localized,
+    approach: { en: 'APPROACH', bn: 'পদ্ধতি' } satisfies Localized,
+    contact: { en: 'CONTACT', bn: 'যোগাযোগ' } satisfies Localized,
+  },
 };

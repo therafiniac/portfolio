@@ -322,7 +322,7 @@ export function Skills() {
   const caretDelay = firstRowDelay + skillGroups.length * 0.1 + 0.4;
 
   return (
-    <Section id="stack" tag="STACK" eyebrow={EYEBROW} title={TITLE} renderHeader={false}>
+    <Section id="stack" tag={strings.sectionTags.stack} eyebrow={EYEBROW} title={TITLE} renderHeader={false}>
       {/* Same left-copy/right-artifact composition as Hero's own grid —
           the one other place on the page that pairs a text column with a
           single focal object — instead of stacking a left-aligned

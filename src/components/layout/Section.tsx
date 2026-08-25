@@ -3,16 +3,19 @@
 import { motion } from "framer-motion";
 import type { ReactNode } from "react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { useLanguage } from "@/lib/useLanguage";
+import { t } from "@/lib/i18n";
 import type { Localized } from "@/types";
 
 type SectionProps = {
   id?: string;
-  // Short, plain-English mono tag (e.g. "WORK", "STACK") rendered as a
-  // giant faint "// TAG" watermark, top-right — a code-comment stamp
-  // rather than a page-number-style index. Deliberately not translated:
-  // like tech/notation elsewhere on the site, this is a fixed label, not
-  // prose (see Localized in types/index.ts for that distinction).
-  tag?: string;
+  // Short mono tag (e.g. "WORK", "STACK") rendered as a giant faint
+  // "// TAG" watermark, top-right — a code-comment stamp rather than a
+  // page-number-style index. Bilingual (see strings.sectionTags) —
+  // this used to be a plain untranslated string on the theory that it's
+  // fixed notation like a tech name, but it's section identity, not a
+  // proper noun, and stayed English on an otherwise fully-Bengali page.
+  tag?: Localized;
   eyebrow: Localized;
   title: Localized;
   tint?: boolean;
@@ -28,6 +31,8 @@ type SectionProps = {
 };
 
 export function Section({ id, tag, eyebrow, title, tint, renderHeader = true, children }: SectionProps) {
+  const language = useLanguage();
+
   return (
     <motion.section
       id={id}
@@ -45,7 +50,7 @@ export function Section({ id, tag, eyebrow, title, tint, renderHeader = true, ch
           className="pointer-events-none absolute top-6 right-4 select-none whitespace-nowrap font-mono text-[clamp(1.5rem,5vw,4rem)] font-bold leading-none tracking-tight text-text-primary/[0.05] md:right-8"
         >
           {"// "}
-          {tag}
+          {t(tag, language)}
         </span>
       )}
       <div className="relative mx-auto max-w-6xl">
