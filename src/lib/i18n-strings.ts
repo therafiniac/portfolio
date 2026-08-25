@@ -180,6 +180,9 @@ export const strings = {
   footer: {
     backToTop: { en: 'Back to top', bn: 'উপরে ফিরে যান' } satisfies Localized,
   },
+  floatingActions: {
+    whatsapp: { en: 'Message on WhatsApp', bn: 'হোয়াটসঅ্যাপে বার্তা পাঠান' } satisfies Localized,
+  },
   // Phonetic transliteration, not translation — spells the same brand/
   // tech name in Bengali script by sound (the way Bengali tech writing
   // normally handles a foreign product name) rather than keeping it in
@@ -246,12 +249,47 @@ export const strings = {
       bn: 'একটি সেকশনে যান…',
     } satisfies Localized,
     noResults: { en: 'No matches', bn: 'কোনো ফলাফল নেই' } satisfies Localized,
+    // Typing this exact string is the one query that isn't really a
+    // search — a dev-humor easter egg for the same audience segment the
+    // console log rewards, just found through the palette instead of
+    // devtools. Checked case-insensitively against the raw query in
+    // CommandPalette.tsx, not treated as a real command with a real id.
+    sudoQuery: 'sudo',
+    sudoJoke: {
+      en: 'Permission denied. This incident will be reported to nobody.',
+      bn: 'অনুমতি নেই। এই ঘটনার রিপোর্ট কাউকে করা হবে না।',
+    } satisfies Localized,
     hint: {
-      en: 'navigate · select · close',
-      bn: 'নেভিগেট · নির্বাচন · বন্ধ',
+      en: 'navigate · select · close · ? for shortcuts',
+      bn: 'নেভিগেট · নির্বাচন · বন্ধ · শর্টকাটের জন্য ?',
     } satisfies Localized,
   },
+  shortcuts: {
+    title: { en: 'Keyboard Shortcuts', bn: 'কীবোর্ড শর্টকাট' } satisfies Localized,
+    home: { en: 'Home', bn: 'হোম' } satisfies Localized,
+    openPalette: {
+      en: 'Open command palette',
+      bn: 'কমান্ড প্যালেট খুলুন',
+    } satisfies Localized,
+    openThis: { en: 'Show this menu', bn: 'এই মেনু দেখান' } satisfies Localized,
+  },
+  skipToContent: { en: 'Skip to content', bn: 'কনটেন্টে যান' } satisfies Localized,
   tabAttention: {
     comeBack: { en: 'Come back! 👋', bn: 'ফিরে আসুন! 👋' } satisfies Localized,
+  },
+  notFound: {
+    heading: { en: 'Page not found', bn: 'পেজ পাওয়া যায়নি' } satisfies Localized,
+    body: {
+      en: "This page doesn't exist — might've been moved, or never existed in the first place.",
+      bn: 'এই পেজটি নেই — সরিয়ে ফেলা হয়েছে, অথবা কখনোই ছিল না।',
+    } satisfies Localized,
+    cta: { en: 'Back to Home', bn: 'হোমে ফিরে যান' } satisfies Localized,
+  },
+  underConstruction: {
+    heading: { en: 'Under Construction', bn: 'নির্মাণাধীন' } satisfies Localized,
+    body: {
+      en: "This isn't live yet — check back soon, or head back to what's already shipped.",
+      bn: 'এটি এখনও লাইভ নয় — শীঘ্রই আবার দেখুন, অথবা যা ইতিমধ্যে ডেলিভার হয়েছে সেখানে ফিরে যান।',
+    } satisfies Localized,
   },
 };

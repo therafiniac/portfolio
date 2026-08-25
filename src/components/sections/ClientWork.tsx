@@ -11,6 +11,7 @@ import { FieldLabel } from "@/components/ui/FieldLabel";
 import { WorkFillerTile } from "@/components/sections/WorkFillerTile";
 import { clientProjects } from "@/lib/data/clientWork";
 import { heroStats } from "@/lib/data/hero";
+import { UNDER_CONSTRUCTION_HREF } from "@/lib/placeholderLink";
 import type { ClientProject, Localized } from "@/types";
 import { useLanguage } from "@/lib/useLanguage";
 import { t } from "@/lib/i18n";
@@ -126,8 +127,9 @@ function WorkCard({ project }: { project: ClientProject }) {
 // real cards: same chrome bar, TileGlow, border, and icon/hover-reveal
 // choreography as WorkCard — an Hourglass stands in for the icon slot,
 // and the reveal is the section's own signature-gradient lettering
-// instead of a screenshot Image, since there's no real one yet. Not a
-// Link — it has nowhere real to go yet — but everything else matches.
+// instead of a screenshot Image, since there's no real one yet. Links to
+// /under-construction (see src/lib/placeholderLink.ts) — an honest
+// landing spot now exists, so this no longer needs to be inert.
 //
 // Hidden below sm (single-column mobile) entirely, not just re-flowed:
 // on a touch device there's no hover to trigger the reveal, so the tile
@@ -141,7 +143,10 @@ function ComingSoonTile() {
   const label = t(strings.clientWork.comingSoon, language);
 
   return (
-    <div className="hover-glow-panel group relative hidden flex-col overflow-hidden rounded-xl border border-line/60 transition-colors duration-300 hover:border-accent/60 sm:flex">
+    <Link
+      href={UNDER_CONSTRUCTION_HREF}
+      className="hover-glow-panel group relative hidden flex-col overflow-hidden rounded-xl border border-line/60 transition-colors duration-300 hover:border-accent/60 sm:flex"
+    >
       <TileGlow />
       <BrowserChrome label="Coming Soon" />
       <div className={`relative w-full overflow-hidden ${SHOT_ASPECT}`}>
@@ -159,7 +164,7 @@ function ComingSoonTile() {
         <FieldLabel>{label}</FieldLabel>
         <p className="mt-1 text-xs text-text-muted">{t(strings.clientWork.comingSoonBody, language)}</p>
       </div>
-    </div>
+    </Link>
   );
 }
 

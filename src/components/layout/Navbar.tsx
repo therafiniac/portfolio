@@ -100,8 +100,14 @@ export function Navbar() {
           style={{ paddingTop: paddingY, paddingBottom: paddingY }}
           className="relative z-10 flex items-center justify-between gap-4 rounded-full px-5"
         >
+          {/* Not resolveHref("#top") — that resolved to "/#top" off the
+              homepage, a hash the browser/Lenis has nothing to scroll to
+              until *after* landing on "/", so it read as "stuck on this
+              page" rather than a real trip home. "/" alone is the actual
+              home route; "#top" (in-page scroll-up via Lenis's anchors)
+              only makes sense already being home. */}
           <a
-            href={resolveHref("#top")}
+            href={isHome ? "#top" : "/"}
             className="group flex items-center gap-2.5 font-mono text-sm text-text-primary transition-colors hover:text-accent"
           >
             <BrandMark size={30} className="text-xs group-hover:bg-accent/15" />

@@ -30,6 +30,12 @@ export const contactInfo: ContactInfo[] = [
   },
 ];
 
+// Given directly by Rafi (not scraped/inferred from any doc) — +91
+// prepended since every other location fact on this site (this file's
+// own Location row, every entry in experience.ts/education.ts) is
+// Kolkata, India. Used by FloatingActions.tsx's floating WhatsApp button.
+export const whatsappHref = "https://wa.me/919563104325";
+
 // Profile links — the destination is the whole point, so icon only, no
 // handle text. href is "#" (not a placeholder domain) for the four not
 // yet real — see AGENTS.md's placeholder-link rule. Labels stay plain —

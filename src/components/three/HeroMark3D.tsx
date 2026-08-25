@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Float, MeshDistortMaterial, Sparkles, Trail } from "@react-three/drei";
 import type { Group, Mesh } from "three";
@@ -28,6 +28,26 @@ const AMBIENT_INTENSITY: Record<Theme, number> = { dark: 0.5, light: 1.6 };
 // token.
 const CORE_OPACITY: Record<Theme, number> = { dark: 1, light: 0.88 };
 const OUTER_MESH_COLOR: Record<Theme, string> = ACCENT;
+
+// Read outside React's render loop (a ref, not state) — this only feeds
+// useFrame, which already runs its own rAF loop independent of React
+// re-renders, so routing scroll position through setState here would
+// just be extra re-renders buying nothing. Normalized against one
+// viewport height: the scene reaches its full scroll-driven energy right
+// around where Hero itself scrolls out of view, not still ramping up
+// deep into the page.
+function useScrollProgressRef() {
+  const progress = useRef(0);
+  useEffect(() => {
+    function handleScroll() {
+      progress.current = Math.min(window.scrollY / window.innerHeight, 1);
+    }
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+  return progress;
+}
 
 function usePrefersReducedMotion() {
   const [reduced, setReduced] = useState(
@@ -93,12 +113,14 @@ function OrbitalMark({
   accentSecondaryColor,
   outerMeshColor,
   coreOpacity,
+  scrollProgress,
 }: {
   reducedMotion: boolean;
   accentColor: string;
   accentSecondaryColor: string;
   outerMeshColor: string;
   coreOpacity: number;
+  scrollProgress: RefObject<number>;
 }) {
   const groupRef = useRef<Group>(null);
   const ring1 = useRef<Mesh>(null);
@@ -108,11 +130,17 @@ function OrbitalMark({
 
   useFrame((state) => {
     const t = state.clock.getElapsedTime();
+    // Cursor and scroll drive the same tilt/spin, not two separate
+    // effects competing for the object — scrolling past Hero reads as
+    // the scene winding up and settling into a new resting tilt, the
+    // same physical "the thing you're leaving keeps a little momentum"
+    // feel the cursor pull already has, rather than an unrelated bolt-on.
+    const scroll = reducedMotion ? 0 : scrollProgress.current;
 
     if (!reducedMotion) {
-      if (ring1.current) ring1.current.rotation.z = t * 0.22;
-      if (ring2.current) ring2.current.rotation.x = t * 0.16;
-      if (ring3.current) ring3.current.rotation.y = t * 0.28;
+      if (ring1.current) ring1.current.rotation.z = t * (0.22 + scroll * 0.35);
+      if (ring2.current) ring2.current.rotation.x = t * (0.16 + scroll * 0.28);
+      if (ring3.current) ring3.current.rotation.y = t * (0.28 + scroll * 0.4);
     }
 
     const group = groupRef.current;
@@ -123,7 +151,7 @@ function OrbitalMark({
       return;
     }
 
-    const target = { x: -state.pointer.y * 0.22, z: state.pointer.x * 0.14 };
+    const target = { x: -state.pointer.y * 0.22 - scroll * 0.3, z: state.pointer.x * 0.14 + scroll * 0.2 };
     tilt.current.x += (target.x - tilt.current.x) * 0.06;
     tilt.current.y += (target.z - tilt.current.y) * 0.06;
     group.rotation.x = tilt.current.x;
@@ -212,6 +240,7 @@ export function HeroMark3D() {
   const reducedMotion = usePrefersReducedMotion();
   const [webglAvailable] = useState(isWebglAvailable);
   const theme = useTheme();
+  const scrollProgress = useScrollProgressRef();
 
   if (!webglAvailable) {
     return <StaticMarkFallback accentColor={ACCENT[theme]} />;
@@ -252,6 +281,7 @@ export function HeroMark3D() {
             accentSecondaryColor={ACCENT_SECONDARY[theme]}
             outerMeshColor={OUTER_MESH_COLOR[theme]}
             coreOpacity={CORE_OPACITY[theme]}
+            scrollProgress={scrollProgress}
           />
         </Float>
       </Canvas>

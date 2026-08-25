@@ -12,6 +12,29 @@ import { strings } from "@/lib/i18n-strings";
 const EYEBROW = strings.skills.eyebrow;
 const TITLE = strings.skills.title;
 
+// Monospace, so a character count converts directly to a "ch" width —
+// the classic CSS typewriter (overflow-hidden + animated width) works
+// cleanly here without needing to split the string into per-letter spans.
+// Everything below it (StackRow, the trailing caret) was already staged
+// in via whileInView while this line just appeared instantly — the one
+// piece of the "real terminal output" illusion that wasn't actually
+// animating.
+function TypedPrompt({ text }: { text: string }) {
+  const duration = text.length * 0.045;
+
+  return (
+    <motion.span
+      className="inline-block overflow-hidden whitespace-nowrap align-bottom"
+      initial={{ width: "0ch" }}
+      whileInView={{ width: `${text.length}ch` }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration, ease: "linear" }}
+    >
+      {text}
+    </motion.span>
+  );
+}
+
 // Reads as `$ rafi --stack` output rather than a data file — each group
 // is a flag, each entry after it the values that flag expands to. Rows
 // stagger in once on scroll, not a loop, so this arrives like real
@@ -45,18 +68,19 @@ function StackRow({ group, delay }: { group: SkillGroup; delay: number }) {
   );
 }
 
-// The row after the last real one — same delay formula StackRow's own
-// call sites use, one index further, plus that row's own 0.4s fade
-// duration and a small buffer. This is what makes the trailing prompt
-// (the "$" + blinking caret right below the rows) show up only once the
-// last row has actually finished animating in, instead of sitting there
-// already blinking before any output has appeared — a real terminal's
-// next prompt doesn't show up until the previous command's output has
-// finished printing.
-const CARET_DELAY = 0.15 + skillGroups.length * 0.1 + 0.4;
-
 export function Skills() {
   const language = useLanguage();
+  const promptText = t(strings.skills.prompt, language);
+  // Rows now wait for the prompt to actually finish "typing" (see
+  // TypedPrompt) before staggering in, instead of starting at a fixed
+  // 0.15s regardless of how long the command itself took to appear —
+  // Bengali's transliterated prompt is a different length than the
+  // English one, so this has to be computed from the real string, not
+  // a constant. CARET_DELAY carries the same one-index-further-plus-
+  // fade-duration reasoning as before, just anchored to this new start
+  // point.
+  const firstRowDelay = promptText.length * 0.045 + 0.2;
+  const caretDelay = firstRowDelay + skillGroups.length * 0.1 + 0.4;
 
   return (
     <Section id="stack" tag="STACK" eyebrow={EYEBROW} title={TITLE} renderHeader={false}>
@@ -112,12 +136,12 @@ export function Skills() {
 
               <div className="px-6 py-6 sm:px-9 sm:py-8">
                 <p className="font-mono text-sm text-text-primary sm:text-base">
-                  <span className="text-accent-secondary">$</span> {t(strings.skills.prompt, language)}
+                  <span className="text-accent-secondary">$</span> <TypedPrompt text={promptText} />
                 </p>
 
                 <div className="mt-5 space-y-5">
                   {skillGroups.map((group, index) => (
-                    <StackRow key={group.label.en} group={group} delay={0.15 + index * 0.1} />
+                    <StackRow key={group.label.en} group={group} delay={firstRowDelay + index * 0.1} />
                   ))}
                 </div>
 
@@ -126,7 +150,7 @@ export function Skills() {
                   initial={{ opacity: 0, y: 8 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-40px" }}
-                  transition={{ duration: 0.4, ease: "easeOut", delay: CARET_DELAY }}
+                  transition={{ duration: 0.4, ease: "easeOut", delay: caretDelay }}
                 >
                   <span className="text-accent-secondary">$</span>{" "}
                   <span className="terminal-caret" aria-hidden="true" />
