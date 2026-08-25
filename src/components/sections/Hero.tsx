@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { HeroCanvasLoader } from "@/components/three/HeroCanvasLoader";
 import { HeroMark3DLoader } from "@/components/three/HeroMark3DLoader";
@@ -7,8 +8,47 @@ import { CountUp } from "@/components/layout/CountUp";
 import { Magnetic } from "@/components/layout/Magnetic";
 import { heroRoles, heroStatusLine, heroStats, heroNameLine1, heroNameLine2 } from "@/lib/data/hero";
 import { useLanguage } from "@/lib/useLanguage";
-import { t } from "@/lib/i18n";
+import { t, localizeNumber } from "@/lib/i18n";
 import { strings } from "@/lib/i18n-strings";
+
+// Answers a real, unspoken question for anyone outside IST — a client
+// or recruiter deciding whether a message sent now will be seen soon.
+// null on first render (server has no "current time" that could ever
+// match the client's, so this can't render anything during SSR without
+// risking a hydration mismatch) — the real value fills in a moment after
+// mount instead, same reasoning as this file's own CountUp components
+// animating in from 0 rather than trying to SSR a final number.
+function LocalTimeBadge() {
+  const language = useLanguage();
+  const [time, setTime] = useState<string | null>(null);
+
+  useEffect(() => {
+    function update() {
+      const formatted = new Intl.DateTimeFormat("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        timeZone: "Asia/Kolkata",
+      }).format(new Date());
+      setTime(localizeNumber(formatted, language));
+    }
+    update();
+    const interval = setInterval(update, 30_000);
+    return () => clearInterval(interval);
+  }, [language]);
+
+  if (!time) return null;
+
+  return (
+    <>
+      <span className="text-text-muted/50" aria-hidden="true">
+        ·
+      </span>
+      <span>
+        {time}, {t(strings.hero.kolkata, language)}
+      </span>
+    </>
+  );
+}
 
 const container = {
   hidden: {},
@@ -80,6 +120,7 @@ export function Hero() {
               aria-hidden="true"
             />
             {t(heroStatusLine, language)}
+            <LocalTimeBadge />
           </motion.p>
 
           <motion.h1

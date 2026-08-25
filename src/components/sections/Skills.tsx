@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { motion } from "framer-motion";
 import { Section } from "@/components/layout/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -65,6 +66,99 @@ function StackRow({ group, delay }: { group: SkillGroup; delay: number }) {
         ))}
       </span>
     </motion.div>
+  );
+}
+
+type HistoryLine = { command: string; output: string[] };
+
+// Turns the trailing "$" + blinking caret (previously pure decoration —
+// nothing happened if you clicked it) into a real, small terminal: type
+// a command, get real output. Only a handful of real commands, not a
+// full shell — "help"/"whoami"/"contact"/"clear", plus "sudo" reusing
+// the exact same joke the command palette's own sudo easter egg has, so
+// the three hidden layers on this site (console log, palette, this)
+// share one voice instead of three unrelated ones. Command *names* stay
+// English always (see the i18n-strings.ts comment by terminalHelp) —
+// only the printed output is bilingual.
+function InteractiveTerminal() {
+  const language = useLanguage();
+  const [input, setInput] = useState("");
+  const [history, setHistory] = useState<HistoryLine[]>([]);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const historyEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    historyEndRef.current?.scrollIntoView({ block: "nearest" });
+  }, [history]);
+
+  function runCommand(raw: string) {
+    const cmd = raw.trim().toLowerCase();
+    if (!cmd) return;
+
+    if (cmd === "clear") {
+      setHistory([]);
+      return;
+    }
+
+    const outputs: Record<string, string> = {
+      sudo: t(strings.commandPalette.sudoJoke, language),
+      whoami: t(strings.skills.terminalWhoami, language),
+      help: t(strings.skills.terminalHelp, language),
+      contact: "therafiniac@gmail.com · github.com/therafiniac · linkedin.com/in/therafiniac",
+    };
+
+    const output =
+      outputs[cmd] ?? `${t(strings.skills.terminalNotFound, language)}: ${raw} — try "help"`;
+    setHistory((h) => [...h, { command: raw, output: [output] }]);
+  }
+
+  function handleKeyDown(e: KeyboardEvent<HTMLInputElement>) {
+    if (e.key !== "Enter") return;
+    runCommand(input);
+    setInput("");
+  }
+
+  return (
+    <div className="mt-5 cursor-text" onClick={() => inputRef.current?.focus()}>
+      {history.map((line, i) => (
+        <div key={i} className="mt-2">
+          <p className="font-mono text-sm text-text-primary sm:text-base">
+            <span className="text-accent-secondary">$</span> {line.command}
+          </p>
+          {line.output.map((line_, j) => (
+            <p key={j} className="mt-1 font-mono text-sm text-text-muted sm:text-base">
+              {line_}
+            </p>
+          ))}
+        </div>
+      ))}
+      <p className="mt-2 flex items-center font-mono text-sm text-text-primary sm:text-base">
+        <span className="mr-2 text-accent-secondary" aria-hidden="true">
+          $
+        </span>
+        {/* Sized to its own content in monospace "ch" units (one
+            character = one ch, exactly, in a monospace font) rather than
+            w-full — a form-field-width input with a native focus ring
+            was the actual complaint: it read as "typing into a text
+            box," not "typing into a terminal line." Native caret hidden
+            (caret-transparent) in favor of the block cursor right after
+            it — a plain text I-beam blinking there looked like an
+            ordinary input, not a terminal prompt. */}
+        <input
+          ref={inputRef}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          spellCheck={false}
+          autoComplete="off"
+          aria-label={t(strings.skills.terminalInputLabel, language)}
+          style={{ width: `${Math.max(input.length, 1)}ch` }}
+          className="terminal-input min-w-[1ch] border-0 bg-transparent p-0 font-mono text-sm text-text-primary caret-transparent outline-none sm:text-base"
+        />
+        <span className="terminal-caret" aria-hidden="true" />
+      </p>
+      <div ref={historyEndRef} />
+    </div>
   );
 }
 
@@ -145,16 +239,14 @@ export function Skills() {
                   ))}
                 </div>
 
-                <motion.p
-                  className="mt-5 font-mono text-sm text-text-primary sm:text-base"
+                <motion.div
                   initial={{ opacity: 0, y: 8 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-40px" }}
                   transition={{ duration: 0.4, ease: "easeOut", delay: caretDelay }}
                 >
-                  <span className="text-accent-secondary">$</span>{" "}
-                  <span className="terminal-caret" aria-hidden="true" />
-                </motion.p>
+                  <InteractiveTerminal />
+                </motion.div>
               </div>
             </div>
           </div>

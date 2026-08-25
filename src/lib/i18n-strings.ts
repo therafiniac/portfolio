@@ -112,6 +112,23 @@ export const strings = {
     // elsewhere) — only the flag transliterates, matching the group
     // flags right below it and the section's own title ("স্ট্যাক").
     prompt: { en: 'rafi --stack', bn: 'rafi --স্ট্যাক' } satisfies Localized,
+    // Command names themselves stay in English in both languages — real
+    // terminal commands aren't prose, same reasoning as tech names and
+    // the "rafi" in the prompt above never translating either. Only the
+    // output text (what a command prints) is bilingual.
+    terminalInputLabel: { en: 'Terminal input', bn: 'টার্মিনাল ইনপুট' } satisfies Localized,
+    terminalHelp: {
+      en: 'available: whoami · contact · clear · help',
+      bn: 'উপলব্ধ: whoami · contact · clear · help',
+    } satisfies Localized,
+    terminalWhoami: {
+      en: 'Full Stack Developer (4+ yrs) — Next.js, TypeScript, production systems. Open to new work — see Contact below.',
+      bn: 'ফুল স্ট্যাক ডেভেলপার (৪+ বছর) — Next.js, TypeScript, প্রোডাকশন সিস্টেম। নতুন কাজের জন্য উন্মুক্ত — নিচের Contact দেখুন।',
+    } satisfies Localized,
+    terminalNotFound: {
+      en: 'command not found',
+      bn: 'কমান্ড পাওয়া যায়নি',
+    } satisfies Localized,
   },
   experience: {
     eyebrow: { en: 'Track Record', bn: 'ট্র্যাক রেকর্ড' } satisfies Localized,
@@ -152,6 +169,7 @@ export const strings = {
       bn: 'ইমেইল ঠিকানা কপি করুন',
     } satisfies Localized,
     copied: { en: 'Copied', bn: 'কপি হয়েছে' } satisfies Localized,
+    saveContact: { en: 'Save Contact', bn: 'কন্টাক্ট সেভ করুন' } satisfies Localized,
   },
   contactForm: {
     name: { en: 'Name', bn: 'নাম' } satisfies Localized,
@@ -176,6 +194,10 @@ export const strings = {
       en: 'Scroll to work',
       bn: 'কাজে স্ক্রল করুন',
     } satisfies Localized,
+    // City name only (not "Kolkata, India" — contact.ts's fuller form is
+    // right for a contact-details row, too long for a compact time badge
+    // next to the status pill).
+    kolkata: { en: 'Kolkata', bn: 'কলকাতা' } satisfies Localized,
   },
   footer: {
     backToTop: { en: 'Back to top', bn: 'উপরে ফিরে যান' } satisfies Localized,

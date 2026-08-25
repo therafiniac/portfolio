@@ -242,6 +242,19 @@ html::-webkit-scrollbar {
   outline-offset: 2px;
 }
 
+/* Skills.tsx's interactive terminal input deliberately opts out of the
+   global focus ring above — a visible box around it was the actual
+   complaint ("feels like typing under a form input"), and this line is
+   meant to read as terminal text, not a form field. A class selector
+   plus :focus-visible (0,2,0) beats the bare :focus-visible rule (0,1,0)
+   on specificity regardless of source order, which matters here since
+   both are plain unlayered CSS — the usual Tailwind-utility-vs-plain-CSS
+   trap this codebase has hit before doesn't apply in the other direction
+   between two plain rules like this. */
+.terminal-input:focus-visible {
+  outline: none;
+}
+
 /* ThemeToggle.tsx drives the actual circle (clip-path animated on
    ::view-transition-new(root) from the click point) — this just turns
    off the browser's default cross-fade on both pseudo-elements so that
@@ -641,10 +654,12 @@ html::-webkit-scrollbar {
   }
 }
 
-/* Blinking prompt cursor for the Stack section's terminal panel — same
-   "continuous CSS animation, guarded for reduced motion" pattern as
-   trail-light/flow-light above. steps(1, end) instead of an eased
-   opacity ramp: a caret should snap on/off, not fade. */
+/* Blinking cursor for the Stack section's interactive terminal
+   (InteractiveTerminal in Skills.tsx) — steps(1, end) instead of an
+   eased opacity ramp, since a caret should snap on/off, not fade. The
+   input's own native caret is hidden (caret-transparent) in favor of
+   this block sitting right after it — a thin native I-beam read as an
+   ordinary text field, not a terminal prompt. */
 @keyframes terminal-caret-blink {
   0%,
   49% {
