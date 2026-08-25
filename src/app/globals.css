@@ -305,6 +305,24 @@ html::-webkit-scrollbar {
     0 12px 32px -12px var(--shadow-elevated);
 }
 
+/* Same glass recipe as .nav-glass, but for FloatingActions.tsx's
+   viewport-pinned buttons — .nav-glass's own `position: relative` is
+   plain, un-layered CSS that silently beats a Tailwind `fixed` utility
+   regardless of class order (same cascade trap nav-mobile-menu already
+   has to work around above), so a fixed floating button needs its own
+   complete rule with `position: fixed` baked in rather than layering
+   Tailwind's `fixed` on top of .nav-glass. */
+.glass-fab {
+  position: fixed;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--text-primary) 10%, transparent),
+    0 12px 32px -12px var(--shadow-elevated);
+}
+
 /* The mobile nav dropdown (Navbar.tsx) also carries .nav-glass for its
    look, but needs `position: absolute` to float over the page instead of
    pushing content down when it opens — same cascade-layer trap as

@@ -17,9 +17,10 @@ export function Footer() {
   const year = new Date().getFullYear();
   const language = useLanguage();
   const openStatus = t(heroStatusLine, language);
-  // Same cross-page reasoning as Navbar.tsx's resolveHref — "#top" only
-  // resolves on the homepage itself; a case-study page needs a real
-  // navigation back to it first.
+  // Same cross-page reasoning as Navbar.tsx's brand-mark link — "#top"
+  // only resolves on the homepage itself, so off it this points at the
+  // real "/" route instead of a "/#top" hash with nothing to land on
+  // until after the navigation completes anyway.
   const isHome = usePathname() === "/";
 
   return (
@@ -27,7 +28,7 @@ export function Footer() {
       <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <a
-            href={isHome ? "#top" : "/#top"}
+            href={isHome ? "#top" : "/"}
             aria-label={t(strings.footer.backToTop, language)}
             className="group"
           >

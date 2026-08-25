@@ -180,6 +180,9 @@ export const strings = {
   footer: {
     backToTop: { en: 'Back to top', bn: 'উপরে ফিরে যান' } satisfies Localized,
   },
+  floatingActions: {
+    whatsapp: { en: 'Message on WhatsApp', bn: 'হোয়াটসঅ্যাপে বার্তা পাঠান' } satisfies Localized,
+  },
   // Phonetic transliteration, not translation — spells the same brand/
   // tech name in Bengali script by sound (the way Bengali tech writing
   // normally handles a foreign product name) rather than keeping it in

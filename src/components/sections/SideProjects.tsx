@@ -2,17 +2,23 @@
 
 import { ArrowUpRight } from "lucide-react";
 import { Section } from "@/components/layout/Section";
-import { TileGlow } from "@/components/ui/TileGlow";
 import { sideProjects } from "@/lib/data/sideProjects";
 import type { SideProject } from "@/types";
 import { useLanguage } from "@/lib/useLanguage";
 import { t } from "@/lib/i18n";
 import { strings } from "@/lib/i18n-strings";
 
-// Deliberately lighter than WorkCard (ClientWork.tsx) — no screenshot, no
-// browser chrome, no tech chips: these are fun utilities, not case studies,
-// so the card shouldn't imply the same depth as a client project.
-function SideProjectCard({ project }: { project: SideProject }) {
+// Deliberately not another bordered-card grid — this is the one section
+// on the page still using the plain "eyebrow + title + intro + grid"
+// template every other section had already broken out of one way or
+// another (ClientWork's stat/CTA/coming-soon tiles, Services' pinned
+// moodboard, HowIBuild's wide/narrow bento). A big-type link list fits
+// this content specifically: only two entries, deliberately kept short
+// (see sideProjects.ts), so the name itself can carry the visual weight
+// instead of being shrunk into a card alongside a screenshot it doesn't
+// have. The name's own hover motion (scale/color/icon-rotate) is the
+// section's kinetic-typography moment — no separate decoration needed.
+function SideProjectRow({ project }: { project: SideProject }) {
   const language = useLanguage();
   // "#" is the honest placeholder for a not-yet-real link (see
   // sideProjects.ts) — the live-status dot only lights up once a real URL
@@ -24,25 +30,37 @@ function SideProjectCard({ project }: { project: SideProject }) {
       href={project.href}
       target={isLive ? "_blank" : undefined}
       rel={isLive ? "noopener noreferrer" : undefined}
-      className="hover-glow-panel group relative flex items-start gap-4 overflow-hidden rounded-xl border border-line/60 p-6 transition-colors duration-300 hover:border-accent/60"
+      className="group flex flex-col gap-3 py-8 sm:flex-row sm:items-center sm:justify-between sm:gap-6"
     >
-      <TileGlow intensity={12} />
-      <project.icon className="h-8 w-8 shrink-0 text-accent-secondary" strokeWidth={1.25} aria-hidden="true" />
-      <div>
-        <h3 className="flex items-center gap-2 text-base text-text-primary">
-          {isLive && (
-            <span
-              className="h-1.5 w-1.5 shrink-0 rounded-full bg-status-live motion-safe:animate-pulse"
-              aria-hidden="true"
-            />
-          )}
+      <div className="flex items-center gap-4 sm:gap-6">
+        <project.icon
+          className="h-6 w-6 shrink-0 text-accent-secondary transition-transform duration-300 ease-out group-hover:-rotate-12 group-hover:scale-110"
+          strokeWidth={1.25}
+          aria-hidden="true"
+        />
+        {/* First pass (md:text-3xl) still read as "the same size" as
+            SectionHeading's own h2 (text-3xl md:text-4xl) at a glance —
+            same typeface, same color, only a 6px gap at md doesn't
+            register as a real hierarchy difference in practice, even
+            though it's technically smaller. Dropped a full step further
+            so the gap is unambiguous at every breakpoint, not just on a
+            ruler. */}
+        <h3 className="font-mono text-lg text-text-primary transition-colors duration-300 group-hover:text-accent sm:text-xl md:text-2xl">
           {t(project.name, language)}
-          <ArrowUpRight
-            className="h-3.5 w-3.5 -translate-x-1 opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100"
+        </h3>
+        {isLive && (
+          <span
+            className="h-1.5 w-1.5 shrink-0 rounded-full bg-status-live motion-safe:animate-pulse"
             aria-hidden="true"
           />
-        </h3>
-        <p className="mt-1 text-xs text-text-muted">{t(project.description, language)}</p>
+        )}
+      </div>
+      <div className="flex items-center gap-3 pl-10 sm:pl-0">
+        <p className="max-w-xs text-sm text-text-muted">{t(project.description, language)}</p>
+        <ArrowUpRight
+          className="h-5 w-5 shrink-0 -translate-x-1 text-text-muted opacity-0 transition-all duration-300 ease-out group-hover:translate-x-0 group-hover:text-accent group-hover:opacity-100"
+          aria-hidden="true"
+        />
       </div>
     </a>
   );
@@ -53,12 +71,15 @@ export function SideProjects() {
 
   return (
     <Section id="side-projects" tag="BUILDS" eyebrow={strings.sideProjects.eyebrow} title={strings.sideProjects.title}>
-      <p className="-mt-6 mb-10 max-w-2xl text-text-muted">{t(strings.sideProjects.intro, language)}</p>
-      {/* sm: 2-up, lg: 3-up — reflows on its own as entries are added, no
-          layout logic to touch when the list grows. */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <p className="-mt-6 mb-2 max-w-2xl text-text-muted">{t(strings.sideProjects.intro, language)}</p>
+      {/* divide-y, not border-b per row — a divider between each row
+          without also framing the whole list top and bottom. Those outer
+          lines (tried first) sat too close to the intro paragraph above
+          and the next section below, both of which already have their
+          own spacing doing that job. */}
+      <div className="flex flex-col divide-y divide-line/50">
         {sideProjects.map((project) => (
-          <SideProjectCard key={project.name.en} project={project} />
+          <SideProjectRow key={project.name.en} project={project} />
         ))}
       </div>
     </Section>

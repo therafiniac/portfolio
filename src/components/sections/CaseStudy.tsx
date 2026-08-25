@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, ArrowUpRight } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, ZoomIn } from "lucide-react";
 import { FieldLabel } from "@/components/ui/FieldLabel";
 import { TechChip } from "@/components/ui/TechChip";
+import { Lightbox } from "@/components/ui/Lightbox";
 import type { ClientProject } from "@/types";
 import { useLanguage } from "@/lib/useLanguage";
 import { t } from "@/lib/i18n";
@@ -29,6 +31,8 @@ type CaseStudyProject = Omit<ClientProject, "icon">;
 // same as everywhere else.
 export function CaseStudy({ project }: { project: CaseStudyProject }) {
   const language = useLanguage();
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const gallery = project.gallery ?? [];
 
   return (
     <div className="mx-auto max-w-4xl px-6 pb-24 pt-32 md:px-12 md:pt-40">
@@ -142,10 +146,18 @@ export function CaseStudy({ project }: { project: CaseStudyProject }) {
               same 16:10 landscape box every desktop screenshot uses —
               that used to crop away most of a portrait shot's height. */}
           <div className="mt-2 flex flex-col gap-8">
-            {project.gallery.map((item) => (
+            {gallery.map((item, i) => (
               <figure key={item.src} className={item.orientation === "portrait" ? "w-56" : "w-full"}>
-                <div
-                  className={`relative overflow-hidden rounded-xl border border-line/60 ${
+                {/* button, not the figure itself — a native, keyboard-
+                    reachable trigger for the lightbox rather than an
+                    onClick bolted onto a div. ZoomIn only shows up on
+                    hover so the gallery still reads as "detail shots" at
+                    rest, not "buttons," until you're actually near one. */}
+                <button
+                  type="button"
+                  onClick={() => setLightboxIndex(i)}
+                  aria-label={t(item.caption, language)}
+                  className={`group relative block w-full overflow-hidden rounded-xl border border-line/60 ${
                     item.orientation === "portrait" ? "aspect-[9/19.5]" : "aspect-[16/10]"
                   }`}
                 >
@@ -154,9 +166,12 @@ export function CaseStudy({ project }: { project: CaseStudyProject }) {
                     alt={t(item.caption, language)}
                     fill
                     sizes={item.orientation === "portrait" ? "224px" : "(min-width: 896px) 896px, 100vw"}
-                    className="object-cover"
+                    className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
                   />
-                </div>
+                  <span className="absolute inset-0 flex items-center justify-center bg-bg/0 opacity-0 transition-all duration-200 group-hover:bg-bg/30 group-hover:opacity-100">
+                    <ZoomIn className="h-6 w-6 text-text-primary drop-shadow" aria-hidden="true" />
+                  </span>
+                </button>
                 <figcaption className="mt-2 font-mono text-xs text-text-muted">
                   {t(item.caption, language)}
                 </figcaption>
@@ -165,6 +180,18 @@ export function CaseStudy({ project }: { project: CaseStudyProject }) {
           </div>
         </>
       )}
+
+      <Lightbox
+        images={gallery.map((item) => ({
+          src: item.src,
+          alt: t(item.caption, language),
+          caption: t(item.caption, language),
+          orientation: item.orientation,
+        }))}
+        index={lightboxIndex}
+        onClose={() => setLightboxIndex(null)}
+        onNavigate={setLightboxIndex}
+      />
     </div>
   );
 }
