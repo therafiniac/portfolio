@@ -718,3 +718,54 @@ html::-webkit-scrollbar {
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
 }
+
+/* A recruiter printing/exporting-to-PDF still happens more than you'd
+   guess, and the default here would just be the dark, glass-panel UI
+   dumped onto paper as-is: wasted ink and low contrast at best, chrome
+   that means nothing on a static page (nav, cursor effects, floating
+   buttons, the scroll-progress rail, film grain) cluttering it at worst.
+   Force a plain light/dark-text reading layout instead — same content,
+   none of the on-screen-only decoration. Kept in this file rather than a
+   separate print.css so it stays next to (and obviously paired with)
+   the screen styles it's overriding. */
+@media print {
+  header,
+  .grain-overlay,
+  .cursor-glow,
+  .cursor-trail,
+  .scroll-progress,
+  .glass-fab,
+  .aurora-blob {
+    display: none !important;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  /* Every surface/border/shadow token collapses to something print-safe
+     rather than trying to preserve blur/elevation that paper can't show
+     anyway — a color-mix'd translucent panel over a dark page prints as
+     a muddy grey rectangle otherwise. */
+  * {
+    background-image: none !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    backdrop-filter: none !important;
+    color: #000000 !important;
+    border-color: #999999 !important;
+    /* Undoes the gradient-clipped-text trick (Hero's name, Contact's
+       headline, etc: background-image supplies the fill, color:
+       transparent + background-clip: text mask it into the letterforms)
+       — with the background-image already stripped above, leaving the
+       clip active would mask the color:#000 override right back out to
+       invisible instead of legible black text. */
+    background-clip: unset !important;
+    -webkit-background-clip: unset !important;
+  }
+
+  a {
+    text-decoration: underline;
+  }
+}

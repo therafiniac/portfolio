@@ -50,7 +50,13 @@ export function Hero() {
           light — the headline and the stats row — instead of drifting in
           empty space at the section's edges, where they read as ambient
           background decoration rather than an actual light source. */}
-      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+      {/* print:hidden — CSS can reset a DOM element's background/color for
+          print (see globals.css's @media print), but a WebGL canvas
+          paints its own pixels outside the CSS cascade entirely, so
+          HeroCanvasLoader's drift field has to be hidden at the
+          container level or it prints as an uncontrolled splash of
+          color regardless of any stylesheet override. */}
+      <div className="pointer-events-none absolute inset-0 print:hidden" aria-hidden="true">
         <div className="aurora-blob absolute left-32 top-[22%] h-96 w-96 rounded-full bg-accent/20 blur-[120px]" />
         <div className="aurora-blob absolute bottom-[8%] left-[18%] h-96 w-96 rounded-full bg-accent-secondary/14 blur-[120px] [animation-delay:-9s]" />
         <HeroCanvasLoader />
@@ -182,7 +188,7 @@ export function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
-          className="relative flex justify-center lg:justify-start"
+          className="relative flex justify-center print:hidden lg:justify-start"
         >
           {/* The mark IS the light source — a bright signature-gradient
               glow bleeding out from directly behind it, sized to the mark's

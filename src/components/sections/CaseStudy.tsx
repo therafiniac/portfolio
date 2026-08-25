@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ArrowUpRight, ZoomIn } from "lucide-react";
@@ -66,8 +67,18 @@ export function CaseStudy({ project }: { project: CaseStudyProject }) {
           actual 1600x1000 viewport every cover screenshot is captured
           at — this used to be 16/9, a wider box than the source image,
           which made object-cover crop real content off the top/bottom
-          of every real screenshot. */}
-      <div className="relative mt-8 aspect-[16/10] w-full overflow-hidden rounded-2xl border border-line/60">
+          of every real screenshot. Wipes open on mount (clip-path, not
+          opacity) rather than just appearing — plays fresh every time
+          this route is entered, priority load means the image itself is
+          already there underneath, so this is purely a reveal, never a
+          wait. whileInView would be wrong here: this sits above the
+          fold, visible on first paint, not something scrolled to. */}
+      <motion.div
+        initial={{ clipPath: "inset(0 0 100% 0)" }}
+        animate={{ clipPath: "inset(0 0 0% 0)" }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        className="relative mt-8 aspect-[16/10] w-full overflow-hidden rounded-2xl border border-line/60"
+      >
         <Image
           src={project.coverImage}
           alt={`${t(project.name, language)} ${t(strings.clientWork.preview, language)}`}
@@ -76,7 +87,7 @@ export function CaseStudy({ project }: { project: CaseStudyProject }) {
           className="object-cover"
           priority
         />
-      </div>
+      </motion.div>
 
       <p className="mt-8 max-w-2xl text-text-muted">{t(project.description, language)}</p>
 
