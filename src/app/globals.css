@@ -1,6 +1,13 @@
 @import "tailwindcss";
 
 :root {
+  /* Tells the browser this page fully owns its own light/dark rendering
+     (matching the data-theme toggle below) so it stops applying its own
+     auto-darkening heuristic (Android/Chromium "force dark") on top of
+     ours — that heuristic doesn't understand the gradient-heading
+     background-clip:text trick and was repainting it with its own
+     darkened guess instead of leaving the gradient alone. */
+  color-scheme: dark;
   --bg: #11111b;
   --surface: #181825;
   --line: #45475a;
@@ -58,6 +65,7 @@
 }
 
 :root[data-theme="light"] {
+  color-scheme: light;
   --bg: #dce0e8;
   --surface: #e6e9ef;
   --line: #bcc0cc;
