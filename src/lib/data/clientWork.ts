@@ -17,6 +17,13 @@ import type { ClientProject } from "@/types";
 // stat/CTA filler land on exactly 3 full grid rows — if either count
 // changes, sanity-check the last row isn't left with a single stranded
 // tile before shipping.
+// Shared between ClientWork.tsx's WorkCard and CaseStudy.tsx so the two
+// sides of the view-transition morph (see both files) can never drift
+// out of sync on the name React matches old/new elements by.
+export function workCoverTransitionName(slug: string) {
+  return `work-cover-${slug}`;
+}
+
 export const clientProjects: ClientProject[] = [
   {
     // First real entry — everything below is verified directly (page
