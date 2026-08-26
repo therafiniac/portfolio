@@ -106,7 +106,7 @@ function WorkCard({ project }: { project: ClientProject }) {
         <h3 className="mt-1 flex items-center gap-1 text-base text-text-primary">
           {t(project.name, language)}
           <ArrowUpRight
-            className="h-3.5 w-3.5 -translate-x-1 opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100"
+            className="h-3.5 w-3.5 translate-x-0 opacity-100 transition-all duration-200 md:-translate-x-1 md:opacity-0 md:group-hover:translate-x-0 md:group-hover:opacity-100"
             aria-hidden="true"
           />
         </h3>
