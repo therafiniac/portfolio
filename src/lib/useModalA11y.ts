@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, type RefObject } from "react";
+import { useLenis } from "lenis/react";
 
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -21,6 +22,14 @@ const FOCUSABLE_SELECTOR =
 // special-case.
 export function useModalA11y(open: boolean, dialogRef: RefObject<HTMLElement | null>) {
   const previouslyFocused = useRef<HTMLElement | null>(null);
+  // SmoothScroll.tsx's Lenis intercepts wheel/touch input at the window
+  // level and drives its own virtual scroll independent of the native
+  // scrollbar — body.style.overflow alone (below) doesn't stop it, which
+  // is exactly why scrolling inside a dialog was scrolling the page
+  // underneath it instead. lenis.stop()/start() is the actual fix;
+  // returns undefined when reduced motion is on (SmoothScroll renders
+  // nothing then), so every call below is optional-chained.
+  const lenis = useLenis();
 
   useEffect(() => {
     if (!open) return;
@@ -29,6 +38,7 @@ export function useModalA11y(open: boolean, dialogRef: RefObject<HTMLElement | n
 
     previouslyFocused.current = document.activeElement as HTMLElement | null;
 
+    lenis?.stop();
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
@@ -61,6 +71,7 @@ export function useModalA11y(open: boolean, dialogRef: RefObject<HTMLElement | n
       document.body.style.overflow = previousOverflow;
       inertedSiblings.forEach((el) => el.removeAttribute("inert"));
       previouslyFocused.current?.focus();
+      lenis?.start();
     };
-  }, [open, dialogRef]);
+  }, [open, dialogRef, lenis]);
 }

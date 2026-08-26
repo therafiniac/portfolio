@@ -282,10 +282,14 @@ export const strings = {
       en: 'Open command palette',
       bn: 'কমান্ড প্যালেট খুলুন',
     } satisfies Localized,
+    // "Jump to a section…" undersold it once search actually covered
+    // projects/skills/experience/side-projects/services too, not just
+    // the 7 section anchors.
     placeholder: {
-      en: 'Jump to a section…',
-      bn: 'একটি সেকশনে যান…',
+      en: 'Search anything…',
+      bn: 'যেকোনো কিছু খুঁজুন…',
     } satisfies Localized,
+    clearLabel: { en: 'Clear search', bn: 'সার্চ মুছুন' } satisfies Localized,
     noResults: { en: 'No matches', bn: 'কোনো ফলাফল নেই' } satisfies Localized,
     // Typing this exact string is the one query that isn't really a
     // search — a dev-humor easter egg for the same audience segment the

@@ -2,11 +2,12 @@
 
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { Search } from "lucide-react";
-import { commandItems } from "@/lib/data/commandPalette";
+import { Search, X } from "lucide-react";
+import { commandItems, type CommandItem } from "@/lib/data/commandPalette";
 import { useModalA11y } from "@/lib/useModalA11y";
-import { useLanguage } from "@/lib/useLanguage";
+import { useLanguage, type Language } from "@/lib/useLanguage";
 import { t } from "@/lib/i18n";
 import { strings } from "@/lib/i18n-strings";
 
@@ -18,6 +19,71 @@ const OPEN_EVENT = "command-palette:open";
 // layout.tsx.
 export function openCommandPalette() {
   window.dispatchEvent(new Event(OPEN_EVENT));
+}
+
+// Three different destinations share one result list now: a same-page
+// section anchor (still routed through Lenis's intercepted anchor click,
+// same as before), a real page route (a case study — a plain <a> would
+// force a full reload, so this is the one case that needs next/link),
+// and an external URL (a side project's real/placeholder href, opened in
+// a new tab). data-command-id stays on every variant either way — it's
+// what handleKeydownInList's Enter-to-select re-click depends on, and
+// next/link forwards unknown props straight to its rendered <a>.
+function ResultRow({
+  item,
+  active,
+  isHome,
+  language,
+  onSelect,
+  onHover,
+}: {
+  item: CommandItem;
+  active: boolean;
+  isHome: boolean;
+  language: Language;
+  onSelect: () => void;
+  onHover: () => void;
+}) {
+  const className = `flex items-center justify-between rounded-lg px-3 py-2.5 font-mono text-sm transition-colors ${
+    active ? "bg-accent/10 text-accent" : "text-text-primary hover:bg-accent/5"
+  }`;
+  const content = (
+    <>
+      {t(item.label, language)}
+      <span className="font-mono text-[length:var(--text-2xs)] uppercase tracking-[0.15em] text-text-muted">
+        {t(item.badge, language)}
+      </span>
+    </>
+  );
+  const sharedProps = {
+    id: `command-option-${item.id}`,
+    role: "option" as const,
+    "aria-selected": active,
+    "data-command-id": item.id,
+    onClick: onSelect,
+    onMouseEnter: onHover,
+    className,
+  };
+
+  if (item.href.startsWith("#")) {
+    return (
+      <a href={isHome ? item.href : `/${item.href}`} {...sharedProps}>
+        {content}
+      </a>
+    );
+  }
+  if (item.href.startsWith("http")) {
+    return (
+      <a href={item.href} target="_blank" rel="noopener noreferrer" {...sharedProps}>
+        {content}
+      </a>
+    );
+  }
+  return (
+    <Link href={item.href} {...sharedProps}>
+      {content}
+    </Link>
+  );
 }
 
 export function CommandPalette() {
@@ -34,14 +100,16 @@ export function CommandPalette() {
   // when the palette is opened from the homepage itself.
   const isHome = usePathname() === "/";
 
-  // Matches against `id` as well as the visible label — the label is each
-  // section's short eyebrow ("Capabilities"), which doesn't always share a
-  // word with the more obvious thing someone would type (its id, "stack",
-  // shown right in the row as "#stack").
+  // Matches against the badge too, not just label/id — a project's badge
+  // is its real category ("GRC Platform"), a skill's is its real group
+  // ("Backend & Data"), so typing either finds entries whose *label*
+  // doesn't contain the word at all (e.g. "backend" surfacing every
+  // backend skill).
   const normalizedQuery = query.trim().toLowerCase();
   const results = commandItems.filter(
     (item) =>
       t(item.label, language).toLowerCase().includes(normalizedQuery) ||
+      t(item.badge, language).toLowerCase().includes(normalizedQuery) ||
       item.id.toLowerCase().includes(normalizedQuery),
   );
 
@@ -136,8 +204,15 @@ export function CommandPalette() {
             aria-modal="true"
             aria-label={t(strings.commandPalette.openLabel, language)}
           >
-            <div className="flex items-center gap-3 border-b border-line/40 px-4 py-3">
-              <Search className="h-4 w-4 shrink-0 text-text-muted" aria-hidden="true" />
+            {/* focus-within, not :focus on the input itself — the row is
+                the visual "field" (icon + text + clear button together),
+                so the whole row should light up when any part of it has
+                focus, not just the text caret. */}
+            <div className="group flex items-center gap-3 border-b border-line/40 px-4 py-3 transition-colors focus-within:border-accent/60">
+              <Search
+                className="h-4 w-4 shrink-0 text-text-muted transition-colors group-focus-within:text-accent"
+                aria-hidden="true"
+              />
               <input
                 ref={inputRef}
                 type="text"
@@ -152,9 +227,35 @@ export function CommandPalette() {
                 placeholder={t(strings.commandPalette.placeholder, language)}
                 className="w-full bg-transparent font-mono text-sm text-text-primary placeholder:text-text-muted focus:outline-none"
               />
+              {query.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleQueryChange("");
+                    inputRef.current?.focus();
+                  }}
+                  aria-label={t(strings.commandPalette.clearLabel, language)}
+                  className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-text-muted transition-colors hover:text-accent"
+                >
+                  <X className="h-3.5 w-3.5" aria-hidden="true" />
+                </button>
+              )}
             </div>
 
-            <div id="command-palette-listbox" role="listbox" className="max-h-72 overflow-y-auto p-2">
+            {/* data-lenis-prevent: useModalA11y's lenis.stop() (see that
+                file) keeps the *background page* from scrolling while
+                this is open, but Lenis's own wheel handler still checks
+                every scroll target's ancestor chain for this exact
+                attribute regardless of stop()/start() state — without
+                it, wheel input over this list was being swallowed the
+                same way the background scroll used to be, just one level
+                further in, instead of scrolling this list natively. */}
+            <div
+              id="command-palette-listbox"
+              role="listbox"
+              data-lenis-prevent
+              className="max-h-72 overflow-y-auto p-2"
+            >
               {normalizedQuery === strings.commandPalette.sudoQuery ? (
                 <p className="px-3 py-6 text-center font-mono text-xs text-text-muted">
                   {t(strings.commandPalette.sudoJoke, language)}
@@ -165,24 +266,15 @@ export function CommandPalette() {
                 </p>
               ) : (
                 results.map((item, i) => (
-                  <a
+                  <ResultRow
                     key={item.id}
-                    id={`command-option-${item.id}`}
-                    role="option"
-                    aria-selected={i === activeIndex}
-                    href={isHome ? `#${item.id}` : `/#${item.id}`}
-                    data-command-id={item.id}
-                    onClick={closePalette}
-                    onMouseEnter={() => setActiveIndex(i)}
-                    className={`flex items-center justify-between rounded-lg px-3 py-2.5 font-mono text-sm transition-colors ${
-                      i === activeIndex ? "bg-accent/10 text-accent" : "text-text-primary hover:bg-accent/5"
-                    }`}
-                  >
-                    {t(item.label, language)}
-                    <span className="font-mono text-[length:var(--text-2xs)] uppercase tracking-[0.15em] text-text-muted">
-                      {`#${item.id}`}
-                    </span>
-                  </a>
+                    item={item}
+                    active={i === activeIndex}
+                    isHome={isHome}
+                    language={language}
+                    onSelect={closePalette}
+                    onHover={() => setActiveIndex(i)}
+                  />
                 ))
               )}
             </div>
