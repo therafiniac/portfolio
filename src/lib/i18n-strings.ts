@@ -291,6 +291,15 @@ export const strings = {
     } satisfies Localized,
     clearLabel: { en: 'Clear search', bn: 'সার্চ মুছুন' } satisfies Localized,
     noResults: { en: 'No matches', bn: 'কোনো ফলাফল নেই' } satisfies Localized,
+    // Shown instead of noResults once there's an actual query with zero
+    // curated section matches — Enter at that point falls back to
+    // window.find() (see CommandPalette.tsx), so this tells the visitor
+    // that typing something specific and hitting Enter still does
+    // something instead of reading as a dead end.
+    findOnPage: {
+      en: 'Press Enter to find it on this page',
+      bn: 'এই পাতায় খুঁজতে Enter চাপুন',
+    } satisfies Localized,
     // Typing this exact string is the one query that isn't really a
     // search — a dev-humor easter egg for the same audience segment the
     // console log rewards, just found through the palette instead of

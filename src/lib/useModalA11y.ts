@@ -70,7 +70,15 @@ export function useModalA11y(open: boolean, dialogRef: RefObject<HTMLElement | n
       dialog.removeEventListener("keydown", handleKeydown);
       document.body.style.overflow = previousOverflow;
       inertedSiblings.forEach((el) => el.removeAttribute("inert"));
-      previouslyFocused.current?.focus();
+      // Deferred one frame, not called synchronously here: closing via
+      // Enter/Space on a focusable trigger (e.g. CommandPalette's own
+      // Enter-to-select) reopened the dialog immediately when this ran
+      // synchronously — moving focus onto a <button> while that same
+      // physical keypress was still being handled made Chromium treat it
+      // as "Enter activated the newly-focused button" and re-fire its
+      // click. By the next frame the original keydown has fully finished
+      // dispatching, so there's nothing left for the browser to redirect.
+      requestAnimationFrame(() => previouslyFocused.current?.focus());
       lenis?.start();
     };
   }, [open, dialogRef, lenis]);

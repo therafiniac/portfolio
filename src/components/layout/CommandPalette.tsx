@@ -2,12 +2,11 @@
 
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { usePathname } from "next/navigation";
-import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Search, X } from "lucide-react";
-import { commandItems, type CommandItem } from "@/lib/data/commandPalette";
+import { commandItems } from "@/lib/data/commandPalette";
 import { useModalA11y } from "@/lib/useModalA11y";
-import { useLanguage, type Language } from "@/lib/useLanguage";
+import { useLanguage } from "@/lib/useLanguage";
 import { t } from "@/lib/i18n";
 import { strings } from "@/lib/i18n-strings";
 
@@ -19,71 +18,6 @@ const OPEN_EVENT = "command-palette:open";
 // layout.tsx.
 export function openCommandPalette() {
   window.dispatchEvent(new Event(OPEN_EVENT));
-}
-
-// Three different destinations share one result list now: a same-page
-// section anchor (still routed through Lenis's intercepted anchor click,
-// same as before), a real page route (a case study — a plain <a> would
-// force a full reload, so this is the one case that needs next/link),
-// and an external URL (a side project's real/placeholder href, opened in
-// a new tab). data-command-id stays on every variant either way — it's
-// what handleKeydownInList's Enter-to-select re-click depends on, and
-// next/link forwards unknown props straight to its rendered <a>.
-function ResultRow({
-  item,
-  active,
-  isHome,
-  language,
-  onSelect,
-  onHover,
-}: {
-  item: CommandItem;
-  active: boolean;
-  isHome: boolean;
-  language: Language;
-  onSelect: () => void;
-  onHover: () => void;
-}) {
-  const className = `flex items-center justify-between rounded-lg px-3 py-2.5 font-mono text-sm transition-colors ${
-    active ? "bg-accent/10 text-accent" : "text-text-primary hover:bg-accent/5"
-  }`;
-  const content = (
-    <>
-      {t(item.label, language)}
-      <span className="font-mono text-[length:var(--text-2xs)] uppercase tracking-[0.15em] text-text-muted">
-        {t(item.badge, language)}
-      </span>
-    </>
-  );
-  const sharedProps = {
-    id: `command-option-${item.id}`,
-    role: "option" as const,
-    "aria-selected": active,
-    "data-command-id": item.id,
-    onClick: onSelect,
-    onMouseEnter: onHover,
-    className,
-  };
-
-  if (item.href.startsWith("#")) {
-    return (
-      <a href={isHome ? item.href : `/${item.href}`} {...sharedProps}>
-        {content}
-      </a>
-    );
-  }
-  if (item.href.startsWith("http")) {
-    return (
-      <a href={item.href} target="_blank" rel="noopener noreferrer" {...sharedProps}>
-        {content}
-      </a>
-    );
-  }
-  return (
-    <Link href={item.href} {...sharedProps}>
-      {content}
-    </Link>
-  );
 }
 
 export function CommandPalette() {
@@ -100,17 +34,20 @@ export function CommandPalette() {
   // when the palette is opened from the homepage itself.
   const isHome = usePathname() === "/";
 
-  // Matches against the badge too, not just label/id — a project's badge
-  // is its real category ("GRC Platform"), a skill's is its real group
-  // ("Backend & Data"), so typing either finds entries whose *label*
-  // doesn't contain the word at all (e.g. "backend" surfacing every
-  // backend skill).
+  // Matches against badge and keywords too, not just label/id — a
+  // project's badge is its real category ("GRC Platform"), a section's
+  // keywords are the real project/skill/role names that live inside it
+  // but don't get their own row (see commandPalette.ts). Typing a
+  // specific term like "mongodb" or "auditpulse" surfaces the *section*
+  // that actually contains it instead of "No matches", without listing
+  // every one of those terms as its own separate result.
   const normalizedQuery = query.trim().toLowerCase();
   const results = commandItems.filter(
     (item) =>
       t(item.label, language).toLowerCase().includes(normalizedQuery) ||
       t(item.badge, language).toLowerCase().includes(normalizedQuery) ||
-      item.id.toLowerCase().includes(normalizedQuery),
+      item.id.toLowerCase().includes(normalizedQuery) ||
+      item.keywords.some((keyword) => keyword.toLowerCase().includes(normalizedQuery)),
   );
 
   // Resets live at the call site that actually causes them (opening the
@@ -166,6 +103,20 @@ export function CommandPalette() {
   // directly — that keeps keyboard selection going through the exact same
   // Lenis-intercepted smooth-scroll a real click gets (see SmoothScroll.tsx
   // — anchors: true), instead of a jarring native jump.
+  //
+  // No curated section match (a typed word/phrase that isn't one of the
+  // 7 section names or their known keywords — e.g. text copied straight
+  // out of a project description) used to just leave the palette sitting
+  // open with nothing to do. window.find() is the browser's own "find on
+  // this page" — it searches the actual rendered text of whatever page is
+  // currently loaded and scrolls/highlights the first match natively, so
+  // this covers real page content the curated list was never meant to
+  // enumerate. It only searches the current page's DOM, not other routes
+  // (case-study pages), which matches this site's single-page-plus-case-
+  // studies shape. The timeout waits out the palette's own 150ms exit
+  // fade — without it, window.find can match text inside the still-
+  // visible-mid-fade palette itself (its own placeholder/hint labels)
+  // instead of the page content underneath.
   function handleKeydownInList(e: KeyboardEvent<HTMLInputElement>) {
     if (e.key === "ArrowDown") {
       e.preventDefault();
@@ -175,8 +126,16 @@ export function CommandPalette() {
       setActiveIndex((i) => Math.max(i - 1, 0));
     } else if (e.key === "Enter") {
       const target = results[activeIndex];
-      if (!target) return;
-      document.querySelector<HTMLAnchorElement>(`a[data-command-id="${target.id}"]`)?.click();
+      if (target) {
+        document.querySelector<HTMLAnchorElement>(`a[data-command-id="${target.id}"]`)?.click();
+      } else if (normalizedQuery) {
+        const searchText = query.trim();
+        // Not in this project's configured DOM lib (a legacy, non-
+        // standard API), but still implemented by every major browser —
+        // the cast is narrower than `any`, just enough to call it.
+        const legacyWindow = window as unknown as { find?: (text: string) => boolean };
+        setTimeout(() => legacyWindow.find?.(searchText), 200);
+      }
       closePalette();
     }
   }
@@ -262,19 +221,28 @@ export function CommandPalette() {
                 </p>
               ) : results.length === 0 ? (
                 <p className="px-3 py-6 text-center font-mono text-xs text-text-muted">
-                  {t(strings.commandPalette.noResults, language)}
+                  {t(normalizedQuery ? strings.commandPalette.findOnPage : strings.commandPalette.noResults, language)}
                 </p>
               ) : (
                 results.map((item, i) => (
-                  <ResultRow
+                  <a
                     key={item.id}
-                    item={item}
-                    active={i === activeIndex}
-                    isHome={isHome}
-                    language={language}
-                    onSelect={closePalette}
-                    onHover={() => setActiveIndex(i)}
-                  />
+                    id={`command-option-${item.id}`}
+                    role="option"
+                    aria-selected={i === activeIndex}
+                    href={isHome ? `#${item.id}` : `/#${item.id}`}
+                    data-command-id={item.id}
+                    onClick={closePalette}
+                    onMouseEnter={() => setActiveIndex(i)}
+                    className={`flex items-center justify-between rounded-lg px-3 py-2.5 font-mono text-sm transition-colors ${
+                      i === activeIndex ? "bg-accent/10 text-accent" : "text-text-primary hover:bg-accent/5"
+                    }`}
+                  >
+                    {t(item.label, language)}
+                    <span className="font-mono text-[length:var(--text-2xs)] uppercase tracking-[0.15em] text-text-muted">
+                      {t(item.badge, language)}
+                    </span>
+                  </a>
                 ))
               )}
             </div>
