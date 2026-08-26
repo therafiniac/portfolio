@@ -145,19 +145,41 @@ export function Experience() {
               <div className="hover-glow-panel relative grid grid-cols-1 gap-2 overflow-hidden rounded-xl border border-line/60 p-5 transition-colors duration-300 group-hover:border-accent/60 md:grid-cols-[200px_1fr] md:gap-8 md:p-6">
                 <TileGlow />
                 <div>
-                  <p className="font-mono text-xs uppercase tracking-[0.15em] text-accent-secondary">
+                  {/* De-emphasized against the duration below it — a plain
+                      date range is metadata, not the thing worth scanning
+                      for first. */}
+                  <p className="font-mono text-[length:var(--text-2xs)] uppercase tracking-[0.1em] text-text-muted">
                     {formatEntryDate(entry.start, language)} — {formatEntryDate(entry.end, language)}
                   </p>
-                  <p className="mt-0.5 font-mono text-[length:var(--text-2xs)] uppercase tracking-[0.1em] text-text-muted">
+                  {/* The card's one "big number" — same focal-point role
+                      Hero's stat row gives a figure elsewhere on the page,
+                      matched here at the same plain (non-bold) weight
+                      Hero's own stat numbers use (`font-mono text-2xl
+                      text-accent-secondary`, no font-semibold) rather than
+                      inventing a heavier one-off style, and one size down
+                      since this sits embedded in a denser card instead of
+                      standing alone. */}
+                  <p className="mt-1 font-mono text-lg text-accent-secondary">
                     {formatDuration(entry.start, entry.end, language)}
                   </p>
                 </div>
                 <div>
-                  <h3 className="text-text-primary">
-                    {t(entry.role, language)} <span className="text-text-muted">· {entry.org}</span>
-                  </h3>
+                  {/* The role is the card's actual headline now — sized and
+                      weighted to dominate, with the org name demoted to
+                      its own quieter line below instead of sharing one
+                      flat line with it. */}
+                  {/* font-mono, not the body-text default (Inter) — this
+                      is a real headline now (sized to dominate the card),
+                      and AGENTS.md's type rule reserves mono for
+                      headlines/display text specifically, same as Hero's
+                      name and CaseStudy's h1. Regular weight, no
+                      font-semibold — matches SideProjects.tsx's own
+                      mono name treatment (font-mono text-lg/xl/2xl,
+                      no explicit weight), the site's established
+                      convention for this size of mono heading. */}
+                  <h3 className="font-mono text-xl text-text-primary md:text-2xl">{t(entry.role, language)}</h3>
                   <p className="mt-1 font-mono text-xs uppercase tracking-[0.1em] text-text-muted">
-                    {t(entry.location, language)}
+                    {entry.org} · {t(entry.location, language)}
                   </p>
                   <ul className="mt-3 space-y-1.5 text-sm text-text-muted">
                     {entry.highlights.map((highlight) => (
