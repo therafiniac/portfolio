@@ -273,6 +273,23 @@ html::-webkit-scrollbar {
   mix-blend-mode: normal;
 }
 
+/* Native View Transitions (the work-cover-<slug> morph in
+   ClientWork.tsx/CaseStudy.tsx) aren't auto-disabled by prefers-reduced-
+   motion the way every other animation in this file already is —
+   ThemeToggle.tsx's own circle-wipe sidesteps this by never calling
+   startViewTransition under reduced motion in the first place (see its
+   own matchMedia check), but App Router's automatic route-level
+   ViewTransition has no equivalent per-navigation JS gate, so this is
+   the only enforcement point for the route morph. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
+
 /* Crisp, mostly-opaque surface with a thin high-contrast border and a
    subtle inset top highlight — closer to Vercel/Linear's "engineered"
    card language than a soft blurred glass sheet. Named glass-panel for

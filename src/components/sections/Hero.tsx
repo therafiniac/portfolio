@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import { HeroCanvasLoader } from "@/components/three/HeroCanvasLoader";
 import { HeroMark3DLoader } from "@/components/three/HeroMark3DLoader";
 import { CountUp } from "@/components/layout/CountUp";
@@ -83,6 +83,19 @@ const roleColors = ["text-accent", "text-accent-secondary"];
 export function Hero() {
   const language = useLanguage();
 
+  // Two different rates/directions so the blobs visibly separate as the
+  // reader scrolls past Hero — a depth cue aurora-drift alone can't give,
+  // since that keyframe only wobbles each blob in place (see
+  // globals.css). Pinned to [0, 0] under reduced motion: MotionConfig's
+  // reducedMotion="user" (layout.tsx) governs Framer's animate/variants
+  // controls, not a raw useTransform value plumbed into a style prop, so
+  // this needs the same explicit useReducedMotion() guard CountUp.tsx
+  // uses rather than relying on that global config alone.
+  const { scrollY } = useScroll();
+  const reducedMotion = useReducedMotion();
+  const blobOneY = useTransform(scrollY, [0, 800], reducedMotion ? [0, 0] : [0, -120]);
+  const blobTwoY = useTransform(scrollY, [0, 800], reducedMotion ? [0, 0] : [0, 80]);
+
   return (
     <section
       id="top"
@@ -106,8 +119,12 @@ export function Hero() {
           container level or it prints as an uncontrolled splash of
           color regardless of any stylesheet override. */}
       <div className="pointer-events-none absolute inset-0 print:hidden" aria-hidden="true">
-        <div className="aurora-blob absolute left-32 top-[22%] h-96 w-96 rounded-full bg-accent/20 blur-[120px]" />
-        <div className="aurora-blob absolute bottom-[8%] left-[18%] h-96 w-96 rounded-full bg-accent-secondary/14 blur-[120px] [animation-delay:-9s]" />
+        <motion.div style={{ y: blobOneY }} className="absolute left-32 top-[22%] h-96 w-96">
+          <div className="aurora-blob h-full w-full rounded-full bg-accent/20 blur-[120px]" />
+        </motion.div>
+        <motion.div style={{ y: blobTwoY }} className="absolute bottom-[8%] left-[18%] h-96 w-96">
+          <div className="aurora-blob h-full w-full rounded-full bg-accent-secondary/14 blur-[120px] [animation-delay:-9s]" />
+        </motion.div>
         <HeroCanvasLoader />
       </div>
 
