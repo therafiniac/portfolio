@@ -1,6 +1,13 @@
 @import "tailwindcss";
 
 :root {
+  /* Tells the browser this page fully owns its own light/dark rendering
+     (matching the data-theme toggle below) so it stops applying its own
+     auto-darkening heuristic (Android/Chromium "force dark") on top of
+     ours — that heuristic doesn't understand the gradient-heading
+     background-clip:text trick and was repainting it with its own
+     darkened guess instead of leaving the gradient alone. */
+  color-scheme: dark;
   --bg: #11111b;
   --surface: #181825;
   --line: #45475a;
@@ -58,6 +65,7 @@
 }
 
 :root[data-theme="light"] {
+  color-scheme: light;
   --bg: #dce0e8;
   --surface: #e6e9ef;
   --line: #bcc0cc;
@@ -263,6 +271,23 @@ html::-webkit-scrollbar {
 ::view-transition-new(root) {
   animation: none;
   mix-blend-mode: normal;
+}
+
+/* Native View Transitions (the work-cover-<slug> morph in
+   ClientWork.tsx/CaseStudy.tsx) aren't auto-disabled by prefers-reduced-
+   motion the way every other animation in this file already is —
+   ThemeToggle.tsx's own circle-wipe sidesteps this by never calling
+   startViewTransition under reduced motion in the first place (see its
+   own matchMedia check), but App Router's automatic route-level
+   ViewTransition has no equivalent per-navigation JS gate, so this is
+   the only enforcement point for the route morph. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
 }
 
 /* Crisp, mostly-opaque surface with a thin high-contrast border and a

@@ -1,5 +1,6 @@
 "use client";
 
+import { ViewTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, Hourglass } from "lucide-react";
@@ -9,7 +10,7 @@ import { TileGlow } from "@/components/ui/TileGlow";
 import { TechChip } from "@/components/ui/TechChip";
 import { FieldLabel } from "@/components/ui/FieldLabel";
 import { WorkFillerTile } from "@/components/sections/WorkFillerTile";
-import { clientProjects } from "@/lib/data/clientWork";
+import { clientProjects, workCoverTransitionName } from "@/lib/data/clientWork";
 import { heroStats } from "@/lib/data/hero";
 import { UNDER_CONSTRUCTION_HREF } from "@/lib/placeholderLink";
 import type { ClientProject, Localized } from "@/types";
@@ -93,20 +94,22 @@ function WorkCard({ project }: { project: ClientProject }) {
             aria-hidden="true"
           />
         </div>
-        <Image
-          src={project.coverImage}
-          alt={`${t(project.name, language)} ${t(strings.clientWork.preview, language)}`}
-          fill
-          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-          className="object-cover opacity-100 transition-opacity duration-300 md:opacity-0 md:group-hover:opacity-100"
-        />
+        <ViewTransition name={workCoverTransitionName(project.slug)} share="morph" default="none">
+          <Image
+            src={project.coverImage}
+            alt={`${t(project.name, language)} ${t(strings.clientWork.preview, language)}`}
+            fill
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            className="object-cover opacity-100 transition-opacity duration-300 md:opacity-0 md:group-hover:opacity-100"
+          />
+        </ViewTransition>
       </div>
       <div className="flex min-h-36 flex-col p-6">
         <FieldLabel>{t(project.category, language)}</FieldLabel>
         <h3 className="mt-1 flex items-center gap-1 text-base text-text-primary">
           {t(project.name, language)}
           <ArrowUpRight
-            className="h-3.5 w-3.5 -translate-x-1 opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100"
+            className="h-3.5 w-3.5 translate-x-0 opacity-100 transition-all duration-200 md:-translate-x-1 md:opacity-0 md:group-hover:translate-x-0 md:group-hover:opacity-100"
             aria-hidden="true"
           />
         </h3>
