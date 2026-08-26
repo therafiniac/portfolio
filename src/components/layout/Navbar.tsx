@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
-import { Menu, Search, X } from "lucide-react";
+import { ArrowUpRight, Menu, Search, X } from "lucide-react";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { LanguageToggle } from "@/components/layout/LanguageToggle";
 import { BrandMark } from "@/components/layout/BrandMark";
 import { openCommandPalette } from "@/components/layout/CommandPalette";
+import { useModalA11y } from "@/lib/useModalA11y";
 import { navLinks } from "@/lib/data/nav";
 import { wordmark } from "@/lib/data/hero";
 import { useLanguage } from "@/lib/useLanguage";
@@ -65,10 +66,26 @@ function useActiveSection() {
   return activeId;
 }
 
+// Same stagger shape Hero.tsx's own entrance uses — reused here rather
+// than inventing a second motion vocabulary for what's ultimately the
+// same idea (a list of things appearing in sequence, not all at once).
+const menuContainer = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.05, delayChildren: 0.04 } },
+};
+
+const menuItem = {
+  hidden: { opacity: 0, y: 8 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.25, ease: "easeOut" as const } },
+};
+
 export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const activeId = useActiveSection();
   const language = useLanguage();
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+
+  useModalA11y(menuOpen, mobileMenuRef);
   // These hrefs are bare "#work"-style fragments so Lenis's anchors:true
   // (SmoothScroll.tsx) can intercept them for an eased same-page scroll —
   // that only resolves on the homepage itself, though. From a case-study
@@ -172,40 +189,86 @@ export function Navbar() {
 
       <AnimatePresence>
         {menuOpen && (
-          <motion.nav
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.2 }}
-            // nav-mobile-menu (globals.css) carries the actual `position:
-            // absolute` — this used to sit in normal document flow after
-            // the header's own row, so opening it pushed every section
-            // below down the page (a real layout shift, not just visual).
-            // A Tailwind `absolute` utility here doesn't work: nav-glass
-            // sets its own plain-CSS `position: relative` which silently
-            // wins over a layered Tailwind utility regardless of class
-            // order (see nav-mobile-menu's comment in globals.css).
-            className="nav-glass nav-mobile-menu z-10 mt-2 flex flex-col gap-1 rounded-2xl p-3 sm:hidden"
-          >
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={resolveHref(link.href)}
+          <>
+            {/* Dimming backdrop — gives the panel real separation from
+                Hero's large headline sitting right behind it (nav-glass's
+                92%-opacity/20px-blur look is right for the always-visible
+                desktop bar, but read as unfinished for a panel someone is
+                actively reading), and doubles as a tap-outside-to-dismiss
+                target. Painted within header's own z-40 stacking context
+                (position:sticky + z-index create one), so this still
+                composites above ordinary page content despite being a
+                nested child rather than a portal. */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              aria-hidden="true"
+              onClick={() => setMenuOpen(false)}
+              className="fixed inset-0 z-0 bg-bg/60 backdrop-blur-sm sm:hidden"
+            />
+            <motion.nav
+              ref={mobileMenuRef}
+              variants={menuContainer}
+              initial="hidden"
+              animate="show"
+              exit="hidden"
+              onKeyDown={(event) => {
+                if (event.key === "Escape") setMenuOpen(false);
+              }}
+              // nav-mobile-menu (globals.css) carries the actual `position:
+              // absolute` — this used to sit in normal document flow after
+              // the header's own row, so opening it pushed every section
+              // below down the page (a real layout shift, not just visual).
+              // A Tailwind `absolute` utility here doesn't work: nav-glass
+              // sets its own plain-CSS `position: relative` which silently
+              // wins over a layered Tailwind utility regardless of class
+              // order (see nav-mobile-menu's comment in globals.css).
+              // nav-mobile-menu-panel bumps the background opacity above
+              // nav-glass's default for the same cascade-layer reason —
+              // see that class's own comment in globals.css.
+              className="nav-glass nav-mobile-menu nav-mobile-menu-panel z-10 mt-2 flex flex-col gap-1 overflow-hidden rounded-2xl p-3 sm:hidden"
+            >
+              {/* A visible touch of --gradient-signature — AGENTS.md calls
+                  for reusing it deliberately and repeatedly, not just on
+                  the one Hero CTA — rather than another neutral hairline. */}
+              <span
+                aria-hidden="true"
+                className="absolute inset-x-3 top-0 h-px"
+                style={{ backgroundImage: "var(--gradient-signature)" }}
+              />
+              {navLinks.map((link) => (
+                <motion.a
+                  key={link.href}
+                  variants={menuItem}
+                  href={resolveHref(link.href)}
+                  onClick={() => setMenuOpen(false)}
+                  aria-current={activeId === link.id ? "true" : undefined}
+                  className={`relative rounded-lg px-3 py-3 font-mono text-sm uppercase tracking-[0.15em] transition-colors hover:text-accent ${
+                    activeId === link.id
+                      ? "nav-active-text-glow font-medium text-accent"
+                      : "text-text-muted"
+                  }`}
+                >
+                  {activeId === link.id && (
+                    <span aria-hidden="true" className="nav-active-torch pointer-events-none absolute -inset-4 -z-10" />
+                  )}
+                  {t(link.label, language)}
+                </motion.a>
+              ))}
+              <motion.a
+                variants={menuItem}
+                href={resolveHref("#contact")}
                 onClick={() => setMenuOpen(false)}
-                aria-current={activeId === link.id ? "true" : undefined}
-                className={`relative rounded-lg px-3 py-2 font-mono text-xs uppercase tracking-[0.15em] transition-colors hover:text-accent ${
-                  activeId === link.id
-                    ? "nav-active-text-glow font-medium text-accent"
-                    : "text-text-muted"
-                }`}
+                className="mt-1 flex items-center justify-between rounded-lg px-3 py-3 font-mono text-sm text-bg"
+                style={{ backgroundImage: "var(--gradient-signature)" }}
               >
-                {activeId === link.id && (
-                  <span aria-hidden="true" className="nav-active-torch pointer-events-none absolute -inset-4 -z-10" />
-                )}
-                {t(link.label, language)}
-              </a>
-            ))}
-          </motion.nav>
+                {t(strings.hero.getInTouch, language)}
+                <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+              </motion.a>
+            </motion.nav>
+          </>
         )}
       </AnimatePresence>
     </header>

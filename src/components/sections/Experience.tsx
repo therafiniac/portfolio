@@ -3,6 +3,7 @@
 import { GraduationCap } from "lucide-react";
 import { Section } from "@/components/layout/Section";
 import { TechChip } from "@/components/ui/TechChip";
+import { TileGlow } from "@/components/ui/TileGlow";
 import { experience } from "@/lib/data/experience";
 import { education } from "@/lib/data/education";
 import type { Language } from "@/lib/useLanguage";
@@ -115,17 +116,17 @@ export function Experience() {
         {experience.map((entry) => {
           const isCurrent = entry.end === "Present";
           return (
-            <div
-              key={`${entry.org}-${entry.start}`}
-              className="relative grid grid-cols-1 gap-2 pl-8 md:grid-cols-[200px_1fr] md:gap-8"
-            >
+            <div key={`${entry.org}-${entry.start}`} className="group relative pl-8">
               {/* Current role gets the same pulsing --status-live treatment
                   as the Hero status dot and the live GitHub stat — it's a
                   genuinely live/ongoing status, the token's actual role,
                   not a repurposed accent color. The shadow color-mixes
                   the same token rather than a hardcoded rgb() literal —
                   a literal baked in the dark-theme hex would silently
-                  mismatch the actual (different) light-theme color. */}
+                  mismatch the actual (different) light-theme color. Stays
+                  on the timeline itself, outside the card below, so it
+                  still reads as a node on the trail rather than becoming
+                  another piece of card content. */}
               <span
                 className={`absolute left-0 top-1.5 h-[10px] w-[10px] rounded-full ${
                   isCurrent
@@ -134,35 +135,67 @@ export function Experience() {
                 }`}
                 aria-hidden="true"
               />
-              <div>
-                <p className="font-mono text-xs uppercase tracking-[0.15em] text-accent-secondary">
-                  {formatEntryDate(entry.start, language)} — {formatEntryDate(entry.end, language)}
-                </p>
-                <p className="mt-0.5 font-mono text-[length:var(--text-2xs)] uppercase tracking-[0.1em] text-text-muted">
-                  {formatDuration(entry.start, entry.end, language)}
-                </p>
-              </div>
-              <div>
-                <h3 className="text-text-primary">
-                  {t(entry.role, language)} <span className="text-text-muted">· {entry.org}</span>
-                </h3>
-                <p className="mt-1 font-mono text-xs uppercase tracking-[0.1em] text-text-muted">
-                  {t(entry.location, language)}
-                </p>
-                <ul className="mt-3 space-y-1.5 text-sm text-text-muted">
-                  {entry.highlights.map((highlight) => (
-                    <li key={highlight.en} className="flex gap-3">
-                      <span className="text-accent-secondary" aria-hidden="true">
-                        →
-                      </span>
-                      <span>{renderHighlight(t(highlight, language), language)}</span>
-                    </li>
-                  ))}
-                </ul>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {entry.tech.map((tech) => (
-                    <TechChip key={tech}>{tech}</TechChip>
-                  ))}
+              {/* Same hover-glow-panel/TileGlow treatment ClientWork's
+                  project cards and HowIBuild's approach tiles use — this
+                  was the one section left reading as a plain text timeline
+                  rather than a bespoke surface, next to the rest of the
+                  page's card-based sections. Non-interactive (no href),
+                  but the same "lit from within" hover cue still applies
+                  as a purely decorative cue, same as HowIBuild's tiles. */}
+              <div className="hover-glow-panel relative grid grid-cols-1 gap-2 overflow-hidden rounded-xl border border-line/60 p-5 transition-colors duration-300 group-hover:border-accent/60 md:grid-cols-[200px_1fr] md:gap-8 md:p-6">
+                <TileGlow />
+                <div>
+                  {/* De-emphasized against the duration below it — a plain
+                      date range is metadata, not the thing worth scanning
+                      for first. */}
+                  <p className="font-mono text-[length:var(--text-2xs)] uppercase tracking-[0.1em] text-text-muted">
+                    {formatEntryDate(entry.start, language)} — {formatEntryDate(entry.end, language)}
+                  </p>
+                  {/* The card's one "big number" — same focal-point role
+                      Hero's stat row gives a figure elsewhere on the page,
+                      matched here at the same plain (non-bold) weight
+                      Hero's own stat numbers use (`font-mono text-2xl
+                      text-accent-secondary`, no font-semibold) rather than
+                      inventing a heavier one-off style, and one size down
+                      since this sits embedded in a denser card instead of
+                      standing alone. */}
+                  <p className="mt-1 font-mono text-lg text-accent-secondary">
+                    {formatDuration(entry.start, entry.end, language)}
+                  </p>
+                </div>
+                <div>
+                  {/* The role is the card's actual headline now — sized and
+                      weighted to dominate, with the org name demoted to
+                      its own quieter line below instead of sharing one
+                      flat line with it. */}
+                  {/* font-mono, not the body-text default (Inter) — this
+                      is a real headline now (sized to dominate the card),
+                      and AGENTS.md's type rule reserves mono for
+                      headlines/display text specifically, same as Hero's
+                      name and CaseStudy's h1. Regular weight, no
+                      font-semibold — matches SideProjects.tsx's own
+                      mono name treatment (font-mono text-lg/xl/2xl,
+                      no explicit weight), the site's established
+                      convention for this size of mono heading. */}
+                  <h3 className="font-mono text-xl text-text-primary md:text-2xl">{t(entry.role, language)}</h3>
+                  <p className="mt-1 font-mono text-xs uppercase tracking-[0.1em] text-text-muted">
+                    {entry.org} · {t(entry.location, language)}
+                  </p>
+                  <ul className="mt-3 space-y-1.5 text-sm text-text-muted">
+                    {entry.highlights.map((highlight) => (
+                      <li key={highlight.en} className="flex gap-3">
+                        <span className="text-accent-secondary" aria-hidden="true">
+                          →
+                        </span>
+                        <span>{renderHighlight(t(highlight, language), language)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {entry.tech.map((tech) => (
+                      <TechChip key={tech}>{tech}</TechChip>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>

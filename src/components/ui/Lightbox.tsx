@@ -1,9 +1,29 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import { useModalA11y } from "@/lib/useModalA11y";
+import { useLanguage } from "@/lib/useLanguage";
+import { t } from "@/lib/i18n";
+import { strings } from "@/lib/i18n-strings";
+
+// Same useSyncExternalStore idiom useLanguage.ts/useTheme.ts already use
+// for "read something only the client knows" — the React-recommended
+// way to get a stable, non-cascading-render "has this mounted on the
+// client yet" flag (needed below since document.body doesn't exist
+// during SSR, so the portal can only render once mounted).
+function subscribe() {
+  return () => {};
+}
+function getSnapshot() {
+  return true;
+}
+function getServerSnapshot() {
+  return false;
+}
 
 export type LightboxImage = {
   src: string;
@@ -34,6 +54,15 @@ export function Lightbox({
 }) {
   const open = index !== null;
   const current = open ? images[index] : null;
+  const language = useLanguage();
+  const dialogRef = useRef<HTMLDivElement>(null);
+  // document.body doesn't exist during SSR — createPortal below can only
+  // run once mounted on the client. The dialog is never open on first
+  // paint (index starts null), so returning null until then is visually
+  // identical to rendering AnimatePresence with no open children.
+  const mounted = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+
+  useModalA11y(open, dialogRef);
 
   useEffect(() => {
     if (!open || index === null) return;
@@ -45,22 +74,20 @@ export function Lightbox({
     }
 
     window.addEventListener("keydown", handleKey);
-    // Locks page scroll while the overlay is open — without this, Lenis
-    // keeps driving the real page underneath while the visitor is trying
-    // to look at a still image, which reads as broken rather than modal.
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      window.removeEventListener("keydown", handleKey);
-      document.body.style.overflow = previousOverflow;
-    };
+    return () => window.removeEventListener("keydown", handleKey);
   }, [open, index, images.length, onClose, onNavigate]);
 
-  return (
+  if (!mounted) return null;
+
+  // Portaled to <body> (rather than rendered inline where CaseStudy.tsx
+  // mounts this, inside <main>) so it's a genuine sibling of <main>, not
+  // a descendant of it — useModalA11y's inert-siblings loop needs that to
+  // avoid inerting its own ancestor along with everything else.
+  return createPortal(
     <AnimatePresence>
       {open && current && index !== null && (
         <motion.div
+          ref={dialogRef}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -73,7 +100,7 @@ export function Lightbox({
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close"
+            aria-label={t(strings.lightbox.close, language)}
             className="glass-fab right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full text-text-muted transition-colors hover:text-accent"
           >
             <X className="h-4 w-4" aria-hidden="true" />
@@ -87,7 +114,7 @@ export function Lightbox({
                   event.stopPropagation();
                   onNavigate((index - 1 + images.length) % images.length);
                 }}
-                aria-label="Previous image"
+                aria-label={t(strings.lightbox.previousImage, language)}
                 className="glass-fab left-4 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full text-text-muted transition-colors hover:text-accent"
               >
                 <ChevronLeft className="h-4 w-4" aria-hidden="true" />
@@ -98,7 +125,7 @@ export function Lightbox({
                   event.stopPropagation();
                   onNavigate((index + 1) % images.length);
                 }}
-                aria-label="Next image"
+                aria-label={t(strings.lightbox.nextImage, language)}
                 className="glass-fab right-4 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full text-text-muted transition-colors hover:text-accent"
               >
                 <ChevronRight className="h-4 w-4" aria-hidden="true" />
@@ -120,6 +147,7 @@ export function Lightbox({
           )}
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }
