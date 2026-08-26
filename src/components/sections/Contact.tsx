@@ -48,7 +48,7 @@ function CopyEmailButton({ value }: { value: string }) {
       type="button"
       onClick={handleCopy}
       aria-label={t(strings.contact.copyEmail, language)}
-      className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-text-muted opacity-0 transition-opacity duration-200 group-hover:opacity-100 hover:text-accent"
+      className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-text-muted opacity-60 transition-opacity duration-200 hover:text-accent md:opacity-0 md:group-hover:opacity-100"
     >
       {copied ? (
         <Check className="h-3.5 w-3.5 text-status-live" aria-hidden="true" />
@@ -75,7 +75,7 @@ function SaveContactButton() {
       download
       aria-label={t(strings.contact.saveContact, language)}
       title={t(strings.contact.saveContact, language)}
-      className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-text-muted opacity-0 transition-opacity duration-200 group-hover:opacity-100 hover:text-accent"
+      className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-text-muted opacity-60 transition-opacity duration-200 hover:text-accent md:opacity-0 md:group-hover:opacity-100"
     >
       <Download className="h-3.5 w-3.5" aria-hidden="true" />
     </a>
