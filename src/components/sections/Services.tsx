@@ -1,5 +1,6 @@
 "use client";
 
+import { Pin } from "lucide-react";
 import { Section } from "@/components/layout/Section";
 import { services, type Service } from "@/lib/data/services";
 import { useLanguage } from "@/lib/useLanguage";
@@ -12,10 +13,16 @@ import { strings } from "@/lib/i18n-strings";
 // the wider Catppuccin decorative hues (see AGENTS.md, and --hue-* in
 // globals.css). Different rotation/offset per card keeps them reading as
 // scattered objects rather than a disguised grid.
+// Similar magnitude on all three (2.5-3deg), alternating sign — an
+// earlier -rotate-1 on the third card gave it a barely-there 1deg swing
+// next to the other two's 2-3deg, since the hover-to-upright distance
+// *is* the swing amount. Arbitrary values instead of Tailwind's fixed
+// rotate steps (1/2/3/6...) so the three can actually land close
+// together instead of being stuck on whichever step happens to exist.
 const cardStyle = [
-  { hue: "--hue-mauve", rotate: "-rotate-3", offset: "sm:mt-0" },
-  { hue: "--hue-sapphire", rotate: "rotate-2", offset: "sm:mt-10" },
-  { hue: "--hue-teal", rotate: "-rotate-1", offset: "sm:mt-4" },
+  { hue: "--hue-mauve", rotate: "-rotate-[3deg]", offset: "sm:mt-0" },
+  { hue: "--hue-sapphire", rotate: "rotate-[2.5deg]", offset: "sm:mt-10" },
+  { hue: "--hue-teal", rotate: "-rotate-[2.5deg]", offset: "sm:mt-4" },
 ];
 
 function ServiceCard({
@@ -29,31 +36,65 @@ function ServiceCard({
   const language = useLanguage();
 
   return (
-    <div
-      className={`group relative w-full max-w-[17rem] shrink-0 rounded-lg border border-line/50 bg-surface p-6 shadow-[0_24px_48px_-28px_color-mix(in_srgb,var(--shadow-color)_65%,transparent)] transition-transform duration-300 ease-out hover:-translate-y-1.5 hover:rotate-0 hover:shadow-[0_32px_60px_-24px_color-mix(in_srgb,var(--shadow-color)_70%,transparent)] ${rotate} ${offset}`}
-      style={{
-        backgroundImage: `linear-gradient(165deg, color-mix(in srgb, var(${hue}) 16%, var(--surface)), var(--surface) 70%)`,
-      }}
-    >
-      {/* The thumbtack — sells "pinned to a board" more than the
-          rotation alone does. */}
+    // group lives on this outer, never-transformed wrapper — the pin and
+    // its anchor-shadow below are positioned against *this* element, not
+    // the paper, so both stay put on the board while the paper (the
+    // actual hover:-transformed element further down) swings around them.
+    <div className={`group relative w-full max-w-[17rem] shrink-0 ${offset}`}>
+      {/* The anchor shadow — a small, tight, dark smudge sitting directly
+          on the paper's surface right under the needle tip, separate from
+          the pin's own drop-shadow and the paper's own big ambient card
+          shadow. Never transforms. */}
       <span
         aria-hidden="true"
-        className="absolute -top-2 left-1/2 h-4 w-4 -translate-x-1/2 rounded-full shadow-[0_2px_6px_color-mix(in_srgb,var(--shadow-color)_40%,transparent)]"
-        style={{ background: `var(${hue})` }}
+        className="absolute left-1/2 top-0 z-[9] h-2 w-3 -translate-x-1/2 rounded-full blur-[2px]"
+        style={{ background: "color-mix(in srgb, black 40%, transparent)" }}
       />
-      {/* No backdrop-blur here — a blurred child under a transforming
-          ancestor (this card's hover:-translate-y-1.5/rotate-0) forces
-          Chromium to recompute the backdrop every frame, which flickers
-          during the transition. */}
-      <span
-        className="flex h-10 w-10 items-center justify-center rounded-full bg-bg/50"
-        style={{ color: `var(${hue})` }}
+
+      {/* A real pushpin (lucide's Pin icon), filled solid in the card's
+          hue with a slightly darker stroke for edge definition, sized so
+          the needle tip lands right at the paper's top edge. Fixed to
+          the board: no transition, no transform, ever — only its drop-
+          shadow deepens slightly on hover (group-hover, not its own
+          :hover — the mouse is over the paper, not this small target)
+          to suggest the paper pulling against it, without the pin
+          itself moving a pixel. */}
+      <Pin
+        aria-hidden="true"
+        className="absolute -top-[22px] left-1/2 z-10 h-6 w-6 -translate-x-1/2 drop-shadow-[0_3px_4px_color-mix(in_srgb,var(--shadow-color)_55%,transparent)] transition-[filter] duration-500 group-hover:drop-shadow-[0_5px_7px_color-mix(in_srgb,var(--shadow-color)_70%,transparent)]"
+        style={{ color: `color-mix(in srgb, black 25%, var(${hue}))`, fill: `var(${hue})` }}
+        strokeWidth={1.5}
+      />
+
+      {/* The paper. transform-origin sits exactly at the pin's position
+          (top center) — pure rotation only, no translate/lift of any
+          kind. A pin holds one fixed point on the sheet; if that point
+          is genuinely fixed, the paper can only pivot around it, not
+          drift away from it (a translate here would visually pull the
+          paper's own pinhole away from the pin graphic sitting above it,
+          which breaks the illusion this whole exercise is about). The
+          back-ease overshoot (cubic-bezier's middle control points past
+          1) is what makes it read as a swing rather than a flat
+          animation — it rocks slightly past upright before settling,
+          the way a sheet loose on one pin actually behaves. */}
+      <div
+        className={`relative origin-top rounded-lg border border-line/50 bg-surface p-6 shadow-[0_24px_48px_-28px_color-mix(in_srgb,var(--shadow-color)_65%,transparent)] transition-transform duration-[650ms] ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:rotate-0 group-hover:shadow-[0_32px_56px_-24px_color-mix(in_srgb,var(--shadow-color)_68%,transparent)] ${rotate}`}
+        style={{
+          backgroundImage: `linear-gradient(165deg, color-mix(in srgb, var(${hue}) 16%, var(--surface)), var(--surface) 70%)`,
+        }}
       >
-        <Icon className="h-5 w-5" aria-hidden="true" />
-      </span>
-      <h3 className="mt-4 text-base text-text-primary">{t(name, language)}</h3>
-      <p className="mt-2 text-sm text-text-muted">{t(description, language)}</p>
+        {/* No backdrop-blur here — a blurred child under a transforming
+            ancestor forces Chromium to recompute the backdrop every
+            frame, which flickers during the transition. */}
+        <span
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-bg/50"
+          style={{ color: `var(${hue})` }}
+        >
+          <Icon className="h-5 w-5" aria-hidden="true" />
+        </span>
+        <h3 className="mt-4 text-base text-text-primary">{t(name, language)}</h3>
+        <p className="mt-2 text-sm text-text-muted">{t(description, language)}</p>
+      </div>
     </div>
   );
 }
