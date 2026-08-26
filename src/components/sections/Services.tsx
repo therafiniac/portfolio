@@ -13,10 +13,16 @@ import { strings } from "@/lib/i18n-strings";
 // the wider Catppuccin decorative hues (see AGENTS.md, and --hue-* in
 // globals.css). Different rotation/offset per card keeps them reading as
 // scattered objects rather than a disguised grid.
+// Similar magnitude on all three (2.5-3deg), alternating sign — an
+// earlier -rotate-1 on the third card gave it a barely-there 1deg swing
+// next to the other two's 2-3deg, since the hover-to-upright distance
+// *is* the swing amount. Arbitrary values instead of Tailwind's fixed
+// rotate steps (1/2/3/6...) so the three can actually land close
+// together instead of being stuck on whichever step happens to exist.
 const cardStyle = [
-  { hue: "--hue-mauve", rotate: "-rotate-3", offset: "sm:mt-0" },
-  { hue: "--hue-sapphire", rotate: "rotate-2", offset: "sm:mt-10" },
-  { hue: "--hue-teal", rotate: "-rotate-1", offset: "sm:mt-4" },
+  { hue: "--hue-mauve", rotate: "-rotate-[3deg]", offset: "sm:mt-0" },
+  { hue: "--hue-sapphire", rotate: "rotate-[2.5deg]", offset: "sm:mt-10" },
+  { hue: "--hue-teal", rotate: "-rotate-[2.5deg]", offset: "sm:mt-4" },
 ];
 
 function ServiceCard({
@@ -37,28 +43,22 @@ function ServiceCard({
     <div className={`group relative w-full max-w-[17rem] shrink-0 ${offset}`}>
       {/* The anchor shadow — a small, tight, dark smudge sitting directly
           on the paper's surface right under the needle tip, separate from
-          the pin's own drop-shadow (which shows the head floating a
-          little above the surface) and from the paper's big ambient card
-          shadow. Without this the pin reads as pasted on top of a flat
-          image rather than actually pressed into something. Sits behind
-          the pin but in front of the paper, and — like the pin — never
-          transforms. */}
+          the pin's own drop-shadow and the paper's own big ambient card
+          shadow. Never transforms. */}
       <span
         aria-hidden="true"
         className="absolute left-1/2 top-0 z-[9] h-2 w-3 -translate-x-1/2 rounded-full blur-[2px]"
         style={{ background: "color-mix(in srgb, black 40%, transparent)" }}
       />
 
-      {/* A real pushpin (lucide's Pin icon — rounded cap over a distinct
-          needle, not an abstract gradient circle standing in for one)
-          instead of hand-rolled CSS shading. Filled solid in the card's
+      {/* A real pushpin (lucide's Pin icon), filled solid in the card's
           hue with a slightly darker stroke for edge definition, sized so
-          the needle tip (near the very bottom of the icon's own viewBox)
-          lands right at the paper's top edge. Fixed to the board: no
-          transition, no transform, ever — only its drop-shadow deepens
-          slightly on hover (group-hover, not its own :hover — the mouse
-          is over the paper, not this small target) to suggest the paper
-          pulling against it, without the pin itself moving a pixel. */}
+          the needle tip lands right at the paper's top edge. Fixed to
+          the board: no transition, no transform, ever — only its drop-
+          shadow deepens slightly on hover (group-hover, not its own
+          :hover — the mouse is over the paper, not this small target)
+          to suggest the paper pulling against it, without the pin
+          itself moving a pixel. */}
       <Pin
         aria-hidden="true"
         className="absolute -top-[22px] left-1/2 z-10 h-6 w-6 -translate-x-1/2 drop-shadow-[0_3px_4px_color-mix(in_srgb,var(--shadow-color)_55%,transparent)] transition-[filter] duration-500 group-hover:drop-shadow-[0_5px_7px_color-mix(in_srgb,var(--shadow-color)_70%,transparent)]"
