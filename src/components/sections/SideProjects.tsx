@@ -61,7 +61,7 @@ function SideProjectRow({ project }: { project: SideProject }) {
       <div className="flex items-center gap-3 pl-10 sm:pl-0">
         <p className="max-w-xs text-sm text-text-muted">{t(project.description, language)}</p>
         <ArrowUpRight
-          className="h-5 w-5 shrink-0 -translate-x-1 text-text-muted opacity-0 transition-all duration-300 ease-out group-hover:translate-x-0 group-hover:text-accent group-hover:opacity-100"
+          className="h-5 w-5 shrink-0 translate-x-0 text-text-muted opacity-100 transition-all duration-300 ease-out md:-translate-x-1 md:opacity-0 md:group-hover:translate-x-0 md:group-hover:text-accent md:group-hover:opacity-100"
           aria-hidden="true"
         />
       </div>
