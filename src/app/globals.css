@@ -382,6 +382,18 @@ html::-webkit-scrollbar {
   top: 100%;
 }
 
+/* Bumps .nav-glass's default 92%-opacity background up for the mobile
+   menu specifically — right for the always-visible desktop bar sitting
+   subtly over Hero, but this panel now has a dimming backdrop behind it
+   and real content weight (links + a CTA row), so it reads as a clear
+   surface instead. Plain CSS, not a Tailwind bg-* utility: .nav-glass's
+   own background is also plain, unlayered CSS, which silently wins over
+   a layered Tailwind utility regardless of class order — this rule wins
+   instead by simply coming later in the cascade at equal specificity. */
+.nav-mobile-menu-panel {
+  background: color-mix(in srgb, var(--surface) 98%, transparent);
+}
+
 /* Same look as nav-glass, but a standalone absolutely-positioned layer
    behind the header pill's content instead of on the content element
    itself — so its opacity can be scroll-animated (transparent over Hero,

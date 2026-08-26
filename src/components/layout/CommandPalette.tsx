@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Search } from "lucide-react";
 import { commandItems } from "@/lib/data/commandPalette";
+import { useModalA11y } from "@/lib/useModalA11y";
 import { useLanguage } from "@/lib/useLanguage";
 import { t } from "@/lib/i18n";
 import { strings } from "@/lib/i18n-strings";
@@ -24,7 +25,10 @@ export function CommandPalette() {
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
   const language = useLanguage();
+
+  useModalA11y(open, dialogRef);
   // Same cross-page reasoning as Navbar.tsx's resolveHref — these items
   // jump to a homepage section by id, which only resolves as a bare hash
   // when the palette is opened from the homepage itself.
@@ -113,6 +117,7 @@ export function CommandPalette() {
     <AnimatePresence>
       {open && (
         <motion.div
+          ref={dialogRef}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -136,6 +141,11 @@ export function CommandPalette() {
               <input
                 ref={inputRef}
                 type="text"
+                role="combobox"
+                aria-expanded="true"
+                aria-autocomplete="list"
+                aria-controls="command-palette-listbox"
+                aria-activedescendant={results[activeIndex] ? `command-option-${results[activeIndex].id}` : undefined}
                 value={query}
                 onChange={(e) => handleQueryChange(e.target.value)}
                 onKeyDown={handleKeydownInList}
@@ -144,7 +154,7 @@ export function CommandPalette() {
               />
             </div>
 
-            <div className="max-h-72 overflow-y-auto p-2">
+            <div id="command-palette-listbox" role="listbox" className="max-h-72 overflow-y-auto p-2">
               {normalizedQuery === strings.commandPalette.sudoQuery ? (
                 <p className="px-3 py-6 text-center font-mono text-xs text-text-muted">
                   {t(strings.commandPalette.sudoJoke, language)}
@@ -157,6 +167,9 @@ export function CommandPalette() {
                 results.map((item, i) => (
                   <a
                     key={item.id}
+                    id={`command-option-${item.id}`}
+                    role="option"
+                    aria-selected={i === activeIndex}
                     href={isHome ? `#${item.id}` : `/#${item.id}`}
                     data-command-id={item.id}
                     onClick={closePalette}

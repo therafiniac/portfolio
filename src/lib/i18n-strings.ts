@@ -272,6 +272,11 @@ export const strings = {
       bn: 'ইংরেজিতে যান',
     } satisfies Localized,
   },
+  lightbox: {
+    close: { en: 'Close', bn: 'বন্ধ করুন' } satisfies Localized,
+    previousImage: { en: 'Previous image', bn: 'আগের ছবি' } satisfies Localized,
+    nextImage: { en: 'Next image', bn: 'পরের ছবি' } satisfies Localized,
+  },
   commandPalette: {
     openLabel: {
       en: 'Open command palette',
