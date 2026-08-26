@@ -257,7 +257,15 @@ function TileShell({
   compact?: boolean;
   children: ReactNode;
 }) {
-  const heightClass = compact ? "h-56" : "h-80";
+  // h-auto below sm — at that width every tile is single-column regardless
+  // of `span` (sm:col-span-2 hasn't kicked in yet), but the two wide tiles'
+  // copy was sized for the double-width column they get from sm up, so it
+  // wraps to more lines in that narrower box. A fixed height there forced
+  // the graphic (itself a fixed h-32) to overlap that overflow text; auto
+  // lets the card grow to fit whichever tile's content is tallest, same
+  // as any other single-column stack. Fixed height comes back at sm since
+  // that's exactly where the layout it was tuned for starts applying.
+  const heightClass = compact ? "h-auto sm:h-56" : "h-auto sm:h-80";
   const spanClass = span === 2 ? "sm:col-span-2" : "";
 
   return (
