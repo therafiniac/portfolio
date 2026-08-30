@@ -87,7 +87,7 @@ function SideProjectRow({ project }: { project: SideProject }) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
-                className="nav-glass absolute left-0 top-full z-20 mt-2 w-72 rounded-lg p-3 font-mono text-[length:var(--text-2xs)] text-text-muted"
+                className="nav-glass glass-popover left-0 top-full z-20 mt-2 w-72 rounded-lg p-3 font-mono text-[length:var(--text-2xs)] text-text-muted"
               >
                 {FAKE_GIT_LOG.map((line) => (
                   <p key={line} className="truncate">

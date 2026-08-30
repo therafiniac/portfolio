@@ -1,7 +1,6 @@
 "use client";
 
 import { ArrowUpRight, Send } from "lucide-react";
-import { Magnetic } from "@/components/layout/Magnetic";
 import { useLanguage } from "@/lib/useLanguage";
 import { t } from "@/lib/i18n";
 import { strings } from "@/lib/i18n-strings";
@@ -43,19 +42,10 @@ function TileFrame({ href, children }: { href: string; children: React.ReactNode
   const style = { backgroundImage: "var(--gradient-signature)" };
 
   return (
-    // Hero's CTA and Contact's submit button already pull toward the
-    // cursor (Magnetic, layout/Magnetic.tsx) — this was the one
-    // gradient-signature CTA on the page without it. A much lower
-    // strength than Hero's default (0.35) on purpose: Magnetic's offset
-    // scales with the element's own size, and this tile is a full grid
-    // cell, not a compact button — Hero's strength here would visibly
-    // slide the whole card around instead of giving it a subtle pull.
-    <Magnetic strength={0.06} className="block h-full">
-      <a href={href} className={className} style={style}>
-        <IconBleed />
-        <div className="relative flex flex-col items-center gap-2">{children}</div>
-      </a>
-    </Magnetic>
+    <a href={href} className={className} style={style}>
+      <IconBleed />
+      <div className="relative flex flex-col items-center gap-2">{children}</div>
+    </a>
   );
 }
 

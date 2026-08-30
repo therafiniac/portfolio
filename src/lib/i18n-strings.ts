@@ -352,13 +352,71 @@ export const strings = {
   tabAttention: {
     comeBack: { en: 'Come back! 👋', bn: 'ফিরে আসুন! 👋' } satisfies Localized,
   },
-  // Shown by RapidToggleWarning.tsx when either LanguageToggle or
-  // ThemeToggle gets clicked 5 times in quick succession — both buttons
-  // already do their real job on every single click (language/theme
-  // actually flips each time), this is purely a toast layered on top,
-  // never blocking or altering that.
+  // Shown by RapidToggleWarning.tsx once LanguageToggle sees enough
+  // clicks in quick succession — that button already does its real job
+  // on every single click (language actually flips each time), this is
+  // purely a banner layered on top, never blocking or altering that.
+  // Styled to look like a real system alert; the words are the joke, not
+  // the presentation — classic dry-alarm humor, same voice as the
+  // command palette's own sudoJoke.
   rapidToggle: {
-    message: { en: 'okay, okay — pick one.', bn: 'ঠিক আছে, ঠিক আছে — একটা বেছে নিন।' } satisfies Localized,
+    headline: {
+      en: '🚨 mental alert',
+      bn: '🚨 মানসিক অ্যালার্ট',
+    } satisfies Localized,
+    subline: {
+      en: 'five clicks on a button in one second. blink twice if you need help.',
+      bn: 'এক সেকেন্ডে একটা বাটনে পাঁচবার ক্লিক। সাহায্য লাগলে দুবার চোখ টিপুন।',
+    } satisfies Localized,
+    // A second, smaller line under subline — the aside that lands the
+    // joke the user asked for ("should I come slap you") without saying
+    // it that literally.
+    tertiary: {
+      en: "we'd come slap some sense into you, but there's an ocean in the way. so — breathe.",
+      bn: 'গিয়ে একটু বুদ্ধি ফেরানোর চেষ্টা করতাম, কিন্তু মাঝে একটা সমুদ্র পড়ে আছে। যাই হোক — শ্বাস নিন।',
+    } satisfies Localized,
+  },
+  // Picked at random by ContextMenu.tsx's "surprise me" row (see
+  // SurpriseFact.tsx). Considered a real joke API for this instead of a
+  // local pool — rejected: this site's CSP sets connect-src 'self'
+  // (middleware.ts), a deliberate lockdown that a third-party fetch would
+  // have to punch a hole in, plus generic external jokes wouldn't share
+  // this site's own dry, specific voice, and would depend on a service
+  // this repo doesn't control ever staying up. Every line here is a real,
+  // true fact about this actual site's own build, same "no fabricated
+  // claim" rule as everything else on it — the joke is the delivery, not
+  // an invented statistic.
+  surprise: {
+    facts: [
+      {
+        en: 'you found the seventh hidden thing on this site. there might be an eighth.',
+        bn: 'এই সাইটের সপ্তম হিডেন জিনিসটা খুঁজে পেয়েছেন। হয়তো একটা অষ্টমও আছে।',
+      },
+      {
+        en: 'the cursor trail simulates real gravity. 0.0005 px per millisecond squared. yes, actually.',
+        bn: 'কার্সার ট্রেইলে আসল গ্র্যাভিটি সিমুলেট করা হয় — ০.০০০৫ px প্রতি মিলিসেকেন্ড²। হ্যাঁ, সত্যিই।',
+      },
+      {
+        en: 'there is no spoon. (try typing "matrix" into the terminal below.)',
+        bn: 'কোনো চামচ নেই। (নিচের টার্মিনালে "matrix" টাইপ করে দেখুন।)',
+      },
+      {
+        en: 'this brand mark used to just say "R". now it spins if you click it enough.',
+        bn: 'এই ব্র্যান্ড মার্কে আগে শুধু "R" লেখা থাকত। এখন যথেষ্ট ক্লিক করলে ঘোরে।',
+      },
+      {
+        en: "fun fact: none of these facts are verified by HR.",
+        bn: 'মজার তথ্য: এই তথ্যগুলোর কোনোটাই HR ভেরিফাই করেনি।',
+      },
+      {
+        en: 'you are the reason a view-transition workaround exists in this codebase.',
+        bn: 'এই কোডবেসে একটা view-transition ওয়ার্কঅ্যারাউন্ড আছে, তার কারণ আপনি।',
+      },
+      {
+        en: 'try typing "sudo hire me" into the contact form message field.',
+        bn: 'কন্টাক্ট ফর্মের মেসেজ বক্সে "sudo hire me" টাইপ করে দেখুন।',
+      },
+    ] satisfies Localized[],
   },
   notFound: {
     heading: { en: 'Page not found', bn: 'পেজ পাওয়া যায়নি' } satisfies Localized,

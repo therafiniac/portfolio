@@ -18,6 +18,7 @@ import { MatrixRain } from "@/components/layout/MatrixRain";
 import { DebugOverlay } from "@/components/layout/DebugOverlay";
 import { ContextMenu } from "@/components/layout/ContextMenu";
 import { RapidToggleWarning } from "@/components/layout/RapidToggleWarning";
+import { SurpriseFact } from "@/components/layout/SurpriseFact";
 import { BackToTopButton, WhatsAppButton } from "@/components/layout/FloatingActions";
 import { SkipToContent } from "@/components/layout/SkipToContent";
 import { KeyboardShortcuts } from "@/components/layout/KeyboardShortcuts";
@@ -224,6 +225,7 @@ export default async function RootLayout({
           <DebugOverlay />
           <ContextMenu />
           <RapidToggleWarning />
+          <SurpriseFact />
           <WhatsAppButton />
           <BackToTopButton />
           {children}

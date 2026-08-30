@@ -382,6 +382,16 @@ html::-webkit-scrollbar {
   top: 100%;
 }
 
+/* A small, generic "position: absolute baked in" companion to
+   nav-mobile-menu above and glass-fab below — for a nav-glass popover
+   that isn't full-width/pinned-to-the-header (SideProjects.tsx's fake
+   git-log reveal), same cascade-order fix (this rule has to come after
+   .nav-glass's own `position: relative` to win at equal specificity),
+   just without nav-mobile-menu's own inset-inline/top-100% opinions. */
+.glass-popover {
+  position: absolute;
+}
+
 /* Bumps .nav-glass's default 92%-opacity background up for the mobile
    menu specifically — right for the always-visible desktop bar sitting
    subtly over Hero, but this panel now has a dimming backdrop behind it
@@ -876,6 +886,20 @@ html::-webkit-scrollbar {
        invisible instead of legible black text. */
     background-clip: unset !important;
     -webkit-background-clip: unset !important;
+    /* Nearly every section on this page starts at opacity:0/translated
+       out of place and only reveals via framer-motion's whileInView —
+       an IntersectionObserver trigger tied to actually scrolling that
+       element into the live viewport. A print/save-as-PDF pass renders
+       the whole page in one shot without ever doing that scrolling, so
+       without this override the printed page was mostly still-opacity:0
+       content: visually blank, which is what "fully white" actually was.
+       !important here beats framer-motion's own inline style (the usual
+       specificity rules still put !important above any non-important
+       declaration, inline included) without needing to touch every
+       component's animation variants individually. */
+    opacity: 1 !important;
+    transform: none !important;
+    visibility: visible !important;
   }
 
   a {
