@@ -5,7 +5,10 @@ import { AnimatePresence, motion, type Variants } from "framer-motion";
 import { useLenis } from "lenis/react";
 import { Mail, Copy, Link2, ArrowUp, SunMoon, Languages, Keyboard, Sparkles, Check } from "lucide-react";
 import { openShortcutsHelp } from "@/components/layout/KeyboardShortcuts";
-import { triggerSurprise } from "@/components/layout/SurpriseFact";
+import { pickSurpriseOutcome, fireSurpriseOutcome } from "@/lib/easterEggGrabBag";
+import { useLanguage } from "@/lib/useLanguage";
+import { t } from "@/lib/i18n";
+import { strings } from "@/lib/i18n-strings";
 
 const VIEWPORT_MARGIN = 8;
 const COPIED_LABEL_MS = 1200;
@@ -53,6 +56,7 @@ export function ContextMenu() {
   const [copied, setCopied] = useState<CopiedItem>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const lenis = useLenis();
+  const language = useLanguage();
 
   function close() {
     setPosition(null);
@@ -175,11 +179,13 @@ export function ContextMenu() {
 
   // Used to scroll to a random section — dropped that: every section is
   // already one scroll away on a one-page site, so it didn't actually
-  // surprise anyone. Shows a random true, dry fact about this site's own
-  // build instead (see strings.surprise.facts / SurpriseFact.tsx).
+  // surprise anyone. Picks from a shuffle-bag over the site's other
+  // hidden effects instead (see easterEggGrabBag.ts for why a bag, not
+  // plain Math.random(), and why each of these reuses its own real
+  // trigger instead of a separate reimplementation).
   function surpriseMe() {
     close();
-    triggerSurprise();
+    fireSurpriseOutcome(pickSurpriseOutcome());
   }
 
   function stop(e: ReactMouseEvent) {
@@ -226,12 +232,12 @@ export function ContextMenu() {
               style={{ backgroundImage: "var(--gradient-signature)" }}
             />
             <div className="px-3 pb-1.5 pt-2 text-[length:var(--text-2xs)] uppercase tracking-[0.15em] text-text-muted">
-              rafi@portfolio
+              {t(strings.contextMenu.header, language)}
             </div>
 
             <motion.div variants={listVariants} initial="hidden" animate="show">
               <MenuItem icon={<Mail className="h-3.5 w-3.5" aria-hidden="true" />} href={`mailto:${EMAIL}`} onClick={close}>
-                say hi
+                {t(strings.contextMenu.sayHi, language)}
               </MenuItem>
               <MenuItem
                 icon={
@@ -243,7 +249,7 @@ export function ContextMenu() {
                 }
                 onClick={() => copy("email", EMAIL)}
               >
-                {copied === "email" ? "copied." : "copy email"}
+                {copied === "email" ? t(strings.contextMenu.copiedLabel, language) : t(strings.contextMenu.copyEmail, language)}
               </MenuItem>
               <MenuItem
                 icon={
@@ -255,28 +261,28 @@ export function ContextMenu() {
                 }
                 onClick={() => copy("link", window.location.href)}
               >
-                {copied === "link" ? "copied." : "copy page link"}
+                {copied === "link" ? t(strings.contextMenu.copiedLabel, language) : t(strings.contextMenu.copyLink, language)}
               </MenuItem>
 
               <div className="my-1 h-px bg-line/40" aria-hidden="true" />
 
               <MenuItem icon={<ArrowUp className="h-3.5 w-3.5" aria-hidden="true" />} onClick={backToTop}>
-                back to top
+                {t(strings.contextMenu.backToTop, language)}
               </MenuItem>
               <MenuItem icon={<SunMoon className="h-3.5 w-3.5" aria-hidden="true" />} onClick={toggleTheme}>
-                toggle theme
+                {t(strings.contextMenu.toggleTheme, language)}
               </MenuItem>
               <MenuItem icon={<Languages className="h-3.5 w-3.5" aria-hidden="true" />} onClick={toggleLanguage}>
-                toggle language
+                {t(strings.contextMenu.toggleLanguage, language)}
               </MenuItem>
               <MenuItem icon={<Keyboard className="h-3.5 w-3.5" aria-hidden="true" />} onClick={showShortcuts}>
-                keyboard shortcuts
+                {t(strings.contextMenu.shortcuts, language)}
               </MenuItem>
 
               <div className="my-1 h-px bg-line/40" aria-hidden="true" />
 
               <MenuItem icon={<Sparkles className="h-3.5 w-3.5" aria-hidden="true" />} onClick={surpriseMe}>
-                surprise me
+                {t(strings.contextMenu.surpriseMe, language)}
               </MenuItem>
             </motion.div>
           </div>

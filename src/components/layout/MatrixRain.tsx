@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 const TRIGGER_EVENT = "easter:matrix";
-const DURATION_MS = 4000;
+const DURATION_MS = 6500;
 const FONT_SIZE = 16;
 const FRAME_INTERVAL_MS = 45;
 // Latin digits plus katakana, the same glyph mix the reference "digital

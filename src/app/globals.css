@@ -592,6 +592,56 @@ html::-webkit-scrollbar {
   }
 }
 
+/* A diagonal light streak that sweeps across on hover — Hero's primary
+   CTA and Contact's submit button share this (both already share the
+   --gradient-signature fill, "the site's two real conversion moments...
+   read as the same kind of action" per ContactForm.tsx's own comment),
+   replacing the pointer-following magnetic pull both used to have. The
+   element needs `position: relative; overflow: hidden` of its own —
+   already true of both buttons (rounded-full already crops the fill,
+   this crops the streak the same way). rgba(255,255,255,*) here
+   specifically, not a --text-primary/--bg color-mix like the glass
+   panels' own inset highlight uses — this is meant to read as a literal
+   light glint off a surface regardless of theme or the button's own
+   colors, not a themed tint, so it sits outside the semantic-token table
+   the same way a plain drop shadow would. */
+.cta-shine {
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+}
+.cta-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.35) 50%, transparent 60%);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+  pointer-events: none;
+}
+.cta-shine:hover::after {
+  transform: translateX(100%);
+}
+/* A brighter, tighter accent glow on hover — --accent specifically (its
+   documented role is "interactive only"), distinct from cta-glow's own
+   always-on ambient pulse right next to it in Hero. The scale/lift
+   itself lives in Hero.tsx/ContactForm.tsx as a framer-motion
+   whileHover (so it respects MotionConfig's reducedMotion="user"
+   automatically); this shadow is plain CSS, which needs its own
+   reduced-motion opt-out below since a shadow fading in isn't covered
+   by framer-motion's reduced-motion handling. */
+.cta-shine:hover {
+  box-shadow: 0 10px 30px -8px color-mix(in srgb, var(--accent) 50%, transparent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .cta-shine::after {
+    display: none;
+  }
+  .cta-shine {
+    transition: none;
+  }
+}
+
 /* A small bright segment traveling down the Experience timeline's static
    gradient line — top/opacity only (no height/width change), so it's cheap.
    Percentage-based top works regardless of how tall the line ends up being

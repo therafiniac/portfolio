@@ -8,7 +8,7 @@ import { t } from "@/lib/i18n";
 import { strings } from "@/lib/i18n-strings";
 
 const TRIGGER_EVENT = "easter:rapid-toggle";
-const VISIBLE_MS = 5500;
+const VISIBLE_MS = 8000;
 
 // Fired by LanguageToggle.tsx once it sees enough clicks inside its own
 // click-tracking window (that button also shakes itself first — see its
@@ -26,13 +26,18 @@ export function triggerRapidToggleWarning() {
 
 // A full modal-style alert, not a small corner toast — same dimmed-
 // backdrop-plus-centered-panel mechanism KeyboardShortcuts.tsx and
-// CommandPalette.tsx already use for their own dialogs. Styled to look
-// like a real system alert (bold, uppercase, a wobbling alert-triangle,
-// a nervous little rotation jitter on the card itself) — the comedy is
-// entirely in the gap between how dramatic the presentation looks and
-// how trivial the actual cause is. --accent-secondary (maroon), not
-// --danger — AGENTS.md scopes --danger to real form/validation errors
-// only; this is a joke, not one.
+// CommandPalette.tsx already use for their own dialogs, now with the
+// whole viewport washed in --danger red behind it and a bigger card.
+// Styled to look like a real system alert (bold, uppercase, a wobbling
+// alert-triangle, a nervous little rotation jitter on the card itself)
+// — the comedy is entirely in the gap between how dramatic the
+// presentation looks and how trivial the actual cause is.
+//
+// --danger, deliberately, on explicit request — AGENTS.md scopes
+// --danger to real form/validation errors only, and this is a joke, not
+// one; this is a one-off, called-out deviation from that rule for this
+// specific full-screen moment, not a precedent for reusing --danger
+// decoratively elsewhere.
 //
 // No click-to-dismiss on the backdrop — it only closes on its own after
 // VISIBLE_MS (or Escape). Someone who just rapid-clicked a button is
@@ -89,7 +94,13 @@ export function RapidToggleWarning() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.15 }}
-          className="fixed inset-0 z-[98] flex items-center justify-center bg-bg/70 px-4 backdrop-blur-sm"
+          style={{
+            // The full-viewport red wash — color-mix against --bg (not a
+            // flat --danger fill) so it still reads as "this page, badly
+            // lit," not an opaque red rectangle covering it.
+            background: "color-mix(in srgb, var(--danger) 16%, var(--bg) 84%)",
+          }}
+          className="fixed inset-0 z-[98] flex items-center justify-center px-4 backdrop-blur-sm"
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.85, y: -12 }}
@@ -102,8 +113,8 @@ export function RapidToggleWarning() {
               // read as a startled "pop" rather than a plain fade/scale-in.
               scale: { duration: 0.4, ease: [0.34, 1.56, 0.64, 1] },
             }}
-            style={{ boxShadow: "0 0 0 2px var(--accent-secondary), 0 25px 60px -20px color-mix(in srgb, var(--shadow-color) 60%, transparent)" }}
-            className="nav-glass flex max-w-sm flex-col items-center gap-3 rounded-2xl px-8 py-9 text-center"
+            style={{ boxShadow: "0 0 0 3px var(--danger), 0 30px 70px -20px color-mix(in srgb, var(--danger) 50%, transparent)" }}
+            className="nav-glass flex w-full max-w-md flex-col items-center gap-4 rounded-2xl px-10 py-12 text-center"
           >
             {/* The endless little "still rattled" wobble lives on this
                 inner wrapper, deliberately never on the card above (the
@@ -124,19 +135,19 @@ export function RapidToggleWarning() {
             <motion.div
               animate={{ rotate: [0, -1.2, 1.2, -1, 1, 0] }}
               transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
-              className="flex flex-col items-center gap-3"
+              className="flex flex-col items-center gap-4"
             >
               <motion.div
                 animate={{ rotate: [0, -14, 14, -10, 10, 0], scale: [1, 1.1, 1, 1.1, 1] }}
                 transition={{ duration: 1, repeat: Infinity, repeatDelay: 0.3, ease: "easeInOut" }}
               >
-                <TriangleAlert className="h-10 w-10 text-accent-secondary" aria-hidden="true" />
+                <TriangleAlert className="h-16 w-16 text-danger" aria-hidden="true" />
               </motion.div>
-              <p className="font-mono text-lg font-bold uppercase leading-snug tracking-[0.08em] text-accent-secondary">
+              <p className="font-mono text-2xl font-bold uppercase leading-snug tracking-[0.08em] text-danger sm:text-3xl">
                 {t(strings.rapidToggle.headline, language)}
               </p>
-              <p className="font-mono text-sm text-text-muted">{t(strings.rapidToggle.subline, language)}</p>
-              <p className="font-mono text-xs text-text-muted/70">{t(strings.rapidToggle.tertiary, language)}</p>
+              <p className="font-mono text-base text-text-primary">{t(strings.rapidToggle.subline, language)}</p>
+              <p className="font-mono text-sm text-text-muted">{t(strings.rapidToggle.tertiary, language)}</p>
             </motion.div>
           </motion.div>
         </motion.div>

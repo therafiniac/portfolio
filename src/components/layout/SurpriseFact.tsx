@@ -1,14 +1,25 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { useLanguage } from "@/lib/useLanguage";
 import { t } from "@/lib/i18n";
 import { strings } from "@/lib/i18n-strings";
+import type { Localized } from "@/types";
 
 const TRIGGER_EVENT = "easter:surprise";
 const VISIBLE_MS = 5000;
+
+// Kept separate from strings.surprise.facts itself (see that array's own
+// comment) — only mixed into the pool on April 1st, computed fresh per
+// trigger rather than once per mount so a tab left open across midnight
+// still picks up (or drops) it correctly.
+function getFactPool(): Localized[] {
+  const today = new Date();
+  const isAprilFools = today.getMonth() === 3 && today.getDate() === 1;
+  return isAprilFools ? [...strings.surprise.facts, strings.surprise.aprilFools] : strings.surprise.facts;
+}
 
 // Fired by ContextMenu.tsx's "surprise me" row — used to just scroll to
 // a random section, replaced with this because that wasn't actually
@@ -32,16 +43,26 @@ export function triggerSurprise() {
 // property that element also has an `exit` value for never resolves, so
 // AnimatePresence never actually unmounts it).
 export function SurpriseFact() {
-  const [factIndex, setFactIndex] = useState<number | null>(null);
+  const [fact, setFact] = useState<Localized | null>(null);
   const language = useLanguage();
+  const lastFactIndex = useRef<number | null>(null);
 
   useEffect(() => {
     let hideTimer: number | undefined;
 
     function handleTrigger() {
-      setFactIndex(Math.floor(Math.random() * strings.surprise.facts.length));
+      const pool = getFactPool();
+      let next = Math.floor(Math.random() * pool.length);
+      // Reroll once against repeating the exact same fact back to back —
+      // same "plain uniform random reads as broken on an immediate
+      // repeat" reasoning as ContextMenu.tsx's own outcome picker.
+      if (next === lastFactIndex.current && pool.length > 1) {
+        next = (next + 1 + Math.floor(Math.random() * (pool.length - 1))) % pool.length;
+      }
+      lastFactIndex.current = next;
+      setFact(pool[next]);
       window.clearTimeout(hideTimer);
-      hideTimer = window.setTimeout(() => setFactIndex(null), VISIBLE_MS);
+      hideTimer = window.setTimeout(() => setFact(null), VISIBLE_MS);
     }
 
     window.addEventListener(TRIGGER_EVENT, handleTrigger);
@@ -50,8 +71,6 @@ export function SurpriseFact() {
       window.removeEventListener(TRIGGER_EVENT, handleTrigger);
     };
   }, []);
-
-  const fact = factIndex === null ? null : strings.surprise.facts[factIndex];
 
   return (
     <AnimatePresence>
@@ -63,7 +82,7 @@ export function SurpriseFact() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.15 }}
-          onClick={() => setFactIndex(null)}
+          onClick={() => setFact(null)}
           className="fixed inset-0 z-[98] flex items-center justify-center bg-bg/70 px-4 backdrop-blur-sm"
         >
           <motion.div

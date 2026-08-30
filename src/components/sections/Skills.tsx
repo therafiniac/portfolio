@@ -8,6 +8,8 @@ import { skillGroups } from "@/lib/data/skills";
 import { services } from "@/lib/data/services";
 import { projects } from "@/lib/data/projects";
 import { clientProjects } from "@/lib/data/clientWork";
+import { experience } from "@/lib/data/experience";
+import { education } from "@/lib/data/education";
 import type { SkillGroup } from "@/types";
 import { useLanguage, type Language } from "@/lib/useLanguage";
 import { t, localizeNumber } from "@/lib/i18n";
@@ -76,17 +78,42 @@ function StackRow({ group, delay }: { group: SkillGroup; delay: number }) {
 }
 
 type HistoryLine = { command: string; output: string[] };
-type CommandKey = "whoami" | "help" | "contact" | "clear" | "sudo" | "services" | "tools" | "projects" | "work";
+type CommandKey =
+  | "whoami"
+  | "help"
+  | "contact"
+  | "clear"
+  | "sudo"
+  | "services"
+  | "tools"
+  | "projects"
+  | "work"
+  | "experience"
+  | "education"
+  | "ping";
 
 // Scoped to the active site language, not "either language works
 // everywhere" — typing whoami while the site is in Bengali mode (or
 // পরিচয় while it's in English mode) is a genuine "command not found,"
 // same as help only ever printing the current language's command names,
-// never both at once. "sudo" is the one command present in both maps
-// with the same literal spelling — it isn't a translatable concept, it's
-// a fixed reference to a real English command, same reasoning as "rafi"
-// in the prompt above never translating either.
-const COMMAND_ORDER: CommandKey[] = ["whoami", "services", "tools", "projects", "work", "contact", "clear", "help"];
+// never both at once. "sudo"/"ping" are the two commands present in both
+// maps with the same literal spelling — neither is a translatable
+// concept, both are fixed references (a real shell command, a network
+// utility), same reasoning as "rafi" in the prompt above never
+// translating either.
+const COMMAND_ORDER: CommandKey[] = [
+  "whoami",
+  "services",
+  "tools",
+  "projects",
+  "work",
+  "experience",
+  "education",
+  "contact",
+  "ping",
+  "clear",
+  "help",
+];
 
 const COMMAND_NAMES: Record<Language, Record<CommandKey, string>> = {
   en: {
@@ -99,6 +126,9 @@ const COMMAND_NAMES: Record<Language, Record<CommandKey, string>> = {
     tools: "tools",
     projects: "projects",
     work: "work",
+    experience: "experience",
+    education: "education",
+    ping: "ping",
   },
   bn: {
     whoami: "পরিচয়",
@@ -110,6 +140,11 @@ const COMMAND_NAMES: Record<Language, Record<CommandKey, string>> = {
     tools: "টুলস",
     projects: "প্রজেক্ট",
     work: "কাজ",
+    // Reuses sectionTags.exp's own translation for "experience" rather
+    // than inventing a second Bengali word for the same concept.
+    experience: "অভিজ্ঞতা",
+    education: "শিক্ষা",
+    ping: "ping",
   },
 };
 
@@ -123,7 +158,12 @@ function resolveCommand(normalized: string, language: Language): CommandKey | nu
 
 function buildHelpList(language: Language): string {
   const names = COMMAND_NAMES[language];
-  return COMMAND_ORDER.map((key) => names[key]).join(" · ");
+  // "echo <text>" is appended rather than folded into COMMAND_NAMES —
+  // every other command is an exact-match word, this one takes a real
+  // argument, which the resolveCommand/COMMAND_NAMES exact-match design
+  // has no way to express. Still listed here so it's discoverable through
+  // "help" like every other real command, unlike the three hidden ones.
+  return `${COMMAND_ORDER.map((key) => names[key]).join(" · ")} · echo <text>`;
 }
 
 // Every command's output is built from data already real elsewhere on
@@ -158,6 +198,14 @@ function buildOutput(canonical: CommandKey, language: Language): string {
         "{count}",
         localizeNumber(clientProjects.length, language),
       );
+    case "experience":
+      return experience
+        .map((entry) => `${t(entry.role, language)} @ ${entry.org} (${entry.start}–${entry.end})`)
+        .join(" · ");
+    case "education":
+      return education.map((entry) => `${t(entry.degree, language)} — ${t(entry.institution, language)}`).join(" · ");
+    case "ping":
+      return t(strings.skills.terminalPing, language);
     default:
       return "";
   }
@@ -179,7 +227,7 @@ const BOOT_LINES = [
   "[    0.512000] checking for pulse ... alive",
   "[    0.701000] rafi@portfolio ready.",
 ];
-const HIDDEN_COMMANDS = ["reboot", "matrix", "debug"] as const;
+const HIDDEN_COMMANDS = ["reboot", "matrix", "debug", "about"] as const;
 type HiddenCommand = (typeof HIDDEN_COMMANDS)[number];
 
 function isTypingTarget(el: Element | null): boolean {
@@ -290,13 +338,30 @@ function InteractiveTerminal() {
       setHistory((h) => [...h, { command: raw, output: [t(strings.skills.terminalMatrix, language)] }]);
       return;
     }
-    triggerDebugToggle();
-    setHistory((h) => [...h, { command: raw, output: [t(strings.skills.terminalDebug, language)] }]);
+    if (hidden === "debug") {
+      triggerDebugToggle();
+      setHistory((h) => [...h, { command: raw, output: [t(strings.skills.terminalDebug, language)] }]);
+      return;
+    }
+    setHistory((h) => [...h, { command: raw, output: [t(strings.skills.terminalAbout, language)] }]);
   }
 
   function runCommand(raw: string) {
     const normalized = raw.trim().toLowerCase();
     if (!normalized) return;
+
+    // "echo" is real user input echoed back, not a fact from anywhere on
+    // the site, so it's exempt from the "every command's output is data
+    // already real elsewhere" rule buildOutput's own comment states — the
+    // text came from the person typing it, not from this codebase. Reads
+    // off raw.trim() (not normalized) so casing survives; "echo " is
+    // still matched case-insensitively against normalized so "ECHO hi"
+    // works the same as "echo hi".
+    if (normalized.startsWith("echo ") || normalized === "echo") {
+      const message = raw.trim().slice(4).trim();
+      setHistory((h) => [...h, { command: raw, output: [message || "echo: give it something to say."] }]);
+      return;
+    }
 
     if ((HIDDEN_COMMANDS as readonly string[]).includes(normalized)) {
       runHiddenCommand(normalized as HiddenCommand, raw);

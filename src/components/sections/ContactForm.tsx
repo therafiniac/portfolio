@@ -5,7 +5,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { CheckCircle2, Send } from "lucide-react";
 import { submitContactForm, type ContactFormState } from "@/lib/actions/contact";
 import { contactSchema, type ContactFieldErrors } from "@/lib/validation/contact";
-import { Magnetic } from "@/components/layout/Magnetic";
 import { useLanguage } from "@/lib/useLanguage";
 import { t } from "@/lib/i18n";
 import { strings } from "@/lib/i18n-strings";
@@ -218,20 +217,22 @@ export function ContactForm() {
       )}
 
       {/* The one other bordered/filled CTA on the page besides Hero's
-          "View My Work" — same signature-gradient fill, so the site's
-          two real conversion moments (come look at the work, get in
-          touch) read as the same kind of action. */}
-      <Magnetic className="block w-full" strength={0.15}>
-        <button
-          type="submit"
-          disabled={pending}
-          className="flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 font-mono text-sm font-medium text-bg transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-          style={{ backgroundImage: "var(--gradient-signature)" }}
-        >
-          <Send className="h-4 w-4" aria-hidden="true" />
-          {pending ? t(strings.contactForm.sending, language) : t(strings.contactForm.send, language)}
-        </button>
-      </Magnetic>
+          "View My Work" — same signature-gradient fill and the same
+          cta-shine sweep + glow + lift, so the site's two real
+          conversion moments (come look at the work, get in touch) read
+          as the same kind of action. */}
+      <motion.button
+        type="submit"
+        disabled={pending}
+        whileHover={pending ? undefined : { scale: 1.03, y: -2 }}
+        whileTap={pending ? undefined : { scale: 0.97, y: 0 }}
+        transition={{ type: "spring", stiffness: 320, damping: 18 }}
+        className="cta-shine flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 font-mono text-sm font-medium text-bg transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+        style={{ backgroundImage: "var(--gradient-signature)" }}
+      >
+        <Send className="h-4 w-4" aria-hidden="true" />
+        {pending ? t(strings.contactForm.sending, language) : t(strings.contactForm.send, language)}
+      </motion.button>
     </form>
   );
 }

@@ -5,7 +5,6 @@ import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion
 import { HeroCanvasLoader } from "@/components/three/HeroCanvasLoader";
 import { HeroMark3DLoader } from "@/components/three/HeroMark3DLoader";
 import { CountUp } from "@/components/layout/CountUp";
-import { Magnetic } from "@/components/layout/Magnetic";
 import { StatusDot } from "@/components/ui/StatusDot";
 import { heroRoles, heroStatusLine, heroStats, heroNameLine1, heroNameLine2 } from "@/lib/data/hero";
 import { useLanguage } from "@/lib/useLanguage";
@@ -169,21 +168,30 @@ export function Hero() {
           </motion.p>
 
           <motion.div variants={item} className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3">
-            <Magnetic>
-              {/* --gradient-signature, not flat bg-accent — AGENTS.md
-                  calls for the gradient on the primary CTA specifically,
-                  "repeatedly... so it reads as a signature." This is
-                  that CTA; Contact's submit button already matches it. */}
-              <a
-                href="#work"
-                className="relative inline-flex items-center gap-2 rounded-full px-6 py-3 font-mono text-sm font-medium text-bg transition-opacity hover:opacity-90"
-                style={{ backgroundImage: "var(--gradient-signature)" }}
-              >
-                <span className="cta-glow" aria-hidden="true" />
-                {t(strings.hero.viewWork, language)}
-                <span aria-hidden="true">→</span>
-              </a>
-            </Magnetic>
+            {/* --gradient-signature, not flat bg-accent — AGENTS.md calls
+                for the gradient on the primary CTA specifically,
+                "repeatedly... so it reads as a signature." This is that
+                CTA; Contact's submit button already matches it, including
+                the cta-shine hover sweep + glow and the lift/arrow-nudge,
+                all shared. whileHover/whileTap rather than a CSS :hover
+                scale — MotionConfig's reducedMotion="user" (layout.tsx)
+                automatically strips the transform for reduced-motion
+                visitors, which a plain CSS transform:scale rule wouldn't
+                get for free. */}
+            <motion.a
+              href="#work"
+              whileHover={{ scale: 1.045, y: -2 }}
+              whileTap={{ scale: 0.97, y: 0 }}
+              transition={{ type: "spring", stiffness: 320, damping: 18 }}
+              className="cta-shine group relative inline-flex items-center gap-2 rounded-full px-6 py-3 font-mono text-sm font-medium text-bg transition-opacity hover:opacity-90"
+              style={{ backgroundImage: "var(--gradient-signature)" }}
+            >
+              <span className="cta-glow" aria-hidden="true" />
+              {t(strings.hero.viewWork, language)}
+              <span aria-hidden="true" className="transition-transform duration-300 ease-out group-hover:translate-x-1">
+                →
+              </span>
+            </motion.a>
             <a
               href="#contact"
               className="font-mono text-sm text-text-muted underline-offset-4 transition-colors hover:text-accent hover:underline"

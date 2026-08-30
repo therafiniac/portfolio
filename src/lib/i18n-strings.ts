@@ -140,12 +140,26 @@ export const strings = {
       bn: '{count}টি বাস্তব ক্লায়েন্ট প্রজেক্ট — উপরে Work দেখুন।',
     } satisfies Localized,
     terminalPrivate: { en: 'private', bn: 'প্রাইভেট' } satisfies Localized,
+    // "ping" is a real, documented command (COMMAND_NAMES), unlike
+    // reboot/matrix/debug — the joke is just in what it prints back.
+    terminalPing: { en: 'pong. (that’s the whole command.)', bn: 'pong। (পুরো কমান্ডটাই এটা।)' } satisfies Localized,
     // Output for the two hidden commands that aren't in COMMAND_NAMES/
     // buildHelpList (see HIDDEN_COMMANDS in Skills.tsx) — same "sudo"
     // exception as COMMAND_NAMES above: fixed English references, not a
     // translatable concept, so bn repeats en rather than transliterating.
     terminalMatrix: { en: 'there is no spoon.', bn: 'there is no spoon.' } satisfies Localized,
     terminalDebug: { en: 'debug overlay: toggled.', bn: 'debug overlay: toggled.' } satisfies Localized,
+    // A fourth hidden command (see HIDDEN_COMMANDS in Skills.tsx) — the
+    // one AGENTS.md's "out of scope: About panel" rule doesn't cover,
+    // since it's a discovery, not a persistent section. Real, localized
+    // prose (not a fixed technical reference like the three above), so it
+    // does translate — and built entirely from facts already stated
+    // elsewhere on this site (Kolkata, full stack + design, 4+ years,
+    // Contact), never a new claim invented just for this line.
+    terminalAbout: {
+      en: 'full stack dev + designer, based in Kolkata, 4+ years in. still figuring out the rest — see Contact if you want to talk.',
+      bn: 'ফুল স্ট্যাক ডেভেলপার + ডিজাইনার, কলকাতা থেকে, ৪+ বছরের অভিজ্ঞতা। বাকিটা এখনও বোঝার চেষ্টা করছি — কথা বলতে চাইলে Contact দেখুন।',
+    } satisfies Localized,
   },
   experience: {
     eyebrow: { en: 'Track Record', bn: 'ট্র্যাক রেকর্ড' } satisfies Localized,
@@ -351,6 +365,16 @@ export const strings = {
   skipToContent: { en: 'Skip to content', bn: 'কনটেন্টে যান' } satisfies Localized,
   tabAttention: {
     comeBack: { en: 'Come back! 👋', bn: 'ফিরে আসুন! 👋' } satisfies Localized,
+    // Shown as a small, non-blocking toast (not a modal — nothing here
+    // needs confirming) if this tab was hidden long enough that "you
+    // stepped away" is a safe guess, not "you alt-tabbed for two
+    // seconds." A gesture no other hidden layer on this site has: every
+    // other one rewards clicking/typing/scrolling *at* the page, this
+    // one rewards leaving it alone.
+    welcomeBack: {
+      en: 'welcome back. the page waited.',
+      bn: 'ফিরে আসার জন্য স্বাগতম। পাতাটা অপেক্ষা করছিল।',
+    } satisfies Localized,
   },
   // Shown by RapidToggleWarning.tsx once LanguageToggle sees enough
   // clicks in quick succession — that button already does its real job
@@ -386,37 +410,80 @@ export const strings = {
   // true fact about this actual site's own build, same "no fabricated
   // claim" rule as everything else on it — the joke is the delivery, not
   // an invented statistic.
+  // Rewritten toward broad, non-technical fun rather than implementation
+  // trivia — most visitors right-clicking around a portfolio aren't
+  // developers, and the first pass leaned hard on code-internals jokes
+  // (view-transition workarounds, px/ms² units) that only landed for the
+  // narrow slice of people who'd already read this source. A couple of
+  // plain-language "try this" nudges toward other hidden layers stay, on
+  // the theory that a nudge in the surprise pool is still a discovery,
+  // not a spoiler — it just doesn't explain *how* anything works.
+  // ContextMenu.tsx's own rows — "rafi@portfolio" transliterates fully
+  // (রাফি@পোর্টফোলিও), same choice Skills.tsx's terminalTitle already
+  // made for the same kind of header/chrome label; contrast with the
+  // typed --stack prompt just above it, which keeps "rafi" in Latin
+  // since that one is real user-facing command syntax, not prose.
+  contextMenu: {
+    header: { en: 'rafi@portfolio', bn: 'রাফি@পোর্টফোলিও' } satisfies Localized,
+    sayHi: { en: 'say hi', bn: 'হাই বলুন' } satisfies Localized,
+    copyEmail: { en: 'copy email', bn: 'ইমেইল কপি করুন' } satisfies Localized,
+    copiedLabel: { en: 'copied.', bn: 'কপি হয়েছে।' } satisfies Localized,
+    copyLink: { en: 'copy page link', bn: 'পেজ লিংক কপি করুন' } satisfies Localized,
+    backToTop: { en: 'back to top', bn: 'উপরে ফিরে যান' } satisfies Localized,
+    toggleTheme: { en: 'toggle theme', bn: 'থিম পাল্টান' } satisfies Localized,
+    toggleLanguage: { en: 'toggle language', bn: 'ভাষা পাল্টান' } satisfies Localized,
+    shortcuts: { en: 'keyboard shortcuts', bn: 'কীবোর্ড শর্টকাট' } satisfies Localized,
+    surpriseMe: { en: 'surprise me', bn: 'চমকে দিন' } satisfies Localized,
+  },
   surprise: {
     facts: [
       {
-        en: 'you found the seventh hidden thing on this site. there might be an eighth.',
-        bn: 'এই সাইটের সপ্তম হিডেন জিনিসটা খুঁজে পেয়েছেন। হয়তো একটা অষ্টমও আছে।',
+        en: 'you have impeccable taste in clicking random things on a stranger\'s website.',
+        bn: 'অচেনা একটা ওয়েবসাইটে এলোমেলো জিনিসে ক্লিক করার আপনার রুচি প্রশংসনীয়।',
       },
       {
-        en: 'the cursor trail simulates real gravity. 0.0005 px per millisecond squared. yes, actually.',
-        bn: 'কার্সার ট্রেইলে আসল গ্র্যাভিটি সিমুলেট করা হয় — ০.০০০৫ px প্রতি মিলিসেকেন্ড²। হ্যাঁ, সত্যিই।',
+        en: "if it's very late where you're reading this, it's also very late in Kolkata. we're both making questionable choices right now.",
+        bn: 'আপনার ওখানে যদি অনেক রাত হয়, কলকাতাতেও তাই। দুজনেই তাহলে এখন একটু বাজে সিদ্ধান্ত নিচ্ছি।',
       },
       {
-        en: 'there is no spoon. (try typing "matrix" into the terminal below.)',
-        bn: 'কোনো চামচ নেই। (নিচের টার্মিনালে "matrix" টাইপ করে দেখুন।)',
+        en: 'there are more hidden things on this site than there are menu items pointing to them.',
+        bn: 'এই সাইটে যত মেনু আইটেম আছে, তার চেয়ে বেশি জিনিস লুকিয়ে আছে।',
       },
       {
-        en: 'this brand mark used to just say "R". now it spins if you click it enough.',
-        bn: 'এই ব্র্যান্ড মার্কে আগে শুধু "R" লেখা থাকত। এখন যথেষ্ট ক্লিক করলে ঘোরে।',
+        en: 'somewhere on this page, a small button is quietly hoping you click it five times in a row.',
+        bn: 'এই পাতার কোথাও একটা ছোট বাটন চুপচাপ আশা করছে আপনি সেটায় পরপর পাঁচবার ক্লিক করবেন।',
       },
       {
-        en: "fun fact: none of these facts are verified by HR.",
-        bn: 'মজার তথ্য: এই তথ্যগুলোর কোনোটাই HR ভেরিফাই করেনি।',
+        en: "you've now spent longer on this popup than most recruiters spend reading a resume. no pressure.",
+        bn: 'একজন রিক্রুটার একটা রিজিউমে যতক্ষণ সময় দেন, তার চেয়ে বেশি সময় আপনি এই পপআপে দিয়ে ফেলেছেন। চাপ নেই অবশ্য।',
       },
       {
-        en: 'you are the reason a view-transition workaround exists in this codebase.',
-        bn: 'এই কোডবেসে একটা view-transition ওয়ার্কঅ্যারাউন্ড আছে, তার কারণ আপনি।',
+        en: 'there is no spoon. there is, however, a terminal — it\'s hiding in the Stack section.',
+        bn: 'কোনো চামচ নেই। তবে একটা টার্মিনাল আছে — সেটা লুকিয়ে আছে Stack সেকশনে।',
       },
       {
-        en: 'try typing "sudo hire me" into the contact form message field.',
-        bn: 'কন্টাক্ট ফর্মের মেসেজ বক্সে "sudo hire me" টাইপ করে দেখুন।',
+        en: 'this site has a favorite gradient. it shows up more than is strictly necessary, on purpose.',
+        bn: 'এই সাইটের একটা প্রিয় গ্র্যাডিয়েন্ট আছে। ইচ্ছাকৃতভাবেই এটা দরকারের চেয়ে বেশি জায়গায় দেখা যায়।',
+      },
+      {
+        en: 'try typing "sudo hire me" into the contact form\'s message box. see what happens.',
+        bn: 'কন্টাক্ট ফর্মের মেসেজ বক্সে "sudo hire me" টাইপ করে দেখুন। কী হয় দেখুন।',
+      },
+      {
+        en: 'right-clicking things is apparently a personality trait now. respect.',
+        bn: 'যেকোনো কিছুতে রাইট-ক্লিক করা এখন সম্ভবত একটা স্বভাব। শ্রদ্ধা রইল।',
       },
     ] satisfies Localized[],
+    // Kept separate from the array above, not just another entry in it —
+    // SurpriseFact.tsx only mixes this into the pool on April 1st itself,
+    // the one calendar date safe to build a joke around without
+    // inventing anything about Rafi specifically (an actual anniversary/
+    // birthday isn't in AGENTS.md's verified fact list, so this stays the
+    // one universally-true special date rather than a guessed one).
+    aprilFools: {
+      en: "it's april 1st. every other fact in here is true. this one's making no promises.",
+      bn: 'আজ ১লা এপ্রিল। এখানের বাকি সব তথ্য সত্যি। এইটার ব্যাপারে কোনো নিশ্চয়তা নেই।',
+    } satisfies Localized,
   },
   notFound: {
     heading: { en: 'Page not found', bn: 'পেজ পাওয়া যায়নি' } satisfies Localized,

@@ -4,6 +4,7 @@ import { Inter, JetBrains_Mono, Anek_Bangla, Noto_Sans_Bengali } from "next/font
 import { MotionConfig } from "framer-motion";
 import { CursorGlow } from "@/components/layout/CursorGlow";
 import { CursorTrail } from "@/components/layout/CursorTrail";
+import { CursorPaint } from "@/components/layout/CursorPaint";
 import { Navbar } from "@/components/layout/Navbar";
 import { SmoothScroll } from "@/components/layout/SmoothScroll";
 import { RouteScrollReset } from "@/components/layout/RouteScrollReset";
@@ -19,6 +20,8 @@ import { DebugOverlay } from "@/components/layout/DebugOverlay";
 import { ContextMenu } from "@/components/layout/ContextMenu";
 import { RapidToggleWarning } from "@/components/layout/RapidToggleWarning";
 import { SurpriseFact } from "@/components/layout/SurpriseFact";
+import { EmptyBackgroundDoubleClick } from "@/components/layout/EmptyBackgroundDoubleClick";
+import { TouchSurprise } from "@/components/layout/TouchSurprise";
 import { BackToTopButton, WhatsAppButton } from "@/components/layout/FloatingActions";
 import { SkipToContent } from "@/components/layout/SkipToContent";
 import { KeyboardShortcuts } from "@/components/layout/KeyboardShortcuts";
@@ -213,6 +216,7 @@ export default async function RootLayout({
           <div className="grain-overlay" aria-hidden="true" />
           <CursorGlow />
           <CursorTrail />
+          <CursorPaint />
           <Navbar />
           <CommandPalette />
           <KeyboardShortcuts />
@@ -226,6 +230,8 @@ export default async function RootLayout({
           <ContextMenu />
           <RapidToggleWarning />
           <SurpriseFact />
+          <EmptyBackgroundDoubleClick />
+          <TouchSurprise />
           <WhatsAppButton />
           <BackToTopButton />
           {children}
