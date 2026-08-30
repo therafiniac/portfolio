@@ -12,6 +12,9 @@ import type { SkillGroup } from "@/types";
 import { useLanguage, type Language } from "@/lib/useLanguage";
 import { t, localizeNumber } from "@/lib/i18n";
 import { strings } from "@/lib/i18n-strings";
+import { triggerPageGlitch } from "@/components/layout/PageGlitch";
+import { triggerMatrixRain } from "@/components/layout/MatrixRain";
+import { triggerDebugToggle } from "@/components/layout/DebugOverlay";
 
 const EYEBROW = strings.skills.eyebrow;
 const TITLE = strings.skills.title;
@@ -160,6 +163,25 @@ function buildOutput(canonical: CommandKey, language: Language): string {
   }
 }
 
+// Three commands deliberately left out of COMMAND_NAMES/buildHelpList —
+// "help" only ever lists the 8 documented commands above, these three
+// stay pure "you have to already know to try it," same discovery grammar
+// as the Konami code or the command palette's own sudo. Dry/technical,
+// so English-only like the console log and view-source comment already
+// are — not a translatable joke, a fixed reference. Content is
+// deliberately generic ("wip", "cold boot") rather than any real project
+// fact, so it stays honest under the same rule everything else on this
+// site follows even though it's obviously a gag.
+const BOOT_LINES = [
+  "[    0.000000] rafi-portfolio: cold boot requested",
+  "[    0.114000] mounting /dev/curiosity ... ok",
+  "[    0.328000] loading stack: next.js, typescript, three.js ... ok",
+  "[    0.512000] checking for pulse ... alive",
+  "[    0.701000] rafi@portfolio ready.",
+];
+const HIDDEN_COMMANDS = ["reboot", "matrix", "debug"] as const;
+type HiddenCommand = (typeof HIDDEN_COMMANDS)[number];
+
 function isTypingTarget(el: Element | null): boolean {
   if (!el) return false;
   const tag = el.tagName;
@@ -240,9 +262,46 @@ function InteractiveTerminal() {
     };
   }, []);
 
+  // Appends the boot log one line at a time to the *last* history entry
+  // rather than all at once — makes "reboot" read as a real stream of
+  // output instead of a static block, the same "arrives like real
+  // command output" reasoning StackRow's own stagger already follows.
+  function pushBootSequence(raw: string) {
+    setHistory((h) => [...h, { command: raw, output: [] }]);
+    BOOT_LINES.forEach((line, i) => {
+      window.setTimeout(() => {
+        setHistory((h) => {
+          const last = h[h.length - 1];
+          if (!last) return h;
+          return [...h.slice(0, -1), { ...last, output: [...last.output, line] }];
+        });
+      }, i * 220);
+    });
+  }
+
+  function runHiddenCommand(hidden: HiddenCommand, raw: string) {
+    if (hidden === "reboot") {
+      triggerPageGlitch();
+      pushBootSequence(raw);
+      return;
+    }
+    if (hidden === "matrix") {
+      triggerMatrixRain();
+      setHistory((h) => [...h, { command: raw, output: [t(strings.skills.terminalMatrix, language)] }]);
+      return;
+    }
+    triggerDebugToggle();
+    setHistory((h) => [...h, { command: raw, output: [t(strings.skills.terminalDebug, language)] }]);
+  }
+
   function runCommand(raw: string) {
     const normalized = raw.trim().toLowerCase();
     if (!normalized) return;
+
+    if ((HIDDEN_COMMANDS as readonly string[]).includes(normalized)) {
+      runHiddenCommand(normalized as HiddenCommand, raw);
+      return;
+    }
 
     const canonical = resolveCommand(normalized, language);
 

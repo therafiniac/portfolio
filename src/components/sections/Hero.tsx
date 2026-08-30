@@ -6,6 +6,7 @@ import { HeroCanvasLoader } from "@/components/three/HeroCanvasLoader";
 import { HeroMark3DLoader } from "@/components/three/HeroMark3DLoader";
 import { CountUp } from "@/components/layout/CountUp";
 import { Magnetic } from "@/components/layout/Magnetic";
+import { StatusDot } from "@/components/ui/StatusDot";
 import { heroRoles, heroStatusLine, heroStats, heroNameLine1, heroNameLine2 } from "@/lib/data/hero";
 import { useLanguage } from "@/lib/useLanguage";
 import { t, localizeNumber } from "@/lib/i18n";
@@ -141,10 +142,7 @@ export function Hero() {
             <span className="text-accent" aria-hidden="true">
               &gt;
             </span>
-            <span
-              className="h-1.5 w-1.5 shrink-0 rounded-full bg-status-live motion-safe:animate-pulse"
-              aria-hidden="true"
-            />
+            <StatusDot />
             {t(heroStatusLine, language)}
             <LocalTimeBadge />
           </motion.p>

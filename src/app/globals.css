@@ -780,6 +780,14 @@ html::-webkit-scrollbar {
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
 }
 
+/* Toggled by DebugOverlay.tsx's "debug" terminal command — outlines
+   every element in the accent color so real layout boxes show through
+   the glass/blur treatment, paired with that component's own grid
+   overlay and corner badge. */
+.debug-mode * {
+  outline: 1px solid color-mix(in srgb, var(--accent) 30%, transparent) !important;
+}
+
 /* A recruiter printing/exporting-to-PDF still happens more than you'd
    guess, and the default here would just be the dark, glass-panel UI
    dumped onto paper as-is: wasted ink and low contrast at best, chrome

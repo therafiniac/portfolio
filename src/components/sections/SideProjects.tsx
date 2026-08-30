@@ -1,6 +1,8 @@
 "use client";
 
+import { useRef, useState, type MouseEvent } from "react";
 import { ArrowUpRight } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 import { Section } from "@/components/layout/Section";
 import { sideProjects } from "@/lib/data/sideProjects";
 import { resolvePlaceholderHref } from "@/lib/placeholderLink";
@@ -8,6 +10,21 @@ import type { SideProject } from "@/types";
 import { useLanguage } from "@/lib/useLanguage";
 import { t } from "@/lib/i18n";
 import { strings } from "@/lib/i18n-strings";
+
+const CLICK_WINDOW_MS = 1200;
+const CLICKS_TO_TRIGGER = 5;
+const LOG_VISIBLE_MS = 3000;
+
+// Deliberately silly, generic commit messages — never a real metric,
+// user count, or claim about the tool itself (see AGENTS.md: every
+// project claim must be interview-defensible). This is a joke overlay
+// that reads as obviously fake, not a second, dishonest description of
+// the project sitting next to the real one.
+const FAKE_GIT_LOG = [
+  "8f3a1c2 wip: pretend this file has more than 40 lines",
+  "a9e04b1 fix: nothing was actually broken",
+  "021bb7f chore: add more coffee",
+];
 
 // Deliberately not another bordered-card grid — this is the one section
 // on the page still using the plain "eyebrow + title + intro + grid"
@@ -27,6 +44,25 @@ function SideProjectRow({ project }: { project: SideProject }) {
   // resolvePlaceholderHref sends a click there to /under-construction
   // instead of a dead "#".
   const isLive = project.href.startsWith("http");
+  const [gitLog, setGitLog] = useState(false);
+  const clickTimestamps = useRef<number[]>([]);
+
+  // Five clicks on the icon specifically — never the row itself, so the
+  // link's real navigation (even to a placeholder) never gets a debounce
+  // delay bolted on just to detect a click streak. preventDefault/
+  // stopPropagation run on every icon click unconditionally, so poking
+  // the icon never navigates at all, only counts.
+  function handleIconClick(e: MouseEvent<SVGSVGElement>) {
+    e.preventDefault();
+    e.stopPropagation();
+    const now = Date.now();
+    clickTimestamps.current = [...clickTimestamps.current.filter((t) => now - t < CLICK_WINDOW_MS), now];
+    if (clickTimestamps.current.length < CLICKS_TO_TRIGGER) return;
+
+    clickTimestamps.current = [];
+    setGitLog(true);
+    window.setTimeout(() => setGitLog(false), LOG_VISIBLE_MS);
+  }
 
   return (
     <a
@@ -36,11 +72,32 @@ function SideProjectRow({ project }: { project: SideProject }) {
       className="group flex flex-col gap-3 py-8 sm:flex-row sm:items-center sm:justify-between sm:gap-6"
     >
       <div className="flex items-center gap-4 sm:gap-6">
-        <project.icon
-          className="h-6 w-6 shrink-0 text-accent-secondary transition-transform duration-300 ease-out group-hover:-rotate-12 group-hover:scale-110"
-          strokeWidth={1.25}
-          aria-hidden="true"
-        />
+        <span className="relative">
+          <project.icon
+            onClick={handleIconClick}
+            className="h-6 w-6 shrink-0 cursor-default text-accent-secondary transition-transform duration-300 ease-out group-hover:-rotate-12 group-hover:scale-110"
+            strokeWidth={1.25}
+            aria-hidden="true"
+          />
+          <AnimatePresence>
+            {gitLog && (
+              <motion.div
+                key="gitlog"
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="nav-glass absolute left-0 top-full z-20 mt-2 w-72 rounded-lg p-3 font-mono text-[length:var(--text-2xs)] text-text-muted"
+              >
+                {FAKE_GIT_LOG.map((line) => (
+                  <p key={line} className="truncate">
+                    {line}
+                  </p>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </span>
         {/* First pass (md:text-3xl) still read as "the same size" as
             SectionHeading's own h2 (text-3xl md:text-4xl) at a glance —
             same typeface, same color, only a 6px gap at md doesn't

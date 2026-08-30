@@ -140,6 +140,12 @@ export const strings = {
       bn: '{count}টি বাস্তব ক্লায়েন্ট প্রজেক্ট — উপরে Work দেখুন।',
     } satisfies Localized,
     terminalPrivate: { en: 'private', bn: 'প্রাইভেট' } satisfies Localized,
+    // Output for the two hidden commands that aren't in COMMAND_NAMES/
+    // buildHelpList (see HIDDEN_COMMANDS in Skills.tsx) — same "sudo"
+    // exception as COMMAND_NAMES above: fixed English references, not a
+    // translatable concept, so bn repeats en rather than transliterating.
+    terminalMatrix: { en: 'there is no spoon.', bn: 'there is no spoon.' } satisfies Localized,
+    terminalDebug: { en: 'debug overlay: toggled.', bn: 'debug overlay: toggled.' } satisfies Localized,
   },
   experience: {
     eyebrow: { en: 'Track Record', bn: 'ট্র্যাক রেকর্ড' } satisfies Localized,
@@ -309,6 +315,14 @@ export const strings = {
     sudoJoke: {
       en: 'Permission denied. This incident will be reported to nobody.',
       bn: 'অনুমতি নেই। এই ঘটনার রিপোর্ট কাউকে করা হবে না।',
+    } satisfies Localized,
+    // A second line shown only under the sudo joke — for whoever already
+    // found one hidden layer, a dry nudge that there are others (the
+    // console log, the Konami code, "g" then a letter) without spelling
+    // any of them out. A pointer to a trail, not a spoiler.
+    sudoHint: {
+      en: "this isn't the only one, if you keep looking.",
+      bn: 'খুঁজতে থাকলে আরও পাবেন।',
     } satisfies Localized,
     hint: {
       en: 'navigate · select · close · ? for shortcuts',
