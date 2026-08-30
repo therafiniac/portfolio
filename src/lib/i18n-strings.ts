@@ -202,6 +202,16 @@ export const strings = {
       en: "Thanks for reaching out — I'll get back to you soon.",
       bn: 'যোগাযোগ করার জন্য ধন্যবাদ — শীঘ্রই উত্তর দেব।',
     } satisfies Localized,
+    // Shown once, briefly, if the message field's value ever contains
+    // the literal phrase "sudo hire me" (checked in English regardless of
+    // active site language — the phrase itself is a fixed callback to the
+    // command palette's own sudoJoke, not something meant to be typed in
+    // Bengali). A real reply to that joke's "permission denied," not a
+    // new one — see sudoJoke above.
+    sudoEasterEgg: {
+      en: 'permission granted, for once.',
+      bn: 'অনুমতি মঞ্জুর হলো, এবারের মতো।',
+    } satisfies Localized,
   },
   hero: {
     viewWork: { en: 'View My Work', bn: 'আমার কাজ দেখুন' } satisfies Localized,
@@ -341,6 +351,14 @@ export const strings = {
   skipToContent: { en: 'Skip to content', bn: 'কনটেন্টে যান' } satisfies Localized,
   tabAttention: {
     comeBack: { en: 'Come back! 👋', bn: 'ফিরে আসুন! 👋' } satisfies Localized,
+  },
+  // Shown by RapidToggleWarning.tsx when either LanguageToggle or
+  // ThemeToggle gets clicked 5 times in quick succession — both buttons
+  // already do their real job on every single click (language/theme
+  // actually flips each time), this is purely a toast layered on top,
+  // never blocking or altering that.
+  rapidToggle: {
+    message: { en: 'okay, okay — pick one.', bn: 'ঠিক আছে, ঠিক আছে — একটা বেছে নিন।' } satisfies Localized,
   },
   notFound: {
     heading: { en: 'Page not found', bn: 'পেজ পাওয়া যায়নি' } satisfies Localized,

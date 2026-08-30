@@ -18,12 +18,16 @@ const FLOURISH_DURATION_MS = 600;
 // to nothing else on the page.
 //
 // Five clicks within CLICK_WINDOW_MS spins it a full turn and briefly
-// swaps the fill to the signature gradient — a fifth hidden layer for
-// the same curious-visitor audience the console log/Konami code/palette
-// hint/status-dot triple-click already reward. Both Navbar's and
-// Footer's marks are real "back to top" links, so this click handler
-// only adds a count on top of that default navigation, never intercepts
-// it (no preventDefault/stopPropagation).
+// swaps the fill to the signature gradient — a hidden layer for the same
+// curious-visitor audience the console log/Konami code/palette hint/
+// status-dot triple-click already reward. Both Navbar's and Footer's
+// marks are real "back to top" links, so this click handler only adds a
+// count on top of that default navigation, never intercepts it (no
+// preventDefault/stopPropagation). Right-clicking the mark is handled
+// site-wide by ContextMenu.tsx now, not here — an earlier version tried
+// a menu scoped to just this element and it broke: the popover ended up
+// as an <a> nested inside the mark's own wrapping "back to top" anchor,
+// which is invalid HTML.
 export function BrandMark({ size = 32, className }: BrandMarkProps) {
   const [spins, setSpins] = useState(0);
   const [flourish, setFlourish] = useState(false);

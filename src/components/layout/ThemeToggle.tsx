@@ -1,16 +1,36 @@
 "use client";
 
+import { useRef } from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "@/lib/useTheme";
 import { useLanguage } from "@/lib/useLanguage";
+import { triggerRapidToggleWarning } from "@/components/layout/RapidToggleWarning";
 import { t } from "@/lib/i18n";
 import { strings } from "@/lib/i18n-strings";
+
+const CLICK_WINDOW_MS = 1200;
+const CLICKS_TO_TRIGGER = 5;
 
 export function ThemeToggle() {
   const theme = useTheme();
   const language = useLanguage();
+  const clickTimestamps = useRef<number[]>([]);
+
+  // Same rapid-click detector as LanguageToggle's own — every click here
+  // already does its real job (theme actually flips each time), this
+  // only adds the shared toast on top after the 5th one in quick
+  // succession.
+  function trackRapidClicks() {
+    const now = Date.now();
+    clickTimestamps.current = [...clickTimestamps.current.filter((t) => now - t < CLICK_WINDOW_MS), now];
+    if (clickTimestamps.current.length < CLICKS_TO_TRIGGER) return;
+
+    clickTimestamps.current = [];
+    triggerRapidToggleWarning();
+  }
 
   function toggle(event: React.MouseEvent<HTMLButtonElement>) {
+    trackRapidClicks();
     const next = theme === "light" ? "dark" : "light";
     const apply = () => {
       document.documentElement.setAttribute("data-theme", next);

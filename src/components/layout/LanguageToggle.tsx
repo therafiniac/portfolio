@@ -1,11 +1,34 @@
 "use client";
 
+import { useRef, useState } from "react";
+import { triggerRapidToggleWarning } from "@/components/layout/RapidToggleWarning";
 import { useLanguage } from "@/lib/useLanguage";
 import { t } from "@/lib/i18n";
 import { strings } from "@/lib/i18n-strings";
 
+const CLICK_WINDOW_MS = 1200;
+const CLICKS_TO_TRIGGER = 5;
+const CONFUSED_DURATION_MS = 550;
+
 export function LanguageToggle() {
   const language = useLanguage();
+  const [confused, setConfused] = useState(false);
+  const clickTimestamps = useRef<number[]>([]);
+
+  // Every click already does its real job (flips the language), so
+  // unlike BrandMark/StatusDot there's nothing to intercept — this only
+  // layers a brief label stutter on top after the 5th rapid click, purely
+  // cosmetic and never touching the actual language state underneath.
+  function trackRapidClicks() {
+    const now = Date.now();
+    clickTimestamps.current = [...clickTimestamps.current.filter((t) => now - t < CLICK_WINDOW_MS), now];
+    if (clickTimestamps.current.length < CLICKS_TO_TRIGGER) return;
+
+    clickTimestamps.current = [];
+    setConfused(true);
+    window.setTimeout(() => setConfused(false), CONFUSED_DURATION_MS);
+    triggerRapidToggleWarning();
+  }
 
   function toggle() {
     const next = language === "en" ? "bn" : "en";
@@ -40,13 +63,16 @@ export function LanguageToggle() {
   return (
     <button
       type="button"
-      onClick={toggle}
+      onClick={() => {
+        trackRapidClicks();
+        toggle();
+      }}
       aria-label={
         language === "en" ? t(strings.nav.switchToBengali, "en") : t(strings.nav.switchToBengali, "bn")
       }
       className="flex h-9 shrink-0 items-center justify-center rounded-full px-2.5 font-mono text-[length:var(--text-1xs)] font-semibold uppercase tracking-[0.1em] text-text-muted transition-colors hover:text-accent"
     >
-      {language === "en" ? "বাং" : "EN"}
+      {confused ? "??" : language === "en" ? "বাং" : "EN"}
     </button>
   );
 }
