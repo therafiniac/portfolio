@@ -6,6 +6,7 @@ import { SideProjects } from '@/components/sections/SideProjects';
 import { Experience } from '@/components/sections/Experience';
 import { Skills } from '@/components/sections/Skills';
 import { HowIBuild } from '@/components/sections/HowIBuild';
+import { Writing } from '@/components/sections/Writing';
 import { Contact } from '@/components/sections/Contact';
 import { Footer } from '@/components/layout/Footer';
 
@@ -21,6 +22,7 @@ export default function Home() {
         <Experience />
         <HowIBuild />
         <Services />
+        <Writing />
         <Contact />
       </main>
       <Footer />
