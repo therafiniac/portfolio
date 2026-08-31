@@ -219,16 +219,25 @@ function OrbitalMark({
   );
 }
 
-// Plain flat fallback — same round/accent-ring language as BrandMark.tsx,
-// just big — for the WebGL-unavailable case, so that slot is never just
-// empty space.
+// Same round/gradient-ring language as BrandMark.tsx, just big — for the
+// WebGL-unavailable case, so that slot is never just empty space. Plain
+// browser CSS here (unlike the favicon/OG copies), so this uses the
+// exact same padding/mask ring technique BrandMark.tsx does, not a
+// Satori-safe workaround.
 function StaticMarkFallback({ accentColor }: { accentColor: string }) {
   return (
-    <div
-      aria-hidden="true"
-      className="flex aspect-square w-full items-center justify-center rounded-full border"
-      style={{ borderColor: accentColor }}
-    >
+    <div aria-hidden="true" className="relative flex aspect-square w-full items-center justify-center rounded-full">
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 rounded-full"
+        style={{
+          padding: "2px",
+          backgroundImage: "var(--gradient-signature)",
+          WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+          WebkitMaskComposite: "xor",
+          maskComposite: "exclude",
+        }}
+      />
       <span className="font-mono text-6xl font-bold" style={{ color: accentColor }}>
         R
       </span>

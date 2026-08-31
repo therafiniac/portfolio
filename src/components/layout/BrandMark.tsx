@@ -59,11 +59,32 @@ export function BrandMark({ size = 32, className }: BrandMarkProps) {
         height: size,
         borderRadius: "50%",
         ...(flourish
-          ? { backgroundImage: "var(--gradient-signature)", color: "var(--bg)", borderColor: "transparent" }
+          ? { backgroundImage: "var(--gradient-signature)", color: "var(--bg)" }
           : undefined),
       }}
-      className={`flex shrink-0 items-center justify-center border border-accent/40 bg-accent/5 font-mono font-bold text-accent transition-all duration-200 ${className ?? ""}`}
+      className={`relative flex shrink-0 items-center justify-center bg-accent/5 font-mono font-bold text-accent transition-all duration-200 ${className ?? ""}`}
     >
+      {/* A permanent thin --gradient-signature ring, not a flat
+          single-color border — AGENTS.md calls for the signature
+          gradient to be the brand mark itself, used deliberately and
+          repeatedly, not just on the 5-click flourish below. Same
+          padding/mask ring technique as .hover-gradient-border in
+          globals.css, just always-on here instead of hover-triggered.
+          Hidden during the flourish so it doesn't double up with that
+          state's own full gradient fill. */}
+      {!flourish && (
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 rounded-full"
+          style={{
+            padding: "1.5px",
+            backgroundImage: "var(--gradient-signature)",
+            WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+            WebkitMaskComposite: "xor",
+            maskComposite: "exclude",
+          }}
+        />
+      )}
       R
     </motion.span>
   );

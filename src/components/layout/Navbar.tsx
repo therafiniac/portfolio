@@ -261,16 +261,26 @@ export function Navbar() {
                   href={resolveHref(link.href)}
                   onClick={() => setMenuOpen(false)}
                   aria-current={activeId === link.id ? "true" : undefined}
-                  className={`relative rounded-lg px-3 py-3 font-mono text-sm uppercase tracking-[0.15em] transition-colors hover:text-accent ${
+                  className={`rounded-lg px-3 py-3 font-mono text-sm uppercase tracking-[0.15em] transition-colors hover:text-accent ${
                     activeId === link.id
                       ? "nav-active-text-glow font-medium text-accent"
                       : "text-text-muted"
                   }`}
                 >
-                  {activeId === link.id && (
-                    <span aria-hidden="true" className="nav-active-torch pointer-events-none absolute -inset-4 -z-10" />
-                  )}
-                  {t(link.label, language)}
+                  {/* The glow's radial-gradient centers on its own box —
+                      on this full-width row (mobile links stretch full
+                      width for a comfortable tap target, unlike desktop's
+                      tight pill) that meant it centered on the whole row
+                      instead of the left-aligned label. Anchoring -inset-4
+                      to a tight inline-block wrapper around just the text
+                      keeps the tap target full-width while centering the
+                      glow on the actual word. */}
+                  <span className="relative inline-block">
+                    {activeId === link.id && (
+                      <span aria-hidden="true" className="nav-active-torch pointer-events-none absolute -inset-4 -z-10" />
+                    )}
+                    {t(link.label, language)}
+                  </span>
                 </motion.a>
               ))}
               <motion.a
