@@ -232,7 +232,7 @@ export default async function RootLayout({
           <SurpriseFact />
           <EmptyBackgroundDoubleClick />
           <TouchSurprise />
-          <WhatsAppButton />
+          {/* <WhatsAppButton /> */}
           <BackToTopButton />
           {children}
         </MotionConfig>
