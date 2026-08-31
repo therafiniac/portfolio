@@ -78,11 +78,30 @@ function Burst() {
   );
 }
 
+const TRIGGER_EVENT = "easter:konami-burst";
+
+// Lets ContextMenu.tsx's "surprise me" grab-bag fire this same burst
+// without typing the sequence — same event-dispatch pattern every other
+// standalone trigger on this site uses (openCommandPalette,
+// triggerMatrixRain, etc.), rather than duplicating the burst component.
+export function triggerKonamiBurst() {
+  window.dispatchEvent(new Event(TRIGGER_EVENT));
+}
+
 export function KonamiEasterEgg() {
   const [progress, setProgress] = useState(0);
   const [triggered, setTriggered] = useState(false);
 
   useEffect(() => {
+    function fireBurst() {
+      // Decorative-only, so it simply doesn't run under reduced motion
+      // rather than showing a degraded (static-dots, no burst) version —
+      // same call every other purely-decorative effect on this site makes.
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      setTriggered(true);
+      window.setTimeout(() => setTriggered(false), 1600);
+    }
+
     function handleKeydown(e: KeyboardEvent) {
       if (isTypingTarget(document.activeElement)) return;
 
@@ -101,16 +120,15 @@ export function KonamiEasterEgg() {
       }
 
       setProgress(0);
-      // Decorative-only, so it simply doesn't run under reduced motion
-      // rather than showing a degraded (static-dots, no burst) version —
-      // same call every other purely-decorative effect on this site makes.
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-      setTriggered(true);
-      window.setTimeout(() => setTriggered(false), 1600);
+      fireBurst();
     }
 
     window.addEventListener("keydown", handleKeydown);
-    return () => window.removeEventListener("keydown", handleKeydown);
+    window.addEventListener(TRIGGER_EVENT, fireBurst);
+    return () => {
+      window.removeEventListener("keydown", handleKeydown);
+      window.removeEventListener(TRIGGER_EVENT, fireBurst);
+    };
   }, [progress]);
 
   return <AnimatePresence>{triggered && <Burst key="burst" />}</AnimatePresence>;

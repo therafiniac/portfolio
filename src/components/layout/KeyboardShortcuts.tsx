@@ -10,6 +10,15 @@ import { t } from "@/lib/i18n";
 import { strings } from "@/lib/i18n-strings";
 
 const LEADER_TIMEOUT = 600;
+const OPEN_HELP_EVENT = "keyboard-shortcuts:open";
+
+// Lets ContextMenu.tsx's "keyboard shortcuts" row open this same dialog
+// from a right-click instead of only the "?" key — same event-dispatch
+// pattern CommandPalette.tsx's own openCommandPalette() uses, rather than
+// prop-drilling a setter through layout.tsx.
+export function openShortcutsHelp() {
+  window.dispatchEvent(new Event(OPEN_HELP_EVENT));
+}
 
 // key -> section id, derived from navLinks (Work/Stack/Experience/
 // Contact) rather than a hand-maintained map — a fifth nav link added
@@ -49,6 +58,14 @@ export function KeyboardShortcuts() {
     const timeout = window.setTimeout(() => setLeaderArmed(false), LEADER_TIMEOUT);
     return () => window.clearTimeout(timeout);
   }, [leaderArmed]);
+
+  useEffect(() => {
+    function handleOpenEvent() {
+      setHelpOpen(true);
+    }
+    window.addEventListener(OPEN_HELP_EVENT, handleOpenEvent);
+    return () => window.removeEventListener(OPEN_HELP_EVENT, handleOpenEvent);
+  }, []);
 
   useEffect(() => {
     function goToSection(id: string) {

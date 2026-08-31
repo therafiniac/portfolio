@@ -4,6 +4,7 @@ import { Inter, JetBrains_Mono, Anek_Bangla, Noto_Sans_Bengali } from "next/font
 import { MotionConfig } from "framer-motion";
 import { CursorGlow } from "@/components/layout/CursorGlow";
 import { CursorTrail } from "@/components/layout/CursorTrail";
+import { CursorPaint } from "@/components/layout/CursorPaint";
 import { Navbar } from "@/components/layout/Navbar";
 import { SmoothScroll } from "@/components/layout/SmoothScroll";
 import { RouteScrollReset } from "@/components/layout/RouteScrollReset";
@@ -12,6 +13,15 @@ import { CommandPalette } from "@/components/layout/CommandPalette";
 import { TabAttention } from "@/components/layout/TabAttention";
 import { ConsoleEasterEgg } from "@/components/layout/ConsoleEasterEgg";
 import { KonamiEasterEgg } from "@/components/layout/KonamiEasterEgg";
+import { PageGlitch } from "@/components/layout/PageGlitch";
+import { PageShake } from "@/components/layout/PageShake";
+import { MatrixRain } from "@/components/layout/MatrixRain";
+import { DebugOverlay } from "@/components/layout/DebugOverlay";
+import { ContextMenu } from "@/components/layout/ContextMenu";
+import { RapidToggleWarning } from "@/components/layout/RapidToggleWarning";
+import { SurpriseFact } from "@/components/layout/SurpriseFact";
+import { EmptyBackgroundDoubleClick } from "@/components/layout/EmptyBackgroundDoubleClick";
+import { TouchSurprise } from "@/components/layout/TouchSurprise";
 import { BackToTopButton, WhatsAppButton } from "@/components/layout/FloatingActions";
 import { SkipToContent } from "@/components/layout/SkipToContent";
 import { KeyboardShortcuts } from "@/components/layout/KeyboardShortcuts";
@@ -145,6 +155,17 @@ const LANG_INIT_SCRIPT = `
 })();
 `;
 
+// A fourth hidden layer for the same curious-visitor audience the
+// console log, Konami code, and "g"+letter shortcuts reward — this one
+// for whoever reads View Source/curl's the page instead of opening
+// devtools. A literal HTML comment can't survive JSX's text escaping,
+// and dangerouslySetInnerHTML on a real DOM node inside <head> risks the
+// browser's parser relocating non-metadata content out of <head> (head
+// can only hold metadata elements), causing a hydration mismatch — an
+// empty, no-op inline script is the safe way to leave something for
+// view-source without one.
+const VIEW_SOURCE_EASTER_EGG = `// if you're reading this before the page even rendered, hi — you and the console.log() are the same crowd. therafiniac@gmail.com`;
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -162,6 +183,7 @@ export default async function RootLayout({
       className={`${inter.variable} ${jetbrainsMono.variable} ${anekBangla.variable} ${notoSansBengali.variable} h-full antialiased`}
     >
       <head>
+        <script nonce={nonce} dangerouslySetInnerHTML={{ __html: VIEW_SOURCE_EASTER_EGG }} />
         <script nonce={nonce} dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <script nonce={nonce} dangerouslySetInnerHTML={{ __html: LANG_INIT_SCRIPT }} />
         <script
@@ -194,12 +216,22 @@ export default async function RootLayout({
           <div className="grain-overlay" aria-hidden="true" />
           <CursorGlow />
           <CursorTrail />
+          <CursorPaint />
           <Navbar />
           <CommandPalette />
           <KeyboardShortcuts />
           <TabAttention />
           <ConsoleEasterEgg />
           <KonamiEasterEgg />
+          <PageGlitch />
+          <PageShake />
+          <MatrixRain />
+          <DebugOverlay />
+          <ContextMenu />
+          <RapidToggleWarning />
+          <SurpriseFact />
+          <EmptyBackgroundDoubleClick />
+          <TouchSurprise />
           <WhatsAppButton />
           <BackToTopButton />
           {children}

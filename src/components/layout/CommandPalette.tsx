@@ -216,9 +216,10 @@ export function CommandPalette() {
               className="max-h-72 overflow-y-auto p-2"
             >
               {normalizedQuery === strings.commandPalette.sudoQuery ? (
-                <p className="px-3 py-6 text-center font-mono text-xs text-text-muted">
-                  {t(strings.commandPalette.sudoJoke, language)}
-                </p>
+                <div className="px-3 py-6 text-center font-mono text-xs text-text-muted">
+                  <p>{t(strings.commandPalette.sudoJoke, language)}</p>
+                  <p className="mt-1.5 opacity-70">{t(strings.commandPalette.sudoHint, language)}</p>
+                </div>
               ) : results.length === 0 ? (
                 <p className="px-3 py-6 text-center font-mono text-xs text-text-muted">
                   {t(normalizedQuery ? strings.commandPalette.findOnPage : strings.commandPalette.noResults, language)}

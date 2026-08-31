@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { BrandMark } from "@/components/layout/BrandMark";
+import { StatusDot } from "@/components/ui/StatusDot";
 import { heroStatusLine, fullName } from "@/lib/data/hero";
 import { useLanguage } from "@/lib/useLanguage";
 import { t, localizeNumber } from "@/lib/i18n";
@@ -40,10 +41,7 @@ export function Footer() {
         </div>
 
         <p className="flex items-center gap-2 font-mono text-[length:var(--text-1xs)] uppercase tracking-[0.15em] text-text-muted">
-          <span
-            className="h-1.5 w-1.5 rounded-full bg-status-live motion-safe:animate-pulse"
-            aria-hidden="true"
-          />
+          <StatusDot />
           {openStatus}
         </p>
       </div>
