@@ -7,7 +7,12 @@ export const contentType = "image/png";
 // convention picks this up automatically for every share of the root
 // page, no manual meta tag wiring needed. Same round-badge brand mark
 // and Mocha/accent palette as icon.tsx and BrandMark.tsx, scaled up into
-// an actual share card instead of a favicon-sized dot.
+// an actual share card instead of a favicon-sized dot. Same nested-circle
+// gradient-ring technique as icon.tsx — see that file's own comment for
+// why (Satori doesn't support BrandMark.tsx's mask-based ring).
+const MARK_SIZE = 96;
+const RING_WIDTH = 2;
+
 export default function OpengraphImage() {
   return new ImageResponse(
     (
@@ -26,19 +31,31 @@ export default function OpengraphImage() {
         <div
           style={{
             display: "flex",
-            width: 96,
-            height: 96,
+            width: MARK_SIZE,
+            height: MARK_SIZE,
             alignItems: "center",
             justifyContent: "center",
             borderRadius: "50%",
-            border: "2px solid #89b4fa",
-            color: "#89b4fa",
-            fontSize: 44,
-            fontWeight: 700,
+            backgroundImage: "linear-gradient(135deg, #89b4fa, #eba0ac)",
             marginBottom: 36,
           }}
         >
-          R
+          <div
+            style={{
+              display: "flex",
+              width: MARK_SIZE - RING_WIDTH * 2,
+              height: MARK_SIZE - RING_WIDTH * 2,
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: "50%",
+              background: "#11111b",
+              color: "#89b4fa",
+              fontSize: 44,
+              fontWeight: 700,
+            }}
+          >
+            R
+          </div>
         </div>
         <div
           style={{

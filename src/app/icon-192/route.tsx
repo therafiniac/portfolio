@@ -8,26 +8,42 @@ const SIZE = 192;
 // actually requires (icon.tsx's 32x32 is too small to reuse directly).
 // A route handler, not the icon.tsx file-convention (that convention
 // only wires up one default favicon size, not arbitrary manifest sizes).
+// Same nested-circle gradient-ring technique as icon.tsx — see that
+// file's own comment for why (Satori doesn't support BrandMark.tsx's
+// mask-based ring).
+const RING_WIDTH = 9;
+
 export async function GET() {
   return new ImageResponse(
     (
       <div
         style={{
-          width: "100%",
-          height: "100%",
+          width: SIZE,
+          height: SIZE,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#11111b",
-          color: "#89b4fa",
-          fontFamily: "monospace",
-          fontSize: 108,
-          fontWeight: 700,
           borderRadius: "50%",
-          border: "9px solid #89b4fa",
+          backgroundImage: "linear-gradient(135deg, #89b4fa, #eba0ac)",
         }}
       >
-        R
+        <div
+          style={{
+            width: SIZE - RING_WIDTH * 2,
+            height: SIZE - RING_WIDTH * 2,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            borderRadius: "50%",
+            background: "#11111b",
+            color: "#89b4fa",
+            fontFamily: "monospace",
+            fontSize: 108,
+            fontWeight: 700,
+          }}
+        >
+          R
+        </div>
       </div>
     ),
     { width: SIZE, height: SIZE },
