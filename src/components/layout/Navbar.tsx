@@ -15,10 +15,21 @@ import { useLanguage } from "@/lib/useLanguage";
 import { t } from "@/lib/i18n";
 import { strings } from "@/lib/i18n-strings";
 
-function useActiveSection() {
+// isHome as a dependency, not just an empty array: Navbar lives in the
+// root layout, so it never unmounts across a client-side route change.
+// Without this, the observer set up on first mount keeps a reference to
+// whichever section DOM nodes existed *then* — navigate away (those get
+// destroyed) and back (fresh ones get created), and the observer is
+// left watching detached nodes forever, so the active link silently
+// stops updating until a full reload re-mounts everything from scratch.
+// Re-running the effect each time isHome flips back to true re-queries
+// the (now fresh) elements instead.
+function useActiveSection(isHome: boolean) {
   const [activeId, setActiveId] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!isHome) return;
+
     const sections = navLinks
       .map((link) => document.getElementById(link.id))
       .filter((el): el is HTMLElement => el !== null);
@@ -61,9 +72,14 @@ function useActiveSection() {
 
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
-  }, []);
+  }, [isHome]);
 
-  return activeId;
+  // Derived, not reset via a second setState call in the effect above
+  // (that pattern trips react-hooks/set-state-in-effect and causes an
+  // extra cascading render) — off-home, activeId may still hold a stale
+  // id from the last time it was true, but the hook simply never
+  // surfaces it until isHome is true again.
+  return isHome ? activeId : null;
 }
 
 // Same stagger shape Hero.tsx's own entrance uses — reused here rather
@@ -81,7 +97,6 @@ const menuItem = {
 
 export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const activeId = useActiveSection();
   const language = useLanguage();
   const mobileMenuRef = useRef<HTMLDivElement>(null);
 
@@ -96,6 +111,7 @@ export function Navbar() {
   const pathname = usePathname();
   const isHome = pathname === "/";
   const resolveHref = (href: string) => (isHome ? href : `/${href}`);
+  const activeId = useActiveSection(isHome);
 
   const { scrollY } = useScroll();
   const paddingY = useTransform(scrollY, [0, 120], [14, 8]);
