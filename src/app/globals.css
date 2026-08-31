@@ -1100,6 +1100,39 @@ html::-webkit-scrollbar {
   }
 }
 
+/* Contact section's social icons — user-supplied reference (a neon-glow
+   button), recolored to --accent instead of the original's flat blue.
+   Plain CSS, not Tailwind hover: utilities — .glass-panel's own
+   background/border are themselves plain, unlayered CSS, and per the
+   CSS cascade-layers spec, unlayered CSS always beats anything from
+   Tailwind's own `@layer utilities` regardless of selector specificity
+   or source order (the same trap FloatingActions.tsx's own comment on
+   glass-fab documents "confirmed the hard way"). A Tailwind
+   hover:bg-accent utility layered on top of glass-panel here would
+   silently do nothing. */
+.social-icon-glow {
+  transition:
+    background-color 0.4s ease,
+    border-color 0.4s ease,
+    box-shadow 0.4s ease,
+    color 0.4s ease;
+}
+.social-icon-glow:hover,
+.social-icon-glow:focus-visible {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
+  box-shadow:
+    0 0 6px var(--accent),
+    0 0 18px var(--accent),
+    0 0 40px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .social-icon-glow {
+    transition: none;
+  }
+}
+
 /* A recruiter printing/exporting-to-PDF still happens more than you'd
    guess, and the default here would just be the dark, glass-panel UI
    dumped onto paper as-is: wasted ink and low contrast at best, chrome
