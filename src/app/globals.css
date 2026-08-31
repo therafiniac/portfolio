@@ -465,8 +465,59 @@ html::-webkit-scrollbar {
   pointer-events: none;
 }
 
+/* Descendant form covers Experience/HowIBuild, where .group sits on a
+   separate outer wrapper (so its hover zone reaches beyond the card
+   itself — Experience's timeline dot, for one). Self form covers
+   ClientWork's cards and StatShowcase, where .group and .hover-glow-panel
+   land on the exact same element (the card *is* the whole interactive
+   surface) — a bare descendant combinator can't match an element against
+   itself, so without this the effect silently never fires there. */
 .group:hover .hover-glow-panel::after,
-.group:focus-within .hover-glow-panel::after {
+.group:focus-within .hover-glow-panel::after,
+.hover-glow-panel:hover::after,
+.hover-glow-panel:focus-within::after {
+  opacity: 1;
+}
+
+/* Elegant gradient-border reveal — replaces the old flat instant
+   border-color swap on cards that actually draw their own border-line/60
+   (Experience entries, HowIBuild's tiles, ClientWork's cards). A
+   dedicated modifier, not folded into .hover-glow-panel itself, since
+   StatShowcase also uses .hover-glow-panel for its ambient glow but
+   already has its own permanent --gradient-signature ring from a
+   different pattern (see ClientWork.tsx) — stacking a second hover-only
+   ring on top of that one would double up, so it opts out by simply not
+   carrying this class.
+   A ring drawn with the padding/mask trick (so it never touches the
+   card's own background — several of these panels are left transparent
+   on purpose, over the section's own tint) fades in over the existing
+   static border-line/60, tinting it with the actual --gradient-signature
+   brand mark instead of a single flat accent color. padding:1px matches
+   the host's own `border` width so the ring lands exactly on the same
+   pixels; border-radius:inherit for the same reason .hover-glow-panel's
+   own ::after needs it — not an inherited property by default.
+   Opacity-only transition: no layout shift, nothing shared with the CTA
+   buttons' own (louder, one-off) hover effects. */
+.hover-gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--gradient-signature);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+
+.group:hover .hover-gradient-border::before,
+.group:focus-within .hover-gradient-border::before,
+.hover-gradient-border:hover::before,
+.hover-gradient-border:focus-within::before {
   opacity: 1;
 }
 

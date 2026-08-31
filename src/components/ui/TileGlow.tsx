@@ -18,7 +18,7 @@ type TileGlowProps = {
 // additive, not a multiplier, specifically so StatShowcase's already-
 // boosted intensity={40} doesn't explode into an almost-solid card (see
 // --wash-boost in globals.css for the full reasoning).
-export function TileGlow({ intensity = 16, spread = 60, originX = 28, originY = 22, className = "" }: TileGlowProps) {
+export function TileGlow({ intensity = 16, spread = 72, originX = 28, originY = 22, className = "" }: TileGlowProps) {
   return (
     <div
       aria-hidden="true"

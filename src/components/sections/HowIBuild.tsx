@@ -270,8 +270,8 @@ function TileShell({
 
   return (
     <div className={`group relative ${heightClass} ${spanClass}`}>
-      <div className="hover-glow-panel tile-signature flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-line/60 p-6 transition-colors duration-300 group-hover:border-accent/60">
-        <TileGlow intensity={20} spread={60} originX={25} originY={20} />
+      <div className="hover-glow-panel hover-gradient-border tile-signature flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-line/60 p-6">
+        <TileGlow intensity={20} originX={25} originY={20} />
         {children}
       </div>
     </div>
