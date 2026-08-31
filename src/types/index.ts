@@ -155,3 +155,26 @@ export type NavLink = {
   label: Localized;
   id: string;
 };
+
+// A post published on another platform, not hosted here — href points at
+// the real post, same honesty rule as ProfileLink's not-yet-real hrefs
+// (see AGENTS.md). `language` marks the post's own written language
+// (Bengali today, English for later posts) independent of the site's own
+// bn/en toggle — a Bengali visitor reading the English-mode site should
+// still see a post correctly flagged "BN", not have it relabeled by the
+// UI language. `platform` stays plain, same reasoning as ProfileLink.label
+// (a proper noun, never translated). `icon` is the post's own topic
+// glyph (e.g. a shield for a VPN explainer) — decorative, picked per
+// entry to fit what that specific post is actually about, distinct from
+// PLATFORM_ICON in Writing.tsx which marks where it was published.
+export type WritingLanguage = "bn" | "en";
+
+export type WritingPost = {
+  title: Localized;
+  excerpt: Localized;
+  href: string;
+  platform: string;
+  date: Localized;
+  language: WritingLanguage;
+  icon: IconComponent;
+};
