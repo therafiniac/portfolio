@@ -3,6 +3,7 @@
 import { useActionState, useRef, useState, type ChangeEvent, type FocusEvent, type FormEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { CheckCircle2, Send } from "lucide-react";
+import { CtaVoltage } from "@/components/layout/CtaVoltage";
 import { submitContactForm, type ContactFormState } from "@/lib/actions/contact";
 import { contactSchema, type ContactFieldErrors } from "@/lib/validation/contact";
 import { useLanguage } from "@/lib/useLanguage";
@@ -217,22 +218,30 @@ export function ContactForm() {
       )}
 
       {/* The one other bordered/filled CTA on the page besides Hero's
-          "View My Work" — same signature-gradient fill and the same
-          cta-shine sweep + glow + lift, so the site's two real
+          "View My Work" — same signature-gradient fill, the same
+          cta-shine sweep + glow + lift, and the same CtaVoltage effect
+          (see Hero.tsx's own comment on why `group` lives on this
+          wrapper, not the button itself), so the site's two real
           conversion moments (come look at the work, get in touch) read
-          as the same kind of action. */}
-      <motion.button
-        type="submit"
-        disabled={pending}
-        whileHover={pending ? undefined : { scale: 1.03, y: -2 }}
-        whileTap={pending ? undefined : { scale: 0.97, y: 0 }}
-        transition={{ type: "spring", stiffness: 320, damping: 18 }}
-        className="cta-shine flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 font-mono text-sm font-medium text-bg transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-        style={{ backgroundImage: "var(--gradient-signature)" }}
-      >
-        <Send className="h-4 w-4" aria-hidden="true" />
-        {pending ? t(strings.contactForm.sending, language) : t(strings.contactForm.send, language)}
-      </motion.button>
+          as the same kind of action. Voltage stays visually off while
+          pending — CtaVoltage's own reveal is purely group-hover-driven,
+          and whileHover is disabled below during pending, so there's
+          nothing left to trigger it mid-submit. */}
+      <div className="cta-voltage group relative block w-full">
+        <motion.button
+          type="submit"
+          disabled={pending}
+          whileHover={pending ? undefined : { scale: 1.03, y: -2 }}
+          whileTap={pending ? undefined : { scale: 0.97, y: 0 }}
+          transition={{ type: "spring", stiffness: 320, damping: 18 }}
+          className="cta-shine relative z-10 flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 font-mono text-sm font-medium text-bg transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+          style={{ backgroundImage: "var(--gradient-signature)" }}
+        >
+          <Send className="h-4 w-4" aria-hidden="true" />
+          {pending ? t(strings.contactForm.sending, language) : t(strings.contactForm.send, language)}
+        </motion.button>
+        <CtaVoltage />
+      </div>
     </form>
   );
 }

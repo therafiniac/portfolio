@@ -892,6 +892,214 @@ html::-webkit-scrollbar {
   outline: 1px solid color-mix(in srgb, var(--accent) 30%, transparent) !important;
 }
 
+/* Hero's and Contact's CTA "voltage" effect — user-supplied reference (a
+   Uiverse.io "voltage-button" component). Reused mostly as-is: the two
+   squiggly path shapes ARE that component's own path data, not redrawn
+   — its `preserveAspectRatio="none"` means the artwork is deliberately
+   built to stretch non-uniformly to fit whatever container it's given,
+   so borrowing the same geometry and letting it deform to our own pill
+   shape is exactly how the technique is meant to be reused, not a
+   shortcut. Recolored to --accent/--accent-secondary (the signature
+   pair) instead of the original's yellow/cyan.
+   Rendered by the shared CtaVoltage.tsx component now (both CTAs render
+   one) — its own comment covers why each <path> gets its glow filter
+   set inline via a per-instance useId() rather than referencing a fixed
+   id from this file, the way an earlier Hero-only version did.
+   group-hover (each CTA's own wrapper carries `group`), not the
+   original's adjacent-sibling `button:hover + svg` selector — this site
+   already uses group/group-hover everywhere else, no reason for this
+   one effect to reach for a different mechanism. */
+.cta-voltage-svg {
+  position: absolute;
+  top: -0.75em;
+  left: -0.25em;
+  width: calc(100% + 0.5em);
+  height: calc(100% + 1.5em);
+  pointer-events: none;
+}
+.cta-voltage-svg path {
+  stroke-dasharray: 100;
+  fill: transparent;
+}
+.cta-voltage-line-1 {
+  stroke: var(--accent);
+  stroke-dashoffset: 0;
+  animation: cta-voltage-spark-1 3s linear infinite;
+}
+.cta-voltage-line-2 {
+  stroke: var(--accent-secondary);
+  stroke-dashoffset: 500;
+  animation: cta-voltage-spark-2 3s linear infinite;
+}
+@keyframes cta-voltage-spark-1 {
+  to {
+    stroke-dashoffset: -1000;
+  }
+}
+@keyframes cta-voltage-spark-2 {
+  to {
+    stroke-dashoffset: -500;
+  }
+}
+.cta-voltage-dots {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+/* rgba(255,255,255,*) — a literal spark/light-glint color, same
+   reasoning the shine streak and cursor spotlight already use it for:
+   this is meant to read as a physical light effect regardless of theme,
+   not a themed tint. Each dot gets its own size/duration/delay (not one
+   shared value five times over) for the same reason the flicker
+   keyframes further down use uneven spacing — identical repeating
+   timing reads as "an animation," de-synced timing reads closer to
+   real, independent sparks. */
+.cta-voltage-dot {
+  position: absolute;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.9);
+  opacity: 0;
+}
+.cta-voltage-dot-1 {
+  top: 0;
+  left: 18%;
+  width: 0.6rem;
+  height: 0.6rem;
+  animation: cta-voltage-fly-up 2.6s linear infinite;
+}
+.cta-voltage-dot-2 {
+  top: 0;
+  left: 52%;
+  width: 0.5rem;
+  height: 0.5rem;
+  animation: cta-voltage-fly-up 3.1s linear infinite 0.35s;
+}
+.cta-voltage-dot-3 {
+  top: 0;
+  left: 83%;
+  width: 0.7rem;
+  height: 0.7rem;
+  animation: cta-voltage-fly-up 2.8s linear infinite 0.9s;
+}
+.cta-voltage-dot-4 {
+  bottom: 0;
+  left: 28%;
+  width: 0.55rem;
+  height: 0.55rem;
+  animation: cta-voltage-fly-down 3.3s linear infinite 1.6s;
+}
+.cta-voltage-dot-5 {
+  bottom: 0;
+  left: 66%;
+  width: 0.65rem;
+  height: 0.65rem;
+  animation: cta-voltage-fly-down 2.5s linear infinite 2.1s;
+}
+@keyframes cta-voltage-fly-up {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.2);
+  }
+  5% {
+    opacity: 1;
+    transform: translateY(-1.2rem) scale(0.4);
+  }
+  10%,
+  100% {
+    opacity: 0;
+    transform: translateY(-2.4rem) scale(0.2);
+  }
+}
+@keyframes cta-voltage-fly-down {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.2);
+  }
+  5% {
+    opacity: 1;
+    transform: translateY(1.2rem) scale(0.4);
+  }
+  10%,
+  100% {
+    opacity: 0;
+    transform: translateY(2.4rem) scale(0.2);
+  }
+}
+/* Realism pass: a real electrical connection doesn't fade smoothly in
+   and out, it stutters — and once lit, it doesn't hold a perfectly
+   steady glow either. Two more keyframe sets layer that on top of the
+   spark/dot animations above, both using steps(1, end) (abrupt jumps
+   between keyframe values, no interpolation in between) instead of the
+   default smooth easing — interpolation is what makes an animation read
+   as "an animation"; abrupt, unevenly-spaced jumps read as flicker.
+   Only applied on .group:hover, and only as one two-animation list — an
+   element can only have one `animation` property win per selector, so
+   the base (unhovered) rule intentionally sets none at all, leaving
+   cta-voltage-svg/-dots' own opacity:0 fully in control of the resting
+   state with nothing fighting it. cta-voltage-flicker's own delay
+   matches cta-voltage-power-on's duration exactly, so the ongoing loop
+   picks up the instant the one-shot power-on finishes rather than the
+   two overlapping or leaving a gap. */
+@keyframes cta-voltage-power-on {
+  0%,
+  8% {
+    opacity: 0;
+  }
+  8.1%,
+  14% {
+    opacity: 1;
+  }
+  14.1%,
+  19% {
+    opacity: 0.15;
+  }
+  19.1%,
+  27% {
+    opacity: 1;
+  }
+  27.1%,
+  33% {
+    opacity: 0.4;
+  }
+  33.1%,
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes cta-voltage-flicker {
+  0%,
+  91% {
+    opacity: 1;
+  }
+  92%,
+  93% {
+    opacity: 0.4;
+  }
+  94%,
+  96% {
+    opacity: 1;
+  }
+  97% {
+    opacity: 0.6;
+  }
+  98%,
+  100% {
+    opacity: 1;
+  }
+}
+.group:hover .cta-voltage-svg,
+.group:hover .cta-voltage-dots {
+  animation:
+    cta-voltage-power-on 0.45s steps(1, end),
+    cta-voltage-flicker 2.8s steps(1, end) 0.45s infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cta-voltage-svg,
+  .cta-voltage-dots {
+    display: none;
+  }
+}
+
 /* A recruiter printing/exporting-to-PDF still happens more than you'd
    guess, and the default here would just be the dark, glass-panel UI
    dumped onto paper as-is: wasted ink and low contrast at best, chrome
@@ -956,3 +1164,4 @@ html::-webkit-scrollbar {
     text-decoration: underline;
   }
 }
+
