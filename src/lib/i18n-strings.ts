@@ -88,6 +88,16 @@ export const strings = {
     } satisfies Localized,
     tryIt: { en: 'Try It', bn: 'ব্যবহার করুন' } satisfies Localized,
   },
+  writing: {
+    eyebrow: { en: 'Writing', bn: 'লেখালেখি' } satisfies Localized,
+    title: { en: 'Also Written', bn: 'যা লিখেছি' } satisfies Localized,
+    intro: {
+      en: "A few explainer posts, written elsewhere for now — new ones land here directly as they're written.",
+      bn: 'আপাতত অন্য জায়গায় লেখা কিছু ব্যাখ্যামূলক পোস্ট — নতুন লেখাগুলো এখন থেকে সরাসরি এখানেই যোগ হবে।',
+    } satisfies Localized,
+    prev: { en: 'Scroll to previous post', bn: 'আগের পোস্টে যান' } satisfies Localized,
+    next: { en: 'Scroll to next post', bn: 'পরের পোস্টে যান' } satisfies Localized,
+  },
   skills: {
     eyebrow: { en: 'Capabilities', bn: 'দক্ষতা' } satisfies Localized,
     // Section h2, not the Navbar link (nav.ts keeps its own short "Stack"
@@ -517,6 +527,7 @@ export const strings = {
     exp: { en: 'EXP', bn: 'অভিজ্ঞতা' } satisfies Localized,
     services: { en: 'SERVICES', bn: 'সার্ভিস' } satisfies Localized,
     builds: { en: 'BUILDS', bn: 'টুলস' } satisfies Localized,
+    writing: { en: 'WRITING', bn: 'লেখা' } satisfies Localized,
     built: { en: 'BUILT', bn: 'তৈরি' } satisfies Localized,
     approach: { en: 'APPROACH', bn: 'পদ্ধতি' } satisfies Localized,
     contact: { en: 'CONTACT', bn: 'যোগাযোগ' } satisfies Localized,

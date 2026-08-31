@@ -240,6 +240,19 @@ html::-webkit-scrollbar {
   display: none;
 }
 
+/* Writing.tsx's card rail — same reasoning as html's own scrollbar
+   hiding above: native drag/wheel/touch scrolling stays fully
+   functional, only the OS-drawn bar is hidden, since the rail gets its
+   own visible arrow controls once it actually has overflow to scroll. */
+.scroll-rail {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scroll-rail::-webkit-scrollbar {
+  display: none;
+}
+
 ::selection {
   background: var(--accent-dim);
   color: var(--accent);
