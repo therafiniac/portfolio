@@ -1,8 +1,8 @@
 "use client";
 
 import type { ReactElement, ReactNode } from "react";
-import { ArrowUpRight, Send } from "lucide-react";
 import { Section } from "@/components/layout/Section";
+import { ContactCtaTile } from "@/components/layout/ContactCtaTile";
 import { TileGlow } from "@/components/ui/TileGlow";
 import { approachPoints, type ApproachPoint } from "@/lib/data/approach";
 import { useLanguage } from "@/lib/useLanguage";
@@ -270,8 +270,8 @@ function TileShell({
 
   return (
     <div className={`group relative ${heightClass} ${spanClass}`}>
-      <div className="hover-glow-panel tile-signature flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-line/60 p-6 transition-colors duration-300 group-hover:border-accent/60">
-        <TileGlow intensity={20} spread={60} originX={25} originY={20} />
+      <div className="hover-glow-panel hover-gradient-border tile-signature flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-line/60 p-6">
+        <TileGlow intensity={20} originX={25} originY={20} />
         {children}
       </div>
     </div>
@@ -310,42 +310,25 @@ function PointCard({
   );
 }
 
-// The site's one other full-gradient CTA (see WorkFillerTile.tsx in
-// ClientWork) — same recipe: full --gradient-signature fill, bg-toned
-// content, one big icon bleeding off the corner. Anchored bottom-left and
-// spanning 2 columns so it reads as the section's one loud brand moment,
-// not another neutral card in the grid.
+// The site's one other full-gradient CTA (see ContactCtaTile.tsx, shared
+// with WorkFillerTile.tsx in ClientWork) — same recipe: full
+// --gradient-signature fill, bg-toned content, one big icon bleeding off
+// the corner. Anchored bottom-left and spanning 2 columns so it reads as
+// the section's one loud brand moment, not another neutral card in the
+// grid.
 function CtaTile() {
-  const language = useLanguage();
-
   return (
-    <a
-      href="#contact"
+    <ContactCtaTile
+      heading={strings.howIBuild.ctaHeading}
+      cta={strings.howIBuild.cta}
       // order-last only below sm — below that breakpoint the grid is a
       // single column, so DOM order is visual order, and the CTA sitting
       // second-to-last (ahead of the last PointCard) reads as an odd
       // interruption rather than a closing tile. sm:order-none restores
       // plain source order once the grid is 2+ columns, where its bottom-
       // left anchoring already works as intended.
-      className="group relative order-last flex h-56 flex-col items-center justify-center gap-2 overflow-hidden rounded-2xl p-6 text-center shadow-lg shadow-black/10 transition-[filter] duration-300 hover:brightness-110 sm:order-none sm:col-span-2"
-      style={{ backgroundImage: "var(--gradient-signature)" }}
-    >
-      <Send
-        className="pointer-events-none absolute -bottom-8 -right-8 h-36 w-36 text-bg/15"
-        strokeWidth={1.25}
-        aria-hidden="true"
-      />
-      <div className="relative flex flex-col items-center gap-2">
-        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-bg/20 text-bg backdrop-blur">
-          <Send className="h-5 w-5" aria-hidden="true" />
-        </span>
-        <span className="font-mono text-lg text-bg">{t(strings.howIBuild.ctaHeading, language)}</span>
-        <span className="flex items-center gap-1 font-mono text-xs uppercase tracking-[0.2em] text-bg/80 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1">
-          {t(strings.howIBuild.cta, language)}
-          <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
-        </span>
-      </div>
-    </a>
+      className="order-last h-56 rounded-2xl sm:order-none sm:col-span-2"
+    />
   );
 }
 

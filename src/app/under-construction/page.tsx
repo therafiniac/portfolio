@@ -1,11 +1,16 @@
 "use client";
 
+import { useRef } from "react";
 import Link from "next/link";
 import { Hourglass } from "lucide-react";
 import { Footer } from "@/components/layout/Footer";
+import { triggerPageShake } from "@/components/layout/PageShake";
 import { useLanguage } from "@/lib/useLanguage";
 import { t } from "@/lib/i18n";
 import { strings } from "@/lib/i18n-strings";
+
+const CLICK_WINDOW_MS = 1200;
+const CLICKS_TO_TRIGGER = 3;
 
 // Where every not-yet-real link on the site now points instead of a
 // dead "#" — the two Coming Soon work tiles, the social links without a
@@ -18,6 +23,19 @@ import { strings } from "@/lib/i18n-strings";
 // crawler here directly, it's only ever a landing spot.
 export default function UnderConstruction() {
   const language = useLanguage();
+  const clickTimestamps = useRef<number[]>([]);
+
+  // Same trigger, same effect as not-found.tsx's own "404" click —
+  // both pages are the same kind of dead end, so they share one easter
+  // egg rather than each getting its own.
+  function handleClick() {
+    const now = Date.now();
+    clickTimestamps.current = [...clickTimestamps.current.filter((t) => now - t < CLICK_WINDOW_MS), now];
+    if (clickTimestamps.current.length < CLICKS_TO_TRIGGER) return;
+
+    clickTimestamps.current = [];
+    triggerPageShake();
+  }
 
   return (
     <>
@@ -31,7 +49,8 @@ export default function UnderConstruction() {
       <meta name="robots" content="noindex, nofollow" />
       <main id="main-content" className="flex flex-1 flex-col items-center justify-center px-6 py-32 text-center">
         <span
-          className="flex h-20 w-20 items-center justify-center rounded-full"
+          onClick={handleClick}
+          className="flex h-20 w-20 cursor-default items-center justify-center rounded-full"
           style={{ backgroundImage: "var(--gradient-signature)" }}
           aria-hidden="true"
         >

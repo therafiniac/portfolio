@@ -142,7 +142,7 @@ export function Experience() {
                   page's card-based sections. Non-interactive (no href),
                   but the same "lit from within" hover cue still applies
                   as a purely decorative cue, same as HowIBuild's tiles. */}
-              <div className="hover-glow-panel relative grid grid-cols-1 gap-2 overflow-hidden rounded-xl border border-line/60 p-5 transition-colors duration-300 group-hover:border-accent/60 md:grid-cols-[200px_1fr] md:gap-8 md:p-6">
+              <div className="hover-glow-panel hover-gradient-border relative grid grid-cols-1 gap-2 overflow-hidden rounded-xl border border-line/60 p-5 md:grid-cols-[200px_1fr] md:gap-8 md:p-6">
                 <TileGlow />
                 <div>
                   {/* De-emphasized against the duration below it — a plain

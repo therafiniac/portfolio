@@ -76,7 +76,7 @@ function WorkCard({ project }: { project: ClientProject }) {
   return (
     <Link
       href={`/work/${project.slug}`}
-      className="hover-glow-panel group relative block overflow-hidden rounded-xl border border-line/60 transition-colors duration-300 hover:border-accent/60"
+      className="hover-glow-panel hover-gradient-border group relative block overflow-hidden rounded-xl border border-line/60"
     >
       <TileGlow />
       <BrowserChrome label={project.tech[0]} />
@@ -87,7 +87,7 @@ function WorkCard({ project }: { project: ClientProject }) {
             mobile. Below md the default flips: the screenshot shows
             plainly and the icon placeholder stays hidden, since that's
             strictly more informative than a state mobile can never reach. */}
-        <div className="tile-signature absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 md:opacity-100 md:group-hover:opacity-0">
+        <div className="tile-signature absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-500 ease-out md:opacity-100 md:group-hover:opacity-0">
           <project.icon
             className="h-14 w-14 text-accent-secondary"
             strokeWidth={1.25}
@@ -100,7 +100,7 @@ function WorkCard({ project }: { project: ClientProject }) {
             alt={`${t(project.name, language)} ${t(strings.clientWork.preview, language)}`}
             fill
             sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-            className="object-cover opacity-100 transition-opacity duration-300 md:opacity-0 md:group-hover:opacity-100"
+            className="object-cover opacity-100 transition-opacity duration-500 ease-out md:opacity-0 md:group-hover:opacity-100"
           />
         </ViewTransition>
       </div>
@@ -148,7 +148,7 @@ function ComingSoonTile() {
   return (
     <Link
       href={UNDER_CONSTRUCTION_HREF}
-      className="hover-glow-panel group relative hidden flex-col overflow-hidden rounded-xl border border-line/60 transition-colors duration-300 hover:border-accent/60 sm:flex"
+      className="hover-glow-panel hover-gradient-border group relative hidden flex-col overflow-hidden rounded-xl border border-line/60 sm:flex"
     >
       <TileGlow />
       <BrowserChrome label="Coming Soon" />

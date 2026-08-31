@@ -1,15 +1,18 @@
 "use client";
 
-import { useActionState, useState, type FocusEvent, type FormEvent } from "react";
+import { useActionState, useRef, useState, type ChangeEvent, type FocusEvent, type FormEvent } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { CheckCircle2, Send } from "lucide-react";
+import { CtaVoltage } from "@/components/layout/CtaVoltage";
 import { submitContactForm, type ContactFormState } from "@/lib/actions/contact";
 import { contactSchema, type ContactFieldErrors } from "@/lib/validation/contact";
-import { Magnetic } from "@/components/layout/Magnetic";
 import { useLanguage } from "@/lib/useLanguage";
 import { t } from "@/lib/i18n";
 import { strings } from "@/lib/i18n-strings";
 
 const initialState: ContactFormState = { status: "idle" };
+const SUDO_PHRASE = "sudo hire me";
+const SUDO_EASTER_EGG_DURATION_MS = 2200;
 
 const fieldClasses =
   "mt-2 w-full rounded-lg border border-line bg-transparent px-3 py-2 text-text-primary outline-none transition-colors focus:border-accent";
@@ -28,7 +31,26 @@ export function ContactForm() {
   );
   const [clientErrors, setClientErrors] = useState<ContactFieldErrors>({});
   const [touched, setTouched] = useState<Partial<Record<FieldName, boolean>>>({});
+  const [sudoEasterEgg, setSudoEasterEgg] = useState(false);
+  const sudoTriggeredRef = useRef(false);
   const language = useLanguage();
+
+  // Reads the field's own live value on every keystroke without making it
+  // a controlled input (no `value=` prop below) — this is a pure side
+  // effect, the field itself stays exactly as uncontrolled as it already
+  // was for the real submit/validation flow. sudoTriggeredRef stops it
+  // re-firing on every keystroke once the phrase is already typed, and
+  // resets the moment it's edited out again.
+  function handleMessageChange(event: ChangeEvent<HTMLTextAreaElement>) {
+    const matched = event.target.value.toLowerCase().includes(SUDO_PHRASE);
+    if (matched && !sudoTriggeredRef.current) {
+      sudoTriggeredRef.current = true;
+      setSudoEasterEgg(true);
+      window.setTimeout(() => setSudoEasterEgg(false), SUDO_EASTER_EGG_DURATION_MS);
+    } else if (!matched) {
+      sudoTriggeredRef.current = false;
+    }
+  }
 
   if (state.status === "success") {
     return (
@@ -161,6 +183,7 @@ export function ContactForm() {
           name="message"
           rows={5}
           onBlur={handleBlur}
+          onChange={handleMessageChange}
           aria-invalid={messageError ? true : undefined}
           aria-describedby={messageError ? "message-error" : undefined}
           className={fieldClasses}
@@ -170,6 +193,22 @@ export function ContactForm() {
             {messageError}
           </p>
         )}
+        <AnimatePresence>
+          {sudoEasterEgg && (
+            <motion.p
+              key="sudo-easter-egg"
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              aria-hidden="true"
+              className="mt-1.5 bg-clip-text font-mono text-xs text-transparent"
+              style={{ backgroundImage: "var(--gradient-signature)" }}
+            >
+              {t(strings.contactForm.sudoEasterEgg, language)}
+            </motion.p>
+          )}
+        </AnimatePresence>
       </div>
 
       {state.status === "error" && state.message && (
@@ -179,20 +218,30 @@ export function ContactForm() {
       )}
 
       {/* The one other bordered/filled CTA on the page besides Hero's
-          "View My Work" — same signature-gradient fill, so the site's
-          two real conversion moments (come look at the work, get in
-          touch) read as the same kind of action. */}
-      <Magnetic className="block w-full" strength={0.15}>
-        <button
+          "View My Work" — same signature-gradient fill, the same
+          cta-shine sweep + glow + lift, and the same CtaVoltage effect
+          (see Hero.tsx's own comment on why `group` lives on this
+          wrapper, not the button itself), so the site's two real
+          conversion moments (come look at the work, get in touch) read
+          as the same kind of action. Voltage stays visually off while
+          pending — CtaVoltage's own reveal is purely group-hover-driven,
+          and whileHover is disabled below during pending, so there's
+          nothing left to trigger it mid-submit. */}
+      <div className="cta-voltage group relative block w-full">
+        <motion.button
           type="submit"
           disabled={pending}
-          className="flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 font-mono text-sm font-medium text-bg transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+          whileHover={pending ? undefined : { scale: 1.03, y: -2 }}
+          whileTap={pending ? undefined : { scale: 0.97, y: 0 }}
+          transition={{ type: "spring", stiffness: 320, damping: 18 }}
+          className="cta-shine relative z-10 flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 font-mono text-sm font-medium text-bg transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
           style={{ backgroundImage: "var(--gradient-signature)" }}
         >
           <Send className="h-4 w-4" aria-hidden="true" />
           {pending ? t(strings.contactForm.sending, language) : t(strings.contactForm.send, language)}
-        </button>
-      </Magnetic>
+        </motion.button>
+        <CtaVoltage />
+      </div>
     </form>
   );
 }

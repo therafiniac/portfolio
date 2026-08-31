@@ -1,10 +1,15 @@
 "use client";
 
+import { useRef } from "react";
 import Link from "next/link";
 import { Footer } from "@/components/layout/Footer";
+import { triggerPageShake } from "@/components/layout/PageShake";
 import { useLanguage } from "@/lib/useLanguage";
 import { t } from "@/lib/i18n";
 import { strings } from "@/lib/i18n-strings";
+
+const CLICK_WINDOW_MS = 1200;
+const CLICKS_TO_TRIGGER = 3;
 
 // Next's own default 404 is unstyled and breaks the site's voice the
 // moment someone hits a dead link — this is that page done in the same
@@ -15,12 +20,27 @@ import { strings } from "@/lib/i18n-strings";
 // since the real accessible heading is the h1 right below it.
 export default function NotFound() {
   const language = useLanguage();
+  const clickTimestamps = useRef<number[]>([]);
+
+  // Three clicks on the "404" itself shakes the whole page — the same
+  // effect under-construction/page.tsx's own icon badge triggers, since
+  // both pages are the same kind of moment (you ended up somewhere
+  // that isn't real content).
+  function handleClick() {
+    const now = Date.now();
+    clickTimestamps.current = [...clickTimestamps.current.filter((t) => now - t < CLICK_WINDOW_MS), now];
+    if (clickTimestamps.current.length < CLICKS_TO_TRIGGER) return;
+
+    clickTimestamps.current = [];
+    triggerPageShake();
+  }
 
   return (
     <>
       <main id="main-content" className="flex flex-1 flex-col items-center justify-center px-6 py-32 text-center">
         <span
-          className="bg-clip-text font-mono text-8xl font-semibold leading-none text-transparent md:text-9xl"
+          onClick={handleClick}
+          className="cursor-default bg-clip-text font-mono text-8xl font-semibold leading-none text-transparent md:text-9xl"
           style={{ backgroundImage: "var(--gradient-signature)" }}
           aria-hidden="true"
         >

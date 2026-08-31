@@ -182,7 +182,7 @@ export function Contact() {
                 rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
                 title={link.label}
                 aria-label={link.label}
-                className="glass-panel flex h-11 w-11 items-center justify-center text-text-muted transition-colors hover:text-accent"
+                className="glass-panel social-icon-glow flex h-11 w-11 items-center justify-center text-text-muted"
               >
                 <link.icon className="h-4 w-4" aria-hidden="true" />
               </a>

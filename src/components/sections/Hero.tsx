@@ -5,7 +5,8 @@ import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion
 import { HeroCanvasLoader } from "@/components/three/HeroCanvasLoader";
 import { HeroMark3DLoader } from "@/components/three/HeroMark3DLoader";
 import { CountUp } from "@/components/layout/CountUp";
-import { Magnetic } from "@/components/layout/Magnetic";
+import { CtaVoltage } from "@/components/layout/CtaVoltage";
+import { StatusDot } from "@/components/ui/StatusDot";
 import { heroRoles, heroStatusLine, heroStats, heroNameLine1, heroNameLine2 } from "@/lib/data/hero";
 import { useLanguage } from "@/lib/useLanguage";
 import { t, localizeNumber } from "@/lib/i18n";
@@ -141,10 +142,7 @@ export function Hero() {
             <span className="text-accent" aria-hidden="true">
               &gt;
             </span>
-            <span
-              className="h-1.5 w-1.5 shrink-0 rounded-full bg-status-live motion-safe:animate-pulse"
-              aria-hidden="true"
-            />
+            <StatusDot />
             {t(heroStatusLine, language)}
             <LocalTimeBadge />
           </motion.p>
@@ -171,21 +169,36 @@ export function Hero() {
           </motion.p>
 
           <motion.div variants={item} className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3">
-            <Magnetic>
-              {/* --gradient-signature, not flat bg-accent — AGENTS.md
-                  calls for the gradient on the primary CTA specifically,
-                  "repeatedly... so it reads as a signature." This is
-                  that CTA; Contact's submit button already matches it. */}
-              <a
+            {/* --gradient-signature, not flat bg-accent — AGENTS.md calls
+                for the gradient on the primary CTA specifically,
+                "repeatedly... so it reads as a signature." CtaVoltage
+                (a user-supplied reference effect — see globals.css's own
+                cta-voltage-* comment for the full breakdown) is layered
+                on top of the existing cta-shine sweep + glow + lift, not
+                a replacement. `group` lives on this wrapper (not the
+                anchor itself) since CtaVoltage's svg/dots have to be
+                siblings of the button, not children of it — .cta-shine's
+                own overflow:hidden (needed to clip the diagonal shine to
+                the pill shape) would otherwise clip the spark arcs,
+                which are deliberately drawn *outside* the button's own
+                edges. */}
+            <div className="cta-voltage group relative inline-block">
+              <motion.a
                 href="#work"
-                className="relative inline-flex items-center gap-2 rounded-full px-6 py-3 font-mono text-sm font-medium text-bg transition-opacity hover:opacity-90"
+                whileHover={{ scale: 1.045, y: -2 }}
+                whileTap={{ scale: 0.97, y: 0 }}
+                transition={{ type: "spring", stiffness: 320, damping: 18 }}
+                className="cta-shine relative z-10 inline-flex items-center gap-2 rounded-full px-6 py-3 font-mono text-sm font-medium text-bg transition-opacity hover:opacity-90"
                 style={{ backgroundImage: "var(--gradient-signature)" }}
               >
                 <span className="cta-glow" aria-hidden="true" />
                 {t(strings.hero.viewWork, language)}
-                <span aria-hidden="true">→</span>
-              </a>
-            </Magnetic>
+                <span aria-hidden="true" className="transition-transform duration-300 ease-out group-hover:translate-x-1">
+                  →
+                </span>
+              </motion.a>
+              <CtaVoltage />
+            </div>
             <a
               href="#contact"
               className="font-mono text-sm text-text-muted underline-offset-4 transition-colors hover:text-accent hover:underline"
